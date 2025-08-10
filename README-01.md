@@ -276,3 +276,7 @@ python --version
 
 *<https://github.com/punkpeye/awesome-mcp-clients/>
 *<https://glama.ai/mcp/clients>
+
+## Zapier MCP Server
+
+*<https://zapier.com/>

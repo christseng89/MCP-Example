@@ -1,0 +1,15 @@
+[project]
+name = "fast-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12.10"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "fast-agent",
+]
+
+[tool.uv.sources]
+fast-agent = { workspace = true }
