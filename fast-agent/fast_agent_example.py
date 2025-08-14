@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Fast-Agent Python Example
-=========================
+Fast-Agent Python Example (Corrected)
+======================================
 
-This example demonstrates how to use the fast-agent framework to create
+This example demonstrates how to use the fast-agent-mcp framework to create
 AI agents that can integrate with MCP (Model Context Protocol) services.
 
 Requirements:
-- fast-agent library
+- fast-agent-mcp library
 - Python 3.8+
 - UV package manager (recommended)
+
+Installation:
+    uv pip install fast-agent-mcp
 
 Usage:
     uv run fast_agent_example.py
@@ -20,7 +23,7 @@ Usage:
 import asyncio
 import logging
 from typing import Optional
-from fastagent import FastAgent
+from mcp_agent.core.fastagent import FastAgent
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -71,80 +74,6 @@ def create_basic_agent_example():
     return basic_agent
 
 
-def create_advanced_agent_example():
-    """Advanced fast-agent example with multiple specialized agents."""
-    
-    # Create the main FastAgent application
-    fast = FastAgent("Advanced MCP Toolkit")
-    
-    @fast.agent(
-        instruction="""You are a Python development assistant specialized in MCP integration.
-        
-        Focus on:
-        - Writing Python code for MCP servers and clients
-        - Explaining MCP Python SDK usage
-        - Debugging MCP connection issues
-        - Performance optimization for MCP implementations
-        
-        Always provide working code examples with proper error handling."""
-    )
-    async def python_mcp_agent():
-        """Agent specialized in Python MCP development."""
-        async with fast.run() as agent:
-            return await agent("Help me create a Python MCP server")
-    
-    @fast.agent(
-        instruction="""You are a security consultant for MCP implementations.
-        
-        Your expertise includes:
-        - MCP server security best practices
-        - API key management and rotation
-        - Permission and access control for MCP servers
-        - Identifying and mitigating security risks in MCP deployments
-        
-        Provide actionable security recommendations with specific implementation steps."""
-    )
-    async def security_mcp_agent():
-        """Agent specialized in MCP security."""
-        async with fast.run() as agent:
-            return await agent("What are the main security risks when using MCP servers?")
-    
-    return python_mcp_agent, security_mcp_agent
-
-
-async def interactive_agent_demo():
-    """Demonstration of interactive agent capabilities."""
-    
-    fast = FastAgent("Interactive MCP Demo")
-    
-    @fast.agent(
-        instruction="""You are an interactive MCP learning assistant.
-        
-        Help users learn MCP step by step:
-        1. Start with basic concepts
-        2. Progress to practical implementations
-        3. Provide hands-on examples
-        4. Answer follow-up questions
-        
-        Use emojis and clear formatting. Be encouraging and supportive."""
-    )
-    async def interactive_demo():
-        async with fast.run() as agent:
-            print("🎓 Welcome to the Interactive MCP Learning Assistant!")
-            print("I'll help you learn Model Context Protocol step by step.\n")
-            
-            # Start with an introduction
-            intro_response = await agent(
-                "Give me a friendly introduction to MCP and ask what I'd like to learn first."
-            )
-            print(f"🤖 Assistant: {intro_response}\n")
-            
-            # Interactive learning loop
-            await agent.interactive()
-    
-    await interactive_demo()
-
-
 async def batch_processing_example():
     """Example of processing multiple queries with fast-agent."""
     
@@ -173,8 +102,11 @@ async def batch_processing_example():
             
             for i, query in enumerate(queries, 1):
                 print(f"📝 Query {i}: {query}")
-                response = await agent(query)
-                print(f"🤖 Response: {response}\n")
+                try:
+                    response = await agent(query)
+                    print(f"🤖 Response: {response}\n")
+                except Exception as e:
+                    print(f"❌ Error: {e}\n")
                 print("-" * 60 + "\n")
     
     await batch_processor()
@@ -197,64 +129,109 @@ async def model_specific_example():
         Format everything in proper markdown with appropriate headings."""
     )
     async def documentation_agent():
-        async with fast.run(model="gpt-4") as agent:  # Specify model
-            query = "Create a quick start guide for setting up MCP with Claude Desktop"
-            response = await agent(query)
-            print("📚 Generated Documentation:")
-            print("=" * 50)
-            print(response)
+        try:
+            # Try to use a specific model (you can change this)
+            async with fast.run(model="sonnet") as agent:
+                query = "Create a quick start guide for setting up MCP with Claude Desktop"
+                response = await agent(query)
+                print("📚 Generated Documentation:")
+                print("=" * 50)
+                print(response)
+        except Exception as e:
+            print(f"❌ Model-specific example error: {e}")
+            print("💡 You might need to configure your API keys or use a different model")
     
     await documentation_agent()
+
+
+async def size_estimator_example():
+    """Example from the official fast-agent documentation."""
+    
+    fast = FastAgent("Size Estimator")
+    
+    @fast.agent(
+        instruction="Given an object, respond only with an estimate of its size."
+    )
+    async def size_estimator():
+        async with fast.run() as agent:
+            print("📏 Size Estimator Agent")
+            print("Ask me to estimate the size of anything!")
+            print("Example: 'the moon', 'a basketball', 'the Eiffel Tower'")
+            print("Type 'exit' to quit\n")
+            
+            while True:
+                try:
+                    user_input = input("Object to estimate: ").strip()
+                    if user_input.lower() in ['exit', 'quit', 'bye']:
+                        print("👋 Goodbye!")
+                        break
+                    
+                    if user_input:
+                        response = await agent(user_input)
+                        print(f"📏 Size estimate: {response}\n")
+                    
+                except KeyboardInterrupt:
+                    print("\n👋 Goodbye!")
+                    break
+                except Exception as e:
+                    print(f"❌ Error: {e}\n")
+    
+    await size_estimator()
 
 
 async def main():
     """Main function demonstrating various fast-agent usage patterns."""
     
-    print("🚀 Fast-Agent MCP Examples")
+    print("🚀 Fast-Agent MCP Examples (Corrected)")
     print("=" * 50)
+    print("Package: fast-agent-mcp")
+    print("Import: from mcp_agent.core.fastagent import FastAgent")
+    print()
+    
+    print("Choose an example to run:")
+    print("1. Basic Interactive MCP Assistant")
+    print("2. Batch Processing Demo")
+    print("3. Model-Specific Demo")
+    print("4. Size Estimator (Official Example)")
+    print("5. Run All Examples")
     
     try:
-        # Example 1: Basic interactive agent
-        print("\n1️⃣  Basic Interactive Agent Demo")
-        basic_agent = create_basic_agent_example()
-        # Uncomment the line below to run the interactive demo
-        # await basic_agent()
+        choice = input("\nEnter choice (1-5): ").strip() or "1"
         
-        # Example 2: Advanced specialized agents
-        print("\n2️⃣  Advanced Specialized Agents Demo")
-        python_agent, security_agent = create_advanced_agent_example()
-        
-        print("Python MCP Agent Response:")
-        python_response = await python_agent()
-        print(python_response)
-        
-        print("\nSecurity MCP Agent Response:")
-        security_response = await security_agent()
-        print(security_response)
-        
-        # Example 3: Batch processing
-        print("\n3️⃣  Batch Processing Demo")
-        await batch_processing_example()
-        
-        # Example 4: Model-specific usage
-        print("\n4️⃣  Model-Specific Demo")
-        await model_specific_example()
-        
-        # Example 5: Interactive learning (uncomment to enable)
-        # print("\n5️⃣  Interactive Learning Demo")
-        # await interactive_agent_demo()
-        
+        if choice == "1":
+            basic_agent = create_basic_agent_example()
+            await basic_agent()
+        elif choice == "2":
+            await batch_processing_example()
+        elif choice == "3":
+            await model_specific_example()
+        elif choice == "4":
+            await size_estimator_example()
+        elif choice == "5":
+            print("\n📦 Running batch processing first...")
+            await batch_processing_example()
+            print("\n📚 Running model-specific example...")
+            await model_specific_example()
+            print("\n🤖 Starting interactive assistant...")
+            basic_agent = create_basic_agent_example()
+            await basic_agent()
+        else:
+            print("Invalid choice, running basic demo...")
+            basic_agent = create_basic_agent_example()
+            await basic_agent()
+            
+    except KeyboardInterrupt:
+        print("\n👋 Demo cancelled.")
     except Exception as e:
         logger.error(f"Error in main execution: {e}")
         print(f"❌ An error occurred: {e}")
+        print("\n💡 Make sure you have installed the package:")
+        print("   uv pip install fast-agent-mcp")
 
 
 if __name__ == "__main__":
     print("🎯 Starting Fast-Agent MCP Examples...")
-    print("Note: Make sure you have the 'fast-agent' library installed:")
-    print("   pip install fast-agent")
-    print("   # or")
-    print("   uv add fast-agent")
+    print("Installation command: uv pip install fast-agent-mcp")
     print()
     
     asyncio.run(main())

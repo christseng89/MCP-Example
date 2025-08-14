@@ -1,0 +1,35 @@
+{
+  "servers": {
+    "test-basic-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-everything"
+      ],
+      "env": {}
+    },
+    "n8n-gateway": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "supergateway",
+        "--streamableHttp",
+        "http://localhost:5678/mcp/5e733516-3be1-40cb-a7b5-3cc714030164",
+        "--header",
+        "Authorization: Bearer 123456789",
+        "--verbose"
+      ],
+      "env": {}
+    },
+    "test-filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ],
+      "env": {}
+    }
+  }
+}
+

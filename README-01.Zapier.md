@@ -114,3 +114,41 @@ mcp exec zapier list-apps
 * 若需多人使用，建議採用 **service account**，而非個人 OAuth。
 
 ---
+
+## Zapier w n8n 運作方式
+
+Zapier 可以用來**把多個 MCP Services 的入口集中起來**，再透過它生成一個統一的 Webhook URL，然後這個 URL 就能當作 **n8n 的一個 MCP Client Tool** 來用。
+
+---
+
+### 運作方式
+
+1. **多個 MCP Services → Zapier**
+
+   * 你在 Zapier 裡建立不同的 Trigger/Action（每個 Trigger 對應一個 MCP Service 的請求）。
+   * Zapier 會把這些動作包裝成單一 API Webhook（或 Zapier 提供的任務入口）。
+
+2. **Zapier → n8n**
+
+   * 在 n8n 的 MCP Client 設定中，只要加一個 Tool，URL 指向 Zapier 的 Webhook URL。
+   * 這樣 n8n 就等於透過這個「代理 URL」可以間接呼叫多個 MCP Services。
+
+---
+
+### 優點
+
+* **集中管理**：不需要在 n8n 一一配置每個 MCP Service 的 endpoint。
+* **多服務合併**：不同 MCP 的結果可以在 Zapier 內先處理，再回傳給 n8n。
+* **快速擴展**：要新增 MCP Service 時，只改 Zapier 的 Flow，不用動 n8n。
+
+---
+
+### 缺點
+
+* **多一層延遲**：資料經過 Zapier 轉發會比直接連接慢。
+* **額外成本**：Zapier 有免費方案限制，高頻使用要付費。
+* **資料流經第三方**：敏感資料要注意隱私與安全。
+
+---
+
+如果你要的重點是 **Cursor / ChatGPT MCP 客戶端可以一次存取多個不同的 MCP Services**，其實除了 Zapier，也可以用 **自建 supergateway** 或 **n8n 自身 workflow** 來做類似的 MCP Multiplex 功能，這樣就不會受限於 Zapier 的流量與安全性。

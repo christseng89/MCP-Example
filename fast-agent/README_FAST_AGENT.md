@@ -1,6 +1,6 @@
-# Fast-Agent Python Examples
+# Fast-Agent Python Examples (Corrected)
 
-This directory contains comprehensive examples for using the **fast-agent** framework to create AI agents that work with MCP (Model Context Protocol).
+This directory contains comprehensive examples for using the **fast-agent-mcp** framework to create AI agents that work with MCP (Model Context Protocol).
 
 ## 🎯 What is Fast-Agent?
 
@@ -11,83 +11,107 @@ Fast-Agent is a Python framework for building AI agents quickly and efficiently.
 - Process multiple queries in batch
 - Integrate with MCP (Model Context Protocol) services
 
+## 🚨 Important: Correct Package Name
+
+The correct package name is **`fast-agent-mcp`**, not `fast-agent`. The import should be:
+
+```python
+from mcp_agent.core.fastagent import FastAgent
+```
+
+## 📦 Installation
+
+### Method 1: Using UV (Recommended)
+```bash
+uv pip install fast-agent-mcp
+```
+
+### Method 2: Using pip
+```bash
+pip install fast-agent-mcp
+```
+
+### Official Setup Command
+```bash
+uv run fast-agent setup    # Creates agent.py and config files
+uv run agent.py           # Runs the generated agent
+```
+
 ## 📁 Example Files
 
 ### 1. `simple_fast_agent.py` 
-**Simplest possible example** - A minimal fast-agent implementation to get you started.
+**Corrected minimal example** - A minimal fast-agent implementation with proper imports.
 
 ```python
-from fastagent import FastAgent
+from mcp_agent.core.fastagent import FastAgent
 
 fast = FastAgent("Simple Assistant")
 
 @fast.agent(instruction="You are helpful.")
 async def main():
     async with fast.run() as agent:
-        response = await agent("What is MCP?")
-        print(response)
+        await agent.interactive()
 ```
 
 ### 2. `fast_agent_example.py`
-**Comprehensive example** with multiple agent patterns:
+**Comprehensive corrected example** with multiple agent patterns:
 - Basic interactive agent
-- Specialized agents for different tasks
 - Batch processing capabilities
 - Model-specific configurations
+- Error handling examples
 
-### 3. `mcp_server_agent.py`
-**MCP-specialized agent** that helps you create and understand MCP servers:
-- Interactive MCP server builder
-- Quick example generation
-- Practical code examples with explanations
-
-### 4. `setup_fast_agent.py`
+### 3. `setup_fast_agent.py`
 **Setup and configuration** examples:
 - Environment setup
 - Different agent configurations
 - Interactive setup wizard
-- Batch processing demos
+- Official setup process demonstration
 
 ## 🚀 Quick Start
 
-### Installation
-
-Using UV (recommended) [[memory:3183744]]:
+### 1. Install the Package
 ```bash
-uv add fast-agent --dev
+uv pip install fast-agent-mcp
 ```
 
-Or using pip:
+### 2. Set up API Keys
+Create a `.env` file (copy from `.env.sample`):
 ```bash
-pip install fast-agent
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
+FAST_AGENT_MODEL=sonnet
 ```
 
-### Basic Usage
+### 3. Run Examples
+```bash
+# Simple example
+uv run simple_fast_agent.py
 
-1. **Install dependencies**:
-   ```bash
-   uv run pip install -r requirements.txt
-   ```
+# Comprehensive example
+uv run fast_agent_example.py
 
-2. **Set up API keys** (copy `.env.sample` to `.env` and add your keys):
-   ```bash
-   OPENAI_API_KEY=your_openai_key
-   ANTHROPIC_API_KEY=your_anthropic_key
-   ```
+# Setup and configuration
+uv run setup_fast_agent.py
+```
 
-3. **Run a simple example**:
-   ```bash
-   uv run simple_fast_agent.py
-   ```
+### 4. Official Quickstart
+```bash
+# Generate official example
+uv run fast-agent setup
 
-4. **Try the interactive examples**:
-   ```bash
-   uv run fast_agent_example.py
-   uv run mcp_server_agent.py
-   uv run setup_fast_agent.py
-   ```
+# Run generated agent
+uv run agent.py
+
+# Generate workflow examples
+uv run fast-agent quickstart workflow
+```
 
 ## 🎮 Usage Patterns
+
+### Correct Import
+```python
+from mcp_agent.core.fastagent import FastAgent
+```
 
 ### Single Query
 ```python
@@ -113,16 +137,17 @@ async with fast.run() as agent:
 
 ### Model Selection
 ```python
-async with fast.run(model="gpt-4") as agent:
-    response = await agent("Complex question requiring GPT-4")
+# Common model names: sonnet, haiku, gpt-4, gpt-3.5-turbo
+async with fast.run(model="sonnet") as agent:
+    response = await agent("Complex question")
 ```
 
 ## 🛠 MCP Integration
 
 These examples are designed to work with MCP (Model Context Protocol) systems:
 
-- **MCP Server Creation**: Use `mcp_server_agent.py` to learn about building MCP servers
-- **MCP Best Practices**: Get guidance on security and performance
+- **MCP Guidance**: Agents that explain MCP concepts and best practices
+- **MCP Development**: Help with creating MCP servers and clients
 - **MCP Troubleshooting**: Debug common issues with MCP implementations
 
 ## 🔧 Configuration Options
@@ -144,39 +169,49 @@ Define your agent's behavior:
 ### Environment Variables
 - `OPENAI_API_KEY` - For GPT models
 - `ANTHROPIC_API_KEY` - For Claude models  
-- `FAST_AGENT_MODEL` - Default model (e.g., "gpt-4", "claude-3-sonnet")
+- `FAST_AGENT_MODEL` - Default model (e.g., "sonnet", "gpt-4")
 - `FAST_AGENT_LOG_LEVEL` - Logging level
 
 ### Model Options
-- `gpt-3.5-turbo` - Fast, cost-effective
-- `gpt-4` - More capable, slower
-- `gpt-4-turbo` - Latest GPT-4 variant
-- `claude-3-sonnet` - Anthropic's balanced model
-- `claude-3-opus` - Anthropic's most capable model
+- `sonnet` - Anthropic's Claude 3.5 Sonnet (recommended)
+- `haiku` - Anthropic's Claude 3 Haiku (fast, cost-effective)
+- `gpt-4` - OpenAI's GPT-4
+- `gpt-3.5-turbo` - OpenAI's GPT-3.5 Turbo
 
 ## 🔍 Example Use Cases
 
 1. **MCP Learning Assistant**: Interactive agent that teaches MCP concepts
-2. **Code Review Agent**: Reviews Python/MCP code for best practices
-3. **Documentation Generator**: Creates MCP server documentation
+2. **Size Estimator**: Official example that estimates object sizes
+3. **Code Review Agent**: Reviews Python/MCP code for best practices
 4. **Batch Query Processor**: Processes multiple MCP-related questions
 5. **Setup Assistant**: Helps configure MCP development environment
 
-## 🚨 Error Handling
+## 📊 Official Examples vs Custom
 
-Common issues and solutions:
+| Type | Description | Command |
+|------|-------------|---------|
+| Official Setup | Generated by fast-agent CLI | `uv run fast-agent setup` |
+| Custom Examples | Hand-crafted for MCP use cases | Files in this directory |
+| Workflow Examples | Generated workflow patterns | `uv run fast-agent quickstart workflow` |
 
-**"No API key found"**
-- Set up your `.env` file with valid API keys
-- Check environment variable names
+## 🚨 Common Issues and Solutions
 
-**"Model not found"**
-- Verify model name spelling
-- Check if you have access to the specified model
+### "Could not find fast-agent"
+- ✅ **Solution**: Install `fast-agent-mcp` not `fast-agent`
+- ✅ **Command**: `uv pip install fast-agent-mcp`
 
-**"Connection error"**
-- Verify internet connection
-- Check API service status
+### "Module fastagent not found"
+- ✅ **Solution**: Use correct import
+- ✅ **Correct**: `from mcp_agent.core.fastagent import FastAgent`
+- ❌ **Wrong**: `from fastagent import FastAgent`
+
+### "No API key found"
+- ✅ **Solution**: Set up your `.env` file with valid API keys
+- ✅ **Check**: Environment variable names are correct
+
+### "Model not found"
+- ✅ **Solution**: Use supported model names
+- ✅ **Common**: `sonnet`, `haiku`, `gpt-4`, `gpt-3.5-turbo`
 
 ## 📚 Further Reading
 
@@ -192,6 +227,13 @@ Feel free to:
 - Improve existing code
 - Fix bugs or issues
 - Enhance documentation
+
+## ✅ Testing Your Setup
+
+1. **Install package**: `uv pip install fast-agent-mcp`
+2. **Set API key**: Add to `.env` file
+3. **Test simple example**: `uv run simple_fast_agent.py`
+4. **Try official setup**: `uv run fast-agent setup && uv run agent.py`
 
 ## 📄 License
 

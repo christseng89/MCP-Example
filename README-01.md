@@ -280,3 +280,230 @@ python --version
 ## Zapier MCP Server
 
 *<https://zapier.com/>
+
+Zapier 的作用很簡單但很強大——它是一個 **線上自動化平台**，可以幫你把不同的應用程式和服務連接起來，讓它們之間自動傳輸資料、執行任務，而不需要自己寫程式。
+
+它的主要用途與功能包括：
+
+### 1️⃣ 連接不同應用（整合 API）
+
+* 例如：Gmail、Google Sheets、Slack、Trello、Notion、Salesforce、HubSpot 等上千種服務。
+* 即使兩個應用程式沒有直接的整合功能，Zapier 也能透過它的中間層 API 連接起來。
+
+---
+
+### 2️⃣ 自動化工作流程（Zaps）
+
+* 你可以設定一個「觸發條件」（Trigger）+ 一個或多個「動作」（Action）。
+* 例子：
+
+  * **Trigger（觸發條件）**：有人填寫 Google 表單
+  * **Action（動作）**：Zapier 自動把資料新增到 Airtable，並且發一則 Slack 通知
+* 這樣你就不用手動去做這些動作，系統會自動完成。
+
+---
+
+### 3️⃣ 節省時間與人力
+
+* 把重複、機械化的任務交給 Zapier，例如：
+
+  * 新的訂單自動寫入 Google Sheets
+  * 客服信件自動分派到指定的團隊
+  * 社群文章自動同步到多個平台
+
+---
+
+### 4️⃣ 無需程式知識
+
+* 不用寫代碼就能做跨平台整合，對非工程人員也非常友好。
+* 介面是拖拉式設定，邏輯類似「IF 發生了這個，THEN 做那個」。
+
+---
+
+💡 **簡單比喻**：Zapier 就像一個**自動化郵差**，根據你的規則，幫你把不同應用之間的資訊傳來傳去，還能同時寄到多個地方。
+
+---
+
+## n8n
+
+### Install n8n
+
+```cmd
+nvm use 18.15.0
+npm install -g n8n
+
+nvm use 20.19.4
+npm update -g n8n
+
+n8n user-management:reset --email admin@example.com --password "ChangeMe123" --firstName Admin --lastName User
+n8n
+```
+
+### **1️⃣ n8n 是什麼？**
+
+**n8n**（讀作 “n-eight-n”）是一個 **開源、自託管 或 雲端的自動化工具**，主要功能是：
+
+* **工作流程自動化（Automation）**：用節點（Node）將不同應用、API、資料處理步驟連接起來。
+* **資料處理能力強**：內建 JavaScript 代碼節點，可在流程中直接處理資料、調用 API。
+* **部署靈活**：可以本地部署（On-Prem）、私有雲、或使用官方雲服務（n8n.cloud）。
+* **開源協議**：根據 **公平代碼授權（Fair Code License）**，個人與內部商用免費，但 SaaS 再販售需要付費授權。
+
+---
+
+**n8n** 和 **Zapier** 都是工作流程自動化（workflow automation）平台，但理念、靈活度、部署方式和成本結構都不同。
+
+### **2️⃣ n8n vs Zapier 對比表**
+
+| 特性         | **n8n**                             | **Zapier**              |
+| ---------- | ----------------------------------- | ----------------------- |
+| **定位**     | 開源、自託管或雲端的自動化平台                     | 商業雲端自動化平台               |
+| **部署方式**   | 本地部署（Docker、VM、K8s）、私有雲、官方雲         | 只能使用 Zapier 雲端          |
+| **價格**     | 自託管免費（除非作為 SaaS 出售）；n8n.cloud 按用量計費 | 月費制（免費版限制多），根據任務數量與功能分級 |
+| **應用整合數量** | 內建 \~350+ 節點，可接任何 API（自定義節點）        | 內建 6,000+ 應用整合（不需程式）    |
+| **資料處理能力** | 高度可編程（支援 JavaScript、變量、條件邏輯）        | 低程式需求（大多數情況不能寫代碼）       |
+| **學習曲線**   | 偏高（需理解工作流程邏輯與 API 基礎）               | 較低（點選設定即可）              |
+| **安全性**    | 資料可留在內部網路（自託管模式）                    | 所有資料經過 Zapier 雲端        |
+| **擴展性**    | 可開發自定義節點、支援複雜流程與分支                  | 擴展有限，以官方支援應用為主          |
+| **適用對象**   | **技術團隊**、需數據隱私、需複雜邏輯的企業                 | 中小企業、行銷團隊、無程式背景的用戶      |
+
+---
+
+## **3️⃣ 簡單理解**
+
+* **Zapier** = **上手快、應用多、封閉平台、付費 SaaS**
+  適合**不想管理伺服器、需要大量應用整合**的人。
+* **n8n** = **靈活可編程、可自託管、開源**
+  適合**技術團隊、對資料隱私敏感、需要複雜流程控制**的企業。
+
+---
+
+💡 **簡單比喻**
+
+* **Zapier**：像租用一個裝修好的辦公室（方便、交租金即可，但規則是房東定的）
+* **n8n**：像擁有自己的辦公樓（自由裝修、自己管理、需要懂技術，但完全掌控 ***）
+
+---
+
+## Workflow **n8n（或類似自動化平台）建立工作流的基礎概念**
+
+1. **工作流的基本結構**
+
+   * 必須包含 **觸發器 (Trigger)** 和 **動作 (Action)**
+   * 觸發器：啟動流程的條件（例：聊天訊息、郵件、Google Drive 檔案上傳、Webhook、定時事件等）
+   * 動作：觸發後執行的任務（例：寄送郵件、呼叫 API、觸發 AI Agent、存入資料庫等）
+
+2. **觸發器種類很多** (Event triggers)
+
+   * 內建支援多種應用（Google、AWS、AirTable、Facebook、GitHub 等）
+   * 支援 Webhook、AMQP Server、由其他工作流觸發、定時觸發等
+
+3. **動作與資料處理**
+
+   * 動作節點可以是 AI Agent，也可以連接外部 API 或工具
+   * 節點間以 **JSON 格式** 傳遞資料，可手動映射（Mapping）
+   * 可加入工具（Tools）、記憶（Memory）等輔助功能
+
+4. **MCP 的應用**
+
+   * 在同一個工作流中可以同時建立 **MCP Server** 和 **MCP Client**
+   * MCP Client 可由 AI Agent 呼叫並與 MCP Server 溝通
+   * MCP Server 可以連接任意其他客戶端
+
+5. **核心原則**
+
+   * **先理解基礎，再做複雜工作流**
+   * 觸發器和動作可以自由組合
+   * MCP 能讓不同工作流與外部系統靈活互通
+
+---
+
+### n8n Triggers Types
+
+* **Trigger manually**
+   Runs the flow on clicking a button in n8n. Good for getting started quickly
+
+* **On app event**
+   Runs the flow when something happens in an app like Telegram, Notion or Airtable
+
+* **On a schedule**
+   Runs the flow every day, hour, or custom interval
+
+* **On webhook call**
+   Runs the flow on receiving an HTTP request
+
+* **On form submission**
+   Generate web forms in n8n and pass their responses to the workflow
+
+* **When executed by another workflow**
+   Runs the flow when called by the Execute Workflow node from a different workflow
+
+* **On chat message**
+   Runs the flow when a user sends a chat message. For use with AI nodes
+
+* **When running evaluation**
+   Run a dataset through your workflow to test performance
+
+* **Other ways…**
+   Runs the flow on workflow errors, file changes, etc.
+
+---
+
+### Camunda + n8n Workflow Example
+
+```flow
+Applicant -> Camunda(Start)
+Camunda(Service Task "OCR") --> n8n(Webhook /ocr)
+n8n --> External APIs (OCR/AI)
+n8n --> Camunda(POST /message feesCalculated + variables)
+Camunda(Message Catch) -> continues to Approval
+```
+
+### Test OpenAI API
+
+```bash
+curl https://api.openai.com/v1/models \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+```
+
+### Connect to Google Sheet step-by-step
+
+1. **Create your Google Cloud project**
+
+   * Console → Create project (e.g., `mcp-BuildAgents`).
+
+2. **Enable APIs**
+
+   * APIs & Services → Enable: **Google Sheets API** and **Google Drive API**.
+
+3. **Configure OAuth consent screen**
+
+   * User type: **External**.
+   * App name: e.g., `mcp-BuildAgents`.
+   * Add your email under **Test users**.
+   * Scopes: add only what you need (e.g. `…/auth/spreadsheets`, `…/auth/drive.file`).
+   * Save (no need to submit for verification if you stay in testing and only test users use it).
+
+4. **Create OAuth 2.0 Client (Web application)**
+
+   * Authorized redirect URIs (match your n8n URL):
+
+     ```text
+     http://localhost:5678/rest/oauth2-credential/callback
+     ```
+
+   * (If n8n runs on another host/port, change accordingly.)
+
+5. **Fill n8n credentials** (`Google Sheets OAuth2 API`)
+
+   * Paste the **Client ID** and **Client Secret** you just created.
+   * Click **Sign in with Google** and pick the same account you added as a Test user.
+
+6. **If you still see 403 access\_denied**
+
+   * Make sure the Google account you select is in **Test users**.
+   * Remove/replace any old credential in n8n that still references **mcp-BuildAgents**.
+   * Check the redirect URI matches exactly (scheme/host/port/path).
+   * If behind a proxy, set `N8N_HOST` and `N8N_EDITOR_BASE_URL` so n8n builds the same callback URL you whitelisted.
+
+> TL;DR: Don’t use the unverified “mcp-BuildAgents” OAuth app. Create your own OAuth client, add yourself as a Test user, and use that Client ID/Secret in n8n.
