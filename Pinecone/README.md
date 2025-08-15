@@ -5,8 +5,9 @@ This project provides a complete Retrieval Augmented Generation (RAG) system for
 ## 🚀 Features
 
 - **File Processing**: Supports PDF, Word documents (.docx/.doc), and text files (.txt/.md/.rtf)
-- **Smart Chunking**: Automatically splits large documents into manageable chunks
+- **Advanced Text Splitting**: Uses RecursiveCharacterTextSplitter with configurable chunk size (1000) and overlap (120)
 - **Vector Embeddings**: Uses OpenAI's `text-embedding-3-small` model for high-quality embeddings
+- **Batch Processing**: Efficient batch embedding creation for optimal performance
 - **Web Interface**: Beautiful Streamlit-based Q&A interface
 - **RAG Pipeline**: Retrieves relevant context and generates accurate answers
 - **Source Attribution**: Always shows which documents were used to generate answers
@@ -129,10 +130,16 @@ OPENAI_EMBED_DIMENSIONS=1536
 OPENAI_EMBED_BATCH_SIZE=128
 OPENAI_EMBED_TIMEOUT=300000
 
+# Text Splitter Settings (optional - uses optimized defaults)
+TEXT_CHUNK_SIZE=1000
+TEXT_CHUNK_OVERLAP=120
+
 # Built-in defaults:
-# Model: text-embedding-3-small (1536 dimensions)
+# Model: text-embedding-3-small (1536 dimensions)  
 # Batch Size: 128 texts per API call
 # Timeout: 300,000ms (5 minutes)
+# Chunk Size: 1000 characters
+# Chunk Overlap: 120 characters
 ```
 
 **query_interface.py**:

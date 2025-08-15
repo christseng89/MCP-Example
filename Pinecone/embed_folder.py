@@ -23,6 +23,9 @@ import tiktoken
 from openai import OpenAI
 from pinecone import Pinecone
 
+# Text splitting
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 # File processing
 import pypdf
 from docx import Document
@@ -49,6 +52,10 @@ EMBED_MODEL = "text-embedding-3-small"
 EMBED_DIMENSIONS = 1536  # Vector dimensions
 EMBED_BATCH_SIZE = 128   # Batch size for processing
 EMBED_TIMEOUT = 300000   # Timeout in milliseconds (300 seconds)
+
+# Recursive Character Text Splitter Configuration (matching the interface settings)
+CHUNK_SIZE = 1000        # Chunk size in characters
+CHUNK_OVERLAP = 120      # Chunk overlap in characters
 
 def load_environment():
     """Load environment variables from .env file if it exists."""
@@ -94,44 +101,85 @@ def count_tokens(text: str, model: str = EMBED_MODEL) -> int:
         return int(len(text.split()) * 1.3)
 
 
-def chunk_text(text: str, max_tokens: int = 8000, overlap: int = 200) -> List[str]:
-    """Split text into chunks that fit within token limits."""
-    if count_tokens(text) <= max_tokens:
+def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, chunk_overlap: int = CHUNK_OVERLAP) -> List[str]:
+    """Split text using Recursive Character Text Splitter with configurable parameters."""
+    try:
+        # Create the recursive character text splitter with specified parameters
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=len,  # Use character count
+            separators=[
+                "\n\n",    # Double newline (paragraphs)
+                "\n",      # Single newline (lines)
+                " ",       # Space (words)
+                ".",       # Period
+                ",",       # Comma
+                "\u200b",  # Zero-width space
+                "\uff0c",  # Full-width comma
+                "\u3001",  # Ideographic comma
+                "\uff0e",  # Full-width period
+                "\u3002",  # Ideographic period
+                "",        # Last resort - split by character
+            ],
+            keep_separator=True,
+        )
+        
+        # Split the text
+        chunks = text_splitter.split_text(text)
+        
+        # Filter out empty chunks
+        chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
+        
+        return chunks
+        
+    except Exception as e:
+        print(f"⚠️  Warning: Error with RecursiveCharacterTextSplitter: {e}")
+        print("   Falling back to simple text splitting...")
+        
+        # Fallback: Simple splitting if RecursiveCharacterTextSplitter fails
+        return simple_chunk_text(text, chunk_size, chunk_overlap)
+
+
+def simple_chunk_text(text: str, chunk_size: int = CHUNK_SIZE, chunk_overlap: int = CHUNK_OVERLAP) -> List[str]:
+    """Fallback simple text chunking method."""
+    if len(text) <= chunk_size:
         return [text]
-
-    paragraphs = text.split('\n\n')
-    chunks: List[str] = []
-    current_chunk = ""
-
-    for paragraph in paragraphs:
-        test_chunk = current_chunk + ("\n\n" if current_chunk else "") + paragraph
-        if count_tokens(test_chunk) <= max_tokens:
-            current_chunk = test_chunk
-        else:
-            if current_chunk:
-                chunks.append(current_chunk.strip())
-                # overlap by words
-                words = current_chunk.split()
-                overlap_text = " ".join(words[-overlap:]) if len(words) > overlap else current_chunk
-                current_chunk = overlap_text + "\n\n" + paragraph
-            else:
-                # paragraph too long -> split by sentences
-                sentences = re.split(r'(?<=[.!?])\s+', paragraph)
-                temp_chunk = ""
-                for sentence in sentences:
-                    if not sentence.strip():
-                        continue
-                    test_sentence = (temp_chunk + " " + sentence).strip()
-                    if count_tokens(test_sentence) <= max_tokens:
-                        temp_chunk = test_sentence
-                    else:
-                        if temp_chunk:
-                            chunks.append(temp_chunk.strip())
-                        temp_chunk = sentence
-                current_chunk = temp_chunk
-    if current_chunk.strip():
-        chunks.append(current_chunk.strip())
-    return chunks
+    
+    chunks = []
+    start = 0
+    
+    while start < len(text):
+        # Calculate end position
+        end = start + chunk_size
+        
+        if end >= len(text):
+            # Last chunk
+            chunks.append(text[start:])
+            break
+        
+        # Try to end at a word boundary
+        chunk = text[start:end]
+        
+        # Look for the last space before the end to avoid cutting words
+        if end < len(text):
+            last_space = chunk.rfind(' ')
+            last_newline = chunk.rfind('\n')
+            last_period = chunk.rfind('.')
+            
+            # Find the best breaking point
+            break_point = max(last_space, last_newline, last_period)
+            
+            if break_point > chunk_size * 0.8:  # Only use if it's not too far back
+                end = start + break_point + 1
+                chunk = text[start:end]
+        
+        chunks.append(chunk.strip())
+        
+        # Move start position with overlap
+        start = end - chunk_overlap
+    
+    return [chunk for chunk in chunks if chunk.strip()]
 
 
 def read_pdf_file(file_path: str) -> str:
@@ -515,6 +563,11 @@ def main():
     print(f"   Dimensions: {EMBED_DIMENSIONS}")
     print(f"   Batch Size: {EMBED_BATCH_SIZE}")
     print(f"   Timeout: {EMBED_TIMEOUT}ms")
+    
+    print(f"📝 Text Splitter configuration:")
+    print(f"   Type: Recursive Character Text Splitter")
+    print(f"   Chunk Size: {CHUNK_SIZE} characters")
+    print(f"   Chunk Overlap: {CHUNK_OVERLAP} characters")
     print()
 
     openai_client, pc = initialize_clients()
