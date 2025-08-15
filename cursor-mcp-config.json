@@ -13,11 +13,9 @@
       "args": [
         "-y",
         "supergateway",
-        "--streamableHttp",
-        "http://localhost:5678/mcp/5e733516-3be1-40cb-a7b5-3cc714030164",
+        "http://localhost:5678/mcp/5e733516-3be1-40cb-a7b5-3cc714030164/sse",
         "--header",
-        "Authorization: Bearer 123456789",
-        "--verbose"
+        "Authorization: Bearer 123456789"
       ],
       "env": {}
     },

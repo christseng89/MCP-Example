@@ -1,5 +1,5 @@
 {
-  "name": "My Google Drive workflow v2",
+  "name": "My Google Drive workflow v2 RAG",
   "nodes": [
     {
       "parameters": {
@@ -9,7 +9,7 @@
       "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
       "typeVersion": 2,
       "position": [
-        -368,
+        1040,
         0
       ],
       "id": "3d7a51ec-93c5-45c8-9024-1dac9467e6e8",
@@ -28,7 +28,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [
-        -464,
+        880,
         176
       ],
       "id": "a6e5f385-e659-4fab-80fc-4530e110d0b1",
@@ -43,7 +43,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        320,
+        480,
         0
       ],
       "id": "37768416-723a-41ed-bdf1-dbcb6ac7019f",
@@ -56,7 +56,7 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.3,
       "position": [
-        160,
+        320,
         0
       ],
       "id": "8f22d04b-2a2c-4ee6-b80e-234cef87d834",
@@ -75,7 +75,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        176,
+        336,
         176
       ],
       "id": "d06ccb89-f7f7-496b-87f8-3660c7e17321",
@@ -149,7 +149,7 @@
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.6,
       "position": [
-        -192,
+        1120,
         176
       ],
       "id": "861b3bf9-a485-4cdf-9ffe-88a9326e823c",
@@ -182,7 +182,7 @@
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.6,
       "position": [
-        -320,
+        1008,
         176
       ],
       "id": "039934a3-132f-439f-8d4e-ebbda1f93182",
@@ -203,7 +203,7 @@
       "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
       "typeVersion": 1.1,
       "position": [
-        528,
+        688,
         176
       ],
       "id": "4bbfde84-8b5a-4de0-b2c2-d3231ac18c84",
@@ -222,7 +222,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
       "typeVersion": 1,
       "position": [
-        -64,
+        1248,
         176
       ],
       "id": "42a6c01f-02cc-4aef-aefc-64d9d740dc7f",
@@ -241,11 +241,60 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        352,
+        512,
         176
       ],
       "id": "41f8185b-327b-4fb0-ae49-a07405cc6a4f",
       "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        320
+      ],
+      "id": "b47fad47-6f1d-471f-862c-a4349e48f079",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "9EoXBynWrBvJWNJx",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "TSLA_RAG",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-course-tsla",
+          "mode": "list",
+          "cachedResultName": "n8n-course-tsla"
+        },
+        "topK": 10,
+        "options": {
+          "pineconeNamespace": "n8n-tsla"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1360,
+        176
+      ],
+      "id": "6521e166-498f-4eb8-93c2-3674dd551db1",
+      "name": "TSLA_RAG",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kFzlzK2eQxyyFKKX",
+          "name": "PineconeApi account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -342,6 +391,28 @@
       "main": [
         []
       ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "TSLA_RAG",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TSLA_RAG": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -349,7 +420,7 @@
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "10bb2786-ec39-48d3-a6c4-a6122bf5344d",
+  "versionId": "fce0e8be-c87f-4582-8d0e-e303a633b589",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"

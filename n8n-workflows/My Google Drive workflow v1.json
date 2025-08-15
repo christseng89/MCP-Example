@@ -9,7 +9,7 @@
       "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
       "typeVersion": 2,
       "position": [
-        -368,
+        896,
         0
       ],
       "id": "8a044efa-fb18-454c-846e-49d8a3eb909a",
@@ -28,7 +28,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [
-        -464,
+        800,
         176
       ],
       "id": "4d4a72f1-8a5f-4156-bd6f-169fa44a8d37",
@@ -149,7 +149,7 @@
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.6,
       "position": [
-        -192,
+        1072,
         176
       ],
       "id": "64d843ad-561a-4464-9121-4b7ebab6432b",
@@ -182,7 +182,7 @@
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.6,
       "position": [
-        -320,
+        944,
         176
       ],
       "id": "0763d71c-7bc6-4e5f-84ee-f8afcecb7c4e",
@@ -222,7 +222,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
       "typeVersion": 1,
       "position": [
-        -64,
+        1200,
         176
       ],
       "id": "02196b4e-0028-4695-b7c2-c9255298fcb5",
@@ -344,7 +344,7 @@
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "bae9baf7-7083-40a6-a47e-0d6893c9b842",
+  "versionId": "b47d7822-5c23-47b9-83cb-109076eca8fd",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"
