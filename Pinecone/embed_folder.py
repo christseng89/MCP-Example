@@ -43,9 +43,9 @@ except Exception:
 
 load_dotenv()
 
-FOLDER_PATH = os.getenv("PINECONE_FOLDER_PATH")
-INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")     # must exist already
-NAMESPACE  = os.getenv("PINECONE_NAMESPACE")     # ASCII only; comment out to use default
+FOLDER_PATH = os.getenv("PINECONE_FOLDER_PATH", r"C:\Users\samfi\Downloads\Tesla-N8N-Course")
+INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "tesla-index")     # must exist already
+NAMESPACE  = os.getenv("PINECONE_NAMESPACE", "tesla")     # ASCII only; comment out to use default
 
 # OpenAI Embedding Configuration (matching the interface settings)
 EMBED_MODEL = "text-embedding-3-small"
@@ -269,7 +269,7 @@ def create_embedding(client: OpenAI, text: str, model: str = EMBED_MODEL) -> Opt
             model=model,
             input=text,
             dimensions=EMBED_DIMENSIONS,
-            timeout=EMBED_TIMEOUT / 1000.0  # Convert milliseconds to seconds
+            # timeout=EMBED_TIMEOUT / 1000.0  # Convert milliseconds to seconds
         )
         return resp.data[0].embedding
     except Exception as e:
@@ -344,7 +344,7 @@ def create_embeddings_batch(client: OpenAI, texts: List[str], model: str = EMBED
                 model=model,
                 input=batch,
                 dimensions=EMBED_DIMENSIONS,
-                timeout=EMBED_TIMEOUT / 1000.0  # Convert milliseconds to seconds
+                # timeout=EMBED_TIMEOUT / 1000.0  # Convert milliseconds to seconds
             )
             
             # Extract embeddings from response

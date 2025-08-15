@@ -30,8 +30,8 @@ from pinecone import Pinecone
 
 load_dotenv()
 
-INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")     # must exist already
-NAMESPACE  = os.getenv("PINECONE_NAMESPACE")   
+INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "tesla-index")     # must exist already
+NAMESPACE  = os.getenv("PINECONE_NAMESPACE", "tesla")   
 INFO = "Tesla N8N Course"
 # INFO = "BiWeekly Meeting Notes"
 EMBED_MODEL = "text-embedding-3-small"
@@ -342,7 +342,7 @@ def main():
         
         # Generate response
         with st.chat_message("assistant"):
-            with st.spinner("🔍 Searching through your meeting notes..."):
+            with st.spinner(f"🔍 Searching through your {INFO}..."):
                 
                 # Create query embedding
                 query_embedding = create_query_embedding(openai_client, prompt)
