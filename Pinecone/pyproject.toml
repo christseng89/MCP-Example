@@ -1,0 +1,14 @@
+[project]
+name = "pinecone-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.99.9",
+    "pinecone>=7.0.0",
+    "pypdf>=6.0.0",
+    "python-docx>=1.2.0",
+    "python-dotenv>=1.1.1",
+    "tiktoken>=0.11.0",
+]
