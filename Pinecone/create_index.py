@@ -107,7 +107,7 @@ def main():
     
     # Default configuration
     default_config = {
-        "index_name": "biweekly-meeting",
+        "index_name": os.getenv("PINECONE_INDEX_NAME"),
         "dimension": 1536,  # OpenAI text-embedding-ada-002 dimension
         "metric": "cosine",
         "cloud": "aws",

@@ -37,11 +37,18 @@ except Exception:
 # =========================
 # Config (edit if you like)
 # =========================
-FOLDER_PATH = r"C:\Users\samfi\Downloads\BiWeekly-MeetingNotes"
-INDEX_NAME = "biweekly-meeting"     # must exist already
-NAMESPACE  = "biweekly-meeting"     # ASCII only; comment out to use default
-EMBED_MODEL = "text-embedding-3-small"  # 1536 dims
 
+load_dotenv()
+
+FOLDER_PATH = os.getenv("PINECONE_FOLDER_PATH")
+INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")     # must exist already
+NAMESPACE  = os.getenv("PINECONE_NAMESPACE")     # ASCII only; comment out to use default
+
+# OpenAI Embedding Configuration (matching the interface settings)
+EMBED_MODEL = "text-embedding-3-small"
+EMBED_DIMENSIONS = 1536  # Vector dimensions
+EMBED_BATCH_SIZE = 128   # Batch size for processing
+EMBED_TIMEOUT = 300000   # Timeout in milliseconds (300 seconds)
 
 def load_environment():
     """Load environment variables from .env file if it exists."""
@@ -207,9 +214,15 @@ def process_file(file_path: str) -> Optional[Dict]:
 
 
 def create_embedding(client: OpenAI, text: str, model: str = EMBED_MODEL) -> Optional[List[float]]:
-    """Create embedding using OpenAI API."""
+    """Create embedding using OpenAI API with configured parameters."""
     try:
-        resp = client.embeddings.create(model=model, input=text)
+        # Create embedding with specified dimensions and timeout
+        resp = client.embeddings.create(
+            model=model,
+            input=text,
+            dimensions=EMBED_DIMENSIONS,
+            timeout=EMBED_TIMEOUT / 1000.0  # Convert milliseconds to seconds
+        )
         return resp.data[0].embedding
     except Exception as e:
         print(f"❌ Error creating embedding: {e}")
@@ -268,6 +281,36 @@ def upload_to_pinecone(pc: Pinecone, index_name: str, vectors: List[Dict], names
         return False
 
 
+def create_embeddings_batch(client: OpenAI, texts: List[str], model: str = EMBED_MODEL) -> List[Optional[List[float]]]:
+    """Create embeddings for multiple texts in batches for efficiency."""
+    embeddings = []
+    
+    # Process texts in batches according to configured batch size
+    for i in range(0, len(texts), EMBED_BATCH_SIZE):
+        batch = texts[i:i + EMBED_BATCH_SIZE]
+        batch_size = len(batch)
+        
+        try:
+            print(f"   🔄 Creating embeddings for batch of {batch_size} texts...")
+            resp = client.embeddings.create(
+                model=model,
+                input=batch,
+                dimensions=EMBED_DIMENSIONS,
+                timeout=EMBED_TIMEOUT / 1000.0  # Convert milliseconds to seconds
+            )
+            
+            # Extract embeddings from response
+            batch_embeddings = [data.embedding for data in resp.data]
+            embeddings.extend(batch_embeddings)
+            
+        except Exception as e:
+            print(f"   ❌ Error creating batch embeddings: {e}")
+            # Add None for each failed embedding in the batch
+            embeddings.extend([None] * batch_size)
+    
+    return embeddings
+
+
 def process_folder(folder_path: str, openai_client: OpenAI, pc: Pinecone, index_name: str, namespace: Optional[str]):
     """Process all files in a folder and upload embeddings to Pinecone."""
     root = Path(folder_path)
@@ -295,6 +338,9 @@ def process_folder(folder_path: str, openai_client: OpenAI, pc: Pinecone, index_
     all_vectors: List[Dict] = []
     processed_files = 0
     total_chunks = 0
+    truncated_chunks = 0
+    all_chunks_for_batch = []  # Store all chunks for batch processing
+    all_metadata = []  # Store corresponding metadata
 
     for file_path in files:
         print("\n" + "=" * 60)
@@ -305,53 +351,111 @@ def process_folder(folder_path: str, openai_client: OpenAI, pc: Pinecone, index_
         chunks = chunk_text(info['content'])
         print(f"📝 Split into {len(chunks)} chunk(s)")
 
+        # Prepare chunks and metadata for batch processing
         for chunk_idx, chunk in enumerate(chunks):
-            print(f"   🔄 Processing chunk {chunk_idx + 1}/{len(chunks)}...")
-            emb = create_embedding(openai_client, chunk)
-            if not emb:
-                print(f"   ❌ Failed to create embedding for chunk {chunk_idx + 1}")
-                continue
-
             vector_id = generate_chunk_id(chunk, str(file_path), chunk_idx)
-            vector = {
-                "id": vector_id,
-                "values": emb,
-                "metadata": {
-                    "filename": info['filename'],
-                    "filepath": info['filepath'],
-                    "file_type": info['type'],
-                    "file_size": info['size'],
-                    "file_modified": info['modified'],
-                    "chunk_index": chunk_idx,
-                    "total_chunks": len(chunks),
-                    # keep metadata < 40KB; trim content
-                    "content": chunk[:1000],
-                    "word_count": len(chunk.split()),
-                    "char_count": len(chunk),
-                    "processed_at": datetime.now().isoformat()
-                }
-            }
-            all_vectors.append(vector)
+            
+            # Calculate available space for content (Pinecone has ~40KB metadata limit)
+            max_content_size = 38000  # bytes
+            full_content = chunk
+            
+            # Truncate content only if it exceeds metadata limit
+            if len(full_content.encode('utf-8')) > max_content_size:
+                truncated = full_content.encode('utf-8')[:max_content_size].decode('utf-8', errors='ignore')
+                last_space = truncated.rfind(' ')
+                if last_space > max_content_size * 0.8:
+                    truncated = truncated[:last_space]
+                stored_content = truncated + "... [TRUNCATED]"
+                content_truncated = True
+            else:
+                stored_content = full_content
+                content_truncated = False
+
+            # Store chunk and metadata for batch processing
+            all_chunks_for_batch.append(chunk)
+            all_metadata.append({
+                "vector_id": vector_id,
+                "info": info,
+                "chunk_idx": chunk_idx,
+                "total_chunks": len(chunks),
+                "stored_content": stored_content,
+                "content_truncated": content_truncated,
+                "chunk": chunk
+            })
+            
             total_chunks += 1
-            print(f"   ✅ Created embedding (dimension: {len(emb)})")
+            if content_truncated:
+                truncated_chunks += 1
 
         processed_files += 1
-        print(f"✅ Completed {info['filename']} ({len(chunks)} chunks)")
+        print(f"✅ Prepared {info['filename']} ({len(chunks)} chunks for batch processing)")
+
+    if not all_chunks_for_batch:
+        print("❌ No chunks were prepared for embedding. Check the files and try again.")
+        return
+
+    print(f"\n📊 Batch Processing Summary:")
+    print(f"   📁 Files prepared: {processed_files}/{len(files)}")
+    print(f"   📄 Total chunks for embedding: {total_chunks}")
+    print(f"   🧠 Embedding model: {EMBED_MODEL}")
+    print(f"   📐 Dimensions: {EMBED_DIMENSIONS}")
+    print(f"   📦 Batch size: {EMBED_BATCH_SIZE}")
+    print(f"   ⏱️  Timeout: {EMBED_TIMEOUT}ms")
+    if truncated_chunks > 0:
+        print(f"   ⚠️  Chunks with truncated content: {truncated_chunks}/{total_chunks}")
+
+    # Create embeddings in batches
+    print(f"\n🔄 Creating embeddings for {len(all_chunks_for_batch)} chunks...")
+    embeddings = create_embeddings_batch(openai_client, all_chunks_for_batch)
+
+    # Create vectors with embeddings
+    successful_embeddings = 0
+    for i, (embedding, metadata) in enumerate(zip(embeddings, all_metadata)):
+        if embedding is None:
+            print(f"   ⚠️  Skipping chunk {i+1} due to embedding failure")
+            continue
+
+        vector = {
+            "id": metadata["vector_id"],
+            "values": embedding,
+            "metadata": {
+                "filename": metadata["info"]['filename'],
+                "filepath": metadata["info"]['filepath'],
+                "file_type": metadata["info"]['type'],
+                "file_size": metadata["info"]['size'],
+                "file_modified": metadata["info"]['modified'],
+                "chunk_index": metadata["chunk_idx"],
+                "total_chunks": metadata["total_chunks"],
+                "content": metadata["stored_content"],
+                "content_truncated": metadata["content_truncated"],
+                "word_count": len(metadata["chunk"].split()),
+                "char_count": len(metadata["chunk"]),
+                "processed_at": datetime.now().isoformat()
+            }
+        }
+        all_vectors.append(vector)
+        successful_embeddings += 1
+
+    print(f"✅ Successfully created {successful_embeddings}/{len(all_chunks_for_batch)} embeddings")
 
     if not all_vectors:
         print("❌ No embeddings were created. Check the files and try again.")
         return
 
     print("\n" + "=" * 60)
-    print("📊 Processing Summary:")
+    print("📊 Final Processing Summary:")
     print(f"   📁 Files processed: {processed_files}/{len(files)}")
     print(f"   📄 Total chunks: {total_chunks}")
-    print(f"   🧠 Total embeddings: {len(all_vectors)}")
+    print(f"   🧠 Successful embeddings: {len(all_vectors)}")
+    print(f"   📐 Vector dimensions: {EMBED_DIMENSIONS}")
+    if truncated_chunks > 0:
+        print(f"   ⚠️  Chunks with truncated content: {truncated_chunks}/{total_chunks}")
+        print(f"       (Content was too large for Pinecone metadata limits)")
 
     # quick peek at IDs to confirm ASCII
     print("🔎 Example IDs:", [v["id"] for v in all_vectors[:3]])
 
-    print(f"\n🔄 Uploading embeddings to Pinecone index '{INDEX_NAME}'...")
+    print(f"\n🔄 Uploading embeddings to Pinecone index '{index_name}'...")
     ok = upload_to_pinecone(pc, index_name, all_vectors, namespace=namespace)
     if ok:
         print("\n🎉 Successfully processed and uploaded all files!")
@@ -364,12 +468,54 @@ def process_folder(folder_path: str, openai_client: OpenAI, pc: Pinecone, index_
 def main():
     print("🧠 Folder Embedding Script for Pinecone")
     print("=" * 60)
-    print(f"📁 Target folder: {FOLDER_PATH}")
-    print(f"🎯 Target index: {INDEX_NAME}")
-    if NAMESPACE:
-        print(f"🧱 Namespace: {NAMESPACE}")
-
+    
+    # Load environment first
     load_environment()
+    
+    # Get configuration values with fallbacks
+    final_folder_path = FOLDER_PATH
+    final_index_name = INDEX_NAME 
+    final_namespace = NAMESPACE 
+    
+    # Validate required configuration
+    if not final_folder_path:
+        print("❌ Error: No folder path specified!")
+        print("   Set PINECONE_FOLDER_PATH environment variable")
+        sys.exit(1)
+    
+    if not final_index_name:
+        print("❌ Error: No index name specified!")
+        print("   Set PINECONE_INDEX_NAME environment variable")
+        sys.exit(1)
+    
+    # Display configuration
+    print(f"📁 Target folder: {final_folder_path}")
+    if FOLDER_PATH:
+        print("   (📌 Using PINECONE_FOLDER_PATH environment variable)")
+    else:
+        print("   (⚠️  Using default path - set PINECONE_FOLDER_PATH to customize)")
+    
+    print(f"🎯 Target index: {final_index_name}")
+    if INDEX_NAME:
+        print("   (📌 Using PINECONE_INDEX_NAME environment variable)")
+    else:
+        print("   (⚠️  Using default index - set PINECONE_INDEX_NAME to customize)")
+    
+    if final_namespace:
+        print(f"🧱 Namespace: {final_namespace}")
+        if NAMESPACE:
+            print("   (📌 Using PINECONE_NAMESPACE environment variable)")
+        else:
+            print("   (⚠️  Using default namespace - set PINECONE_NAMESPACE to customize)")
+    else:
+        print("🧱 Namespace: Default (no namespace)")
+    
+    print(f"🧠 Embedding configuration:")
+    print(f"   Model: {EMBED_MODEL}")
+    print(f"   Dimensions: {EMBED_DIMENSIONS}")
+    print(f"   Batch Size: {EMBED_BATCH_SIZE}")
+    print(f"   Timeout: {EMBED_TIMEOUT}ms")
+    print()
 
     openai_client, pc = initialize_clients()
     if not openai_client or not pc:
@@ -378,26 +524,29 @@ def main():
     # Verify index exists
     try:
         indexes = pc.list_indexes().names()
-        if INDEX_NAME not in indexes:
-            print(f"❌ Index '{INDEX_NAME}' not found!")
+        if final_index_name not in indexes:
+            print(f"❌ Index '{final_index_name}' not found!")
             print(f"Available indexes: {', '.join(indexes) if indexes else 'None'}")
-            print("Please create the index first.")
+            print("Please create the index first using create_index.py")
             sys.exit(1)
         else:
-            print(f"✅ Found index '{INDEX_NAME}'")
+            print(f"✅ Found index '{final_index_name}'")
     except Exception as e:
         print(f"❌ Error checking indexes: {e}")
         sys.exit(1)
 
     print("\n⚠️  This will process all supported files in:")
-    print(f"   {FOLDER_PATH}")
-    print(f"   And upload embeddings to index '{INDEX_NAME}'")
+    print(f"   {final_folder_path}")
+    print(f"   And upload embeddings to index '{final_index_name}'")
+    if final_namespace:
+        print(f"   Using namespace: '{final_namespace}'")
+    
     confirmation = input("\nProceed? (y/N): ").strip().lower()
     if confirmation not in ("y", "yes"):
         print("❌ Operation cancelled by user.")
         return
 
-    process_folder(FOLDER_PATH, openai_client, pc, INDEX_NAME, namespace=NAMESPACE)
+    process_folder(final_folder_path, openai_client, pc, final_index_name, namespace=final_namespace)
 
 
 if __name__ == "__main__":
