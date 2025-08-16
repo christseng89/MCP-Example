@@ -1,5 +1,5 @@
 {
-  "name": "PineCore TLSA Workflow v2 - md",
+  "name": "PineCore MeetingNotes - Word",
   "nodes": [
     {
       "parameters": {
@@ -13,10 +13,10 @@
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
-          "value": "1muK5oJPuF_VWQ8npJl9lMwNMxrWPom6F",
+          "value": "1rWauf9DvSz_0nmE9fmpXEgNPy5EWVXft",
           "mode": "list",
-          "cachedResultName": "TelsaFinancialReports",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/1muK5oJPuF_VWQ8npJl9lMwNMxrWPom6F"
+          "cachedResultName": "BiWeekly-MeetingNotes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1rWauf9DvSz_0nmE9fmpXEgNPy5EWVXft"
         },
         "event": "fileCreated",
         "options": {}
@@ -27,7 +27,7 @@
         0,
         0
       ],
-      "id": "f81a61b8-c6e4-4f19-8519-cec89233a9cc",
+      "id": "c2b58a5a-75df-4af3-806b-763ab411b5c7",
       "name": "Google Drive Trigger",
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -52,7 +52,7 @@
         208,
         0
       ],
-      "id": "95e813c3-8368-4506-af45-9e688a2bcd47",
+      "id": "be724bf4-bd16-4ccd-b89c-e6a1f61c049c",
       "name": "Download file",
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -66,12 +66,12 @@
         "mode": "insert",
         "pineconeIndex": {
           "__rl": true,
-          "value": "n8n-course-tsla",
+          "value": "biweekly-meetings",
           "mode": "list",
-          "cachedResultName": "n8n-course-tsla"
+          "cachedResultName": "biweekly-meetings"
         },
         "options": {
-          "pineconeNamespace": "n8n-tsla"
+          "pineconeNamespace": "biweekly"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
@@ -80,7 +80,7 @@
         416,
         0
       ],
-      "id": "e4ccde77-1220-499e-95a4-5f1d65af60b0",
+      "id": "50c88e24-c76e-4c68-8468-852a41692016",
       "name": "Pinecone Vector Store",
       "credentials": {
         "pineconeApi": {
@@ -103,7 +103,7 @@
         320,
         192
       ],
-      "id": "d7d2101d-1553-497e-ba36-f31e2e803725",
+      "id": "91e97260-c3db-4027-8cdc-b1b784cfb22c",
       "name": "Embeddings OpenAI",
       "credentials": {
         "openAiApi": {
@@ -114,12 +114,13 @@
     },
     {
       "parameters": {
+        "dataType": "binary",
         "textSplittingMode": "custom",
         "options": {
           "metadata": {
             "metadataValues": [
               {
-                "name": "=  TSLAQ2-2023",
+                "name": "=BiWeekly",
                 "value": "={{ $json.name }}"
               }
             ]
@@ -132,7 +133,7 @@
         496,
         192
       ],
-      "id": "4f6e67bc-9f95-482d-9d68-8145f4f2a07b",
+      "id": "94a17917-591a-4f64-b804-0868adabc051",
       "name": "Default Data Loader"
     },
     {
@@ -146,7 +147,7 @@
         496,
         336
       ],
-      "id": "39b13f8b-c937-45d6-87bd-c566b8458a18",
+      "id": "318221b0-2a9d-47ed-800b-3a2a684d2899",
       "name": "Recursive Character Text Splitter"
     }
   ],
@@ -212,11 +213,11 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "a55f9075-0edc-4188-a88f-c87f9bb645c5",
+  "versionId": "909b286a-acea-486a-895f-6b6a52087bc3",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"
   },
-  "id": "3a4WsvN3XKsQpiEC",
+  "id": "qxynQL9o0QkyayBS",
   "tags": []
 }

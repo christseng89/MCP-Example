@@ -466,44 +466,28 @@ curl https://api.openai.com/v1/models \
 
 ```
 
-### Connect to Google Sheet step-by-step
+### Self-Host n8n: Make Your MCP Server Accessible from Anywhere
 
-1. **Create your Google Cloud project**
+<https://docs.n8n.io/hosting/installation/server-setups/>
 
-   * Console → Create project (e.g., `mcp-BuildAgents`).
+Self-host with Docker Compose:
 
-2. **Enable APIs**
+* **Hostinger** $6.99/month
+* Digital Ocean
+* Heroku
+* Hetzner Cloud
 
-   * APIs & Services → Enable: **Google Sheets API** and **Google Drive API**.
+Starting points for a Kubernetes setup:
 
-3. **Configure OAuth consent screen**
+* AWS
+* Azure
+* Google Cloud Platform
 
-   * User type: **External**.
-   * App name: e.g., `mcp-BuildAgents`.
-   * Add your email under **Test users**.
-   * Scopes: add only what you need (e.g. `…/auth/spreadsheets`, `…/auth/drive.file`).
-   * Save (no need to submit for verification if you stay in testing and only test users use it).
+Configuration guides to help you get started on other platforms:
 
-4. **Create OAuth 2.0 Client (Web application)**
+* Docker Compose
 
-   * Authorized redirect URIs (match your n8n URL):
+### n8n Community Nodes
 
-     ```text
-     http://localhost:5678/rest/oauth2-credential/callback
-     ```
-
-   * (If n8n runs on another host/port, change accordingly.)
-
-5. **Fill n8n credentials** (`Google Sheets OAuth2 API`)
-
-   * Paste the **Client ID** and **Client Secret** you just created.
-   * Click **Sign in with Google** and pick the same account you added as a Test user.
-
-6. **If you still see 403 access\_denied**
-
-   * Make sure the Google account you select is in **Test users**.
-   * Remove/replace any old credential in n8n that still references **mcp-BuildAgents**.
-   * Check the redirect URI matches exactly (scheme/host/port/path).
-   * If behind a proxy, set `N8N_HOST` and `N8N_EDITOR_BASE_URL` so n8n builds the same callback URL you whitelisted.
-
-> TL;DR: Don’t use the unverified “mcp-BuildAgents” OAuth app. Create your own OAuth client, add yourself as a Test user, and use that Client ID/Secret in n8n.
+<https://blog.n8n.io/community-nodes-available-on-n8n-cloud/>
+<https://www.npmjs.com/package/n8n-nodes-mcp>

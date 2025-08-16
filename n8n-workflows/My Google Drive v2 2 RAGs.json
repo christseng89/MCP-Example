@@ -1,0 +1,502 @@
+{
+  "name": "My Google Drive v2 2 RAGs",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "path": "3c6202f0-039c-4c0f-8e4d-9a8370eeb99a"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        336,
+        -208
+      ],
+      "id": "567666a9-98bd-4164-9269-1078729d647b",
+      "name": "MCP Server Trigger",
+      "webhookId": "3c6202f0-039c-4c0f-8e4d-9a8370eeb99a",
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yFzfoHUMmGTdbmRm",
+          "name": "Header Auth Test"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -32
+      ],
+      "id": "ab3429c6-a5bf-4c56-8a80-b30572e47e20",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant. The current time is {{ $now }}.\n\nIf you get questions about telsa, always use mcp client first."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        -208
+      ],
+      "id": "8f113bb7-3577-43ad-b098-eca18b51dcab",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -448,
+        -208
+      ],
+      "id": "2306020b-4866-4a4d-8597-d7922493f73e",
+      "name": "When chat message received",
+      "webhookId": "40fb0f5f-075f-4afe-a151-4c6262ef3ca6"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -432,
+        -32
+      ],
+      "id": "644257ff-f82d-45af-9cf3-97b079e82345",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "9EoXBynWrBvJWNJx",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1CT18pOTS3BFD8Qh3VBqQJ1NNokrMzp5angSYRqvGjlM",
+          "mode": "list",
+          "cachedResultName": "Contact_list",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CT18pOTS3BFD8Qh3VBqQJ1NNokrMzp5angSYRqvGjlM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CT18pOTS3BFD8Qh3VBqQJ1NNokrMzp5angSYRqvGjlM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Mail": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Mail', ``, 'string') }}",
+            "Telefon": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Telefon', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mail",
+              "displayName": "Mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        416,
+        -32
+      ],
+      "id": "fd2149cf-75e6-4b19-93ef-113c6de6cf42",
+      "name": "Google Sheets Append",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W1jT3y2EgFOhT2XR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1CT18pOTS3BFD8Qh3VBqQJ1NNokrMzp5angSYRqvGjlM",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CT18pOTS3BFD8Qh3VBqQJ1NNokrMzp5angSYRqvGjlM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CT18pOTS3BFD8Qh3VBqQJ1NNokrMzp5angSYRqvGjlM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        304,
+        -32
+      ],
+      "id": "7a829f4c-cf4f-4a31-9789-dbf2a9035d9a",
+      "name": "Google Sheets Read",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "W1jT3y2EgFOhT2XR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/3c6202f0-039c-4c0f-8e4d-9a8370eeb99a",
+        "authentication": "headerAuth"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "2dcf303b-efbc-4e4c-8288-7e5ef84a4f12",
+      "name": "MCP Client",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yFzfoHUMmGTdbmRm",
+          "name": "Header Auth Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        -32
+      ],
+      "id": "32ee7ed9-e792-40b4-9528-6f837c2a0529",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        144
+      ],
+      "id": "52930bbd-6d33-4910-809c-abf2e6d3b819",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "9EoXBynWrBvJWNJx",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        544,
+        -32
+      ],
+      "id": "81dc78c5-72c3-42b3-9694-60d113661ec6",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "hLZqwr8Ebs32nzqd",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Tesla Financial Info.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-course-tsla",
+          "mode": "list",
+          "cachedResultName": "n8n-course-tsla"
+        },
+        "topK": 10,
+        "options": {
+          "pineconeNamespace": "n8n-tsla"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        -32
+      ],
+      "id": "a3d48bd3-8c5f-4411-9df2-7c727b8678a9",
+      "name": "Tesla",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kFzlzK2eQxyyFKKX",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Bi-Weekly Meeting Notes",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "biweekly-meetings",
+          "mode": "list",
+          "cachedResultName": "biweekly-meetings"
+        },
+        "topK": 10,
+        "options": {
+          "pineconeNamespace": "biweekly"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        -32
+      ],
+      "id": "4fd84591-4b78-4e24-960b-b903719ecc77",
+      "name": "Meetings Note",
+      "credentials": {
+        "pineconeApi": {
+          "id": "kFzlzK2eQxyyFKKX",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -32
+      ],
+      "id": "1f47c380-23fa-4cd7-894f-9f453609a5b7",
+      "name": "Tavily Search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "XU1oWXLo515cbUCq",
+          "name": "Tavily account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Append": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Read": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Tesla",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Meetings Note",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tesla": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meetings Note": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "f7e77eaf-c837-4f74-a816-f2bb1f7a5c72",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"
+  },
+  "id": "iMedWPQIBus9xySZ",
+  "tags": []
+}

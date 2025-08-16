@@ -1,5 +1,5 @@
 {
-  "name": "PineCore TLSA Workflow v1 - pdf",
+  "name": "PineCore TLSA v1 - pdf",
   "nodes": [
     {
       "parameters": {
@@ -120,7 +120,7 @@
           "metadata": {
             "metadataValues": [
               {
-                "name": "=  TSLAQ2-2023",
+                "name": "= Tesla",
                 "value": "={{ $json.name }}"
               }
             ]
@@ -213,7 +213,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "d39e236c-ace1-4cfb-8e4a-697b1ccf1e05",
+  "versionId": "e0e4435e-baa1-4b6b-956c-31c5377ba25f",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"

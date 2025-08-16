@@ -1,0 +1,122 @@
+{
+  "name": "My first workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9a113fc7-5b61-41dc-8e58-635a31494cb0",
+      "name": "When chat message received",
+      "webhookId": "e70aeb73-f89c-4b66-9cfc-9081dc1a6a91"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "931ec12b-16e1-4098-b9a7-0d7b49ae85f0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        192
+      ],
+      "id": "b330f511-6f5e-4c0a-b1a1-603db960175e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "9EoXBynWrBvJWNJx",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        368,
+        192
+      ],
+      "id": "576715d0-b139-43ee-a5a4-78e3ee67255a",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "hLZqwr8Ebs32nzqd",
+          "name": "SerpAPI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "66462564-4639-4911-89be-6cb753e77f30",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"
+  },
+  "id": "cZgjEvZ0uPbbOnD5",
+  "tags": []
+}

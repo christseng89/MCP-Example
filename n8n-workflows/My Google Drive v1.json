@@ -1,5 +1,5 @@
 {
-  "name": "My Google Drive workflow v1",
+  "name": "My Google Drive v1",
   "nodes": [
     {
       "parameters": {
@@ -344,7 +344,7 @@
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "b47d7822-5c23-47b9-83cb-109076eca8fd",
+  "versionId": "072126e9-9ac1-4f58-808c-1a66186ed613",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"
