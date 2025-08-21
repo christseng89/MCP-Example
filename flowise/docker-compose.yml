@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: flowise-db
+    environment:
+      - POSTGRES_DB=flowise
+      - POSTGRES_USER=flowise
+      - POSTGRES_PASSWORD=ChangeMe
+    ports:
+      - "5432:5432"
+    volumes:
+      - "C:/flowise/postgres:/var/lib/postgresql/data"
+    restart: unless-stopped
+
+  flowise:
+    image: flowiseai/flowise:latest
+    container_name: flowise
+    depends_on:
+      - db
+    ports:
+      - "3100:3100"
+    env_file: .env
+    volumes:
+      - "C:/flowise/data:/root/.flowise"
+    restart: unless-stopped

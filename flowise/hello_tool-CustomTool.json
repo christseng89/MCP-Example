@@ -1,0 +1,9 @@
+{
+  "name": "hello_tool",
+  "description": "When hello with a name then using this tool",
+  "color": "linear-gradient(rgb(36,199,52), rgb(118,121,66))",
+  "iconSrc": "",
+  "schema": "[{\"id\":0,\"property\":\"name\",\"type\":\"string\",\"description\":\"User's name\",\"required\":true},{\"id\":1,\"property\":\"age\",\"description\":\"User's age\",\"type\":\"number\",\"required\":false}]",
+  "func": "return \"Hi, $name how are you? You are $age years old\";",
+  "workspaceId": "fea5290c-054b-47a8-9a51-88960ff8916d"
+}
