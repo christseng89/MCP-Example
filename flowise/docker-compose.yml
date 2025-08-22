@@ -23,4 +23,5 @@ services:
     env_file: .env
     volumes:
       - "C:/flowise/data:/root/.flowise"
+      - "C:/flowise/workspace:/workspace"   # ← 新增：把主機資料夾掛進容器      
     restart: unless-stopped

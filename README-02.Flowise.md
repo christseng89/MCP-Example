@@ -85,3 +85,14 @@ CREATE INDEX ON mspatterns
 USING ivfflat (embedding vector_l2_ops)
 WITH (lists = 100)
 ```
+
+## Voicy (X)
+
+<https://usevoicy.com/> => Control + X
+
+Windows + H => 語音輸入
+
+## Blender
+
+<https://github.com/ahujasid/blender-mcp>
+<https://www.blender.org/download/>
