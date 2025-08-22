@@ -1,0 +1,43 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "n8n Webhook Trigger",
+    "description": "Sends a prompt to the n8n webhook workflow",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "YOUR URL"
+    }
+  ],
+  "paths": {
+    "/YOUR WEBHOOK": {
+      "post": {
+        "operationId": "sendPromptToWebhook",
+        "summary": "Send prompt to n8n webhook",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "example": "Write a poem about AI gone rogue."
+                  }
+                },
+                "required": ["prompt"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}

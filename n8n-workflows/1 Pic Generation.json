@@ -1,0 +1,168 @@
+{
+  "name": "1 Pic Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "fab9c5ef-86db-46ed-a89b-1d6708efd3b5"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        -112
+      ],
+      "id": "75a379a3-4537-43e8-89ae-b55d2e3192ba",
+      "name": "MCP Server Trigger",
+      "webhookId": "fab9c5ef-86db-46ed-a89b-1d6708efd3b5"
+    },
+    {
+      "parameters": {
+        "description": "call this tool to generate pictures",
+        "workflowId": {
+          "__rl": true,
+          "value": "9aIDGZSdAAlwb86p",
+          "mode": "list",
+          "cachedResultName": "pic generator for mcp"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        176
+      ],
+      "id": "5b66d8d2-80a9-4ef1-8eed-60a2fc3b3d50",
+      "name": "Call n8n Workflow Tool"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "427b329e-5bf5-4cd1-8017-630bdbafc754",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "33438060-81b3-45bb-a0e9-2c3486e8191c",
+      "name": "When chat message received",
+      "webhookId": "70eafe9d-645b-44e0-84ae-8a92a39de042"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        176
+      ],
+      "id": "af4c985a-6c69-4ff6-b613-2fe7592ceee6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "9EoXBynWrBvJWNJx",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://arnie.app.n8n.cloud/mcp/fab9c5ef-86db-46ed-a89b-1d6708efd3b5/sse"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        176,
+        128
+      ],
+      "id": "8a638c97-c128-4940-bbd3-602838fb5cdc",
+      "name": "MCP Client"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f6247cc6-1293-4e26-b1d4-dc2ebf6345a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f68acdd5e00c8e0eaa03372dc243705f91ee6ee3b01899cca8263774eb69944a"
+  },
+  "id": "SfqbkY7Pa7ikRJiO",
+  "tags": []
+}
