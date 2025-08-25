@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "analysis-templates": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "D:\\development\\mcp-BuildAgents\\mcp-prompt-templates",
+        "run",
+        "python",
+        "server.py"
+      ]
+    }
+  }
+}
