@@ -4,15 +4,24 @@ import os
 from pathlib import Path
 from typing import Dict, Optional
 
+from dotenv import load_dotenv
+import asyncio
+
+load_dotenv()
+
+
 # Create an MCP server
 mcp = FastMCP("Calculator Server")
 
 # Define the path to the resource file
 TS_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-typeSdk.md")
-PY_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-pythonSdk.md")
+PY_SDK_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "README-pythonSdk.md")
 
 # Define the path to the prompt template
-PROMPT_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "templates", "Prompt.md")
+PROMPT_TEMPLATE_PATH = os.path.join(
+    os.path.dirname(__file__), "templates", "Prompt.md")
+
 
 @mcp.resource("file://typesdk")
 async def get_typesdk_resource() -> str:
@@ -31,6 +40,7 @@ async def get_typesdk_resource() -> str:
     except Exception as e:
         return f"Error reading typesdk.md: {str(e)}"
 
+
 @mcp.resource("file://pythonsdk")
 async def get_pythonsdk_resource() -> str:
     """
@@ -48,6 +58,7 @@ async def get_pythonsdk_resource() -> str:
     except Exception as e:
         return f"Error reading pythonSdk.md: {str(e)}"
 
+
 @mcp.prompt("meeting_summary")
 async def meeting_summary_prompt(
     meeting_date: str,
@@ -56,12 +67,12 @@ async def meeting_summary_prompt(
 ) -> str:
     """
     A prompt template for generating executive meeting summaries.
-    
+
     Args:
         'meeting_date': The date of the meeting
         'meeting_title': The title or purpose of the meeting
         'transcript': The meeting transcript or notes
-    
+
     Returns:
         A structured meeting summary with key points, decisions, and action items.
     """
@@ -69,39 +80,43 @@ async def meeting_summary_prompt(
         # Read the template file
         with open(PROMPT_TEMPLATE_PATH, 'r', encoding='utf-8') as file:
             template = file.read()
-        
+
         # Fill in the template variables
         variables = {
             "meeting_date": meeting_date,
             "meeting_title": meeting_title,
             "transcript": transcript
         }
-        
+
         for key, value in variables.items():
             placeholder = f"{{{{ {key} }}}}"
             template = template.replace(placeholder, str(value))
-        
+
         # Here you would typically send the filled template to an LLM
         # For now, we'll return the filled template
         return template
-        
+
     except Exception as e:
         raise RuntimeError(f"Error executing meeting summary prompt: {str(e)}")
+
 
 @mcp.tool()
 def add(a: float, b: float) -> float:
     """Add two numbers together."""
     return a + b
 
+
 @mcp.tool()
 def subtract(a: float, b: float) -> float:
     """Subtract the second number from the first number."""
     return a - b
 
+
 @mcp.tool()
 def multiply(a: float, b: float) -> float:
     """Multiply two numbers together."""
     return a * b
+
 
 @mcp.tool()
 def divide(a: float, b: float) -> float:
@@ -110,10 +125,12 @@ def divide(a: float, b: float) -> float:
         raise ValueError("Cannot divide by zero")
     return a / b
 
+
 @mcp.tool()
 def power(base: float, exponent: float) -> float:
     """Raise a number to a power."""
     return base ** exponent
+
 
 @mcp.tool()
 def square_root(x: float) -> float:
@@ -121,6 +138,7 @@ def square_root(x: float) -> float:
     if x < 0:
         raise ValueError("Cannot calculate square root of negative number")
     return math.sqrt(x)
+
 
 @mcp.tool()
 def factorial(n: int) -> int:
@@ -131,10 +149,23 @@ def factorial(n: int) -> int:
         raise ValueError("Number too large for factorial calculation")
     return math.factorial(n)
 
+
 @mcp.tool()
 def calculate_percentage(value: float, percentage: float) -> float:
     """Calculate a percentage of a value."""
     return (value * percentage) / 100
 
+
+async def main():
+    transport = os.getenv("TRANSPORT", "stdio").lower()
+    print(f"Transport: {transport}")
+    if transport == 'stdio':
+        # Run the MCP server with stdio transport
+        await mcp.run_stdio_async()       
+    else:
+        # Run the MCP server with streamable http transport
+        await mcp.run_streamable_http_async()
+
+
 if __name__ == "__main__":
-    mcp.run() 
+    asyncio.run(main())
