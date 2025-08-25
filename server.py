@@ -8,7 +8,8 @@ from typing import Dict, Optional
 mcp = FastMCP("Calculator Server")
 
 # Define the path to the resource file
-DESKTOP_FILE_PATH = r"C:\Users\Arnold\Desktop\typesdk.md"
+TS_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-typeSdk.md")
+PY_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-pythonSdk.md")
 
 # Define the path to the prompt template
 PROMPT_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "templates", "Prompt.md")
@@ -21,14 +22,31 @@ async def get_typesdk_resource() -> str:
     """
     try:
         # Read the file from desktop
-        if os.path.exists(DESKTOP_FILE_PATH):
-            with open(DESKTOP_FILE_PATH, 'r', encoding='utf-8') as file:
+        if os.path.exists(TS_SDK_FILE_PATH):
+            with open(TS_SDK_FILE_PATH, 'r', encoding='utf-8') as file:
                 content = file.read()
             return content
         else:
-            return "Error: typesdk.md file not found on desktop"
+            return "Error: typesdk.md file not found in the folder"
     except Exception as e:
         return f"Error reading typesdk.md: {str(e)}"
+
+@mcp.resource("file://pythonsdk")
+async def get_pythonsdk_resource() -> str:
+    """
+    Provides access to the Python SDK MCP documentation.
+    This resource contains information about the Python SDK for MCP.
+    """
+    try:
+        # Read the file from desktop
+        if os.path.exists(PY_SDK_FILE_PATH):
+            with open(PY_SDK_FILE_PATH, 'r', encoding='utf-8') as file:
+                content = file.read()
+            return content
+        else:
+            return "Error: pythonSdk.md file not found in the folder"
+    except Exception as e:
+        return f"Error reading pythonSdk.md: {str(e)}"
 
 @mcp.prompt("meeting_summary")
 async def meeting_summary_prompt(
@@ -40,9 +58,9 @@ async def meeting_summary_prompt(
     A prompt template for generating executive meeting summaries.
     
     Args:
-        meeting_date: The date of the meeting
-        meeting_title: The title or purpose of the meeting
-        transcript: The meeting transcript or notes
+        'meeting_date': The date of the meeting
+        'meeting_title': The title or purpose of the meeting
+        'transcript': The meeting transcript or notes
     
     Returns:
         A structured meeting summary with key points, decisions, and action items.
