@@ -1,6 +1,6 @@
-# MCP Multi-Tool Server
+# MCP Calculator Server
 
-A comprehensive Model Context Protocol (MCP) server built with FastMCP that provides calculator tools, document resources, and prompt templates. This server demonstrates multiple MCP capabilities including tools, resources, and prompts in a single implementation.
+A comprehensive Model Context Protocol (MCP) server built with FastMCP that provides calculator tools, SDK documentation resources, and prompt templates. This server demonstrates multiple MCP capabilities including tools, resources, and prompts in a single implementation.
 
 ## Features
 
@@ -11,8 +11,9 @@ A comprehensive Model Context Protocol (MCP) server built with FastMCP that prov
 - **Error Handling**: Division by zero protection, negative square root protection, factorial range limits
 
 ### 📖 Document Resources  
-- **TypeScript SDK Resource**: Access to MCP TypeScript SDK documentation
-- **Dynamic File Reading**: Reads from configurable file paths
+- **TypeScript SDK Resource**: Access to MCP TypeScript SDK documentation (`file://typesdk`)
+- **Python SDK Resource**: Access to MCP Python SDK documentation (`file://pythonsdk`)
+- **Dynamic File Reading**: Reads from local markdown files
 - **Error Handling**: Graceful handling of missing files
 
 ### 📝 Prompt Templates
@@ -30,8 +31,8 @@ A comprehensive Model Context Protocol (MCP) server built with FastMCP that prov
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
-   cd mcp-multi-tool-server
+   git clone https://github.com/christseng89/MCP-Example.git
+   cd MCP-Example
    ```
 
 2. **Install dependencies**
@@ -41,10 +42,15 @@ A comprehensive Model Context Protocol (MCP) server built with FastMCP that prov
 
 3. **Test the server**
    ```bash
+   # Using MCP development tools (after installing mcp[cli])
+   uv add "mcp[cli]"
    uv run mcp dev server.py
+   
+   # Or using NPX MCP Inspector
+   npx @modelcontextprotocol/inspector -- uv run python server.py
    ```
    
-   Open http://localhost:3000 to test the server in MCP Inspector.
+   The MCP Inspector will open in your browser for testing.
 
 ## Usage
 
@@ -63,18 +69,26 @@ The server provides 8 calculator tools:
 | `factorial` | Calculate factorial | `factorial(5) → 120` |
 | `calculate_percentage` | Calculate percentage | `calculate_percentage(200, 15) → 30` |
 
-### TypeScript SDK Resource
+### SDK Documentation Resources
 
-Access the TypeScript SDK documentation:
+Access MCP SDK documentation for both TypeScript and Python:
 
+**TypeScript SDK Resource**:
 ```python
 # Resource URI: file://typesdk
-# Returns the contents of the TypeScript SDK documentation
+# Returns the contents of README-typeSdk.md
 ```
 
-**Configuration**: Update `DESKTOP_FILE_PATH` in `server.py` to point to your documentation file:
+**Python SDK Resource**:
 ```python
-DESKTOP_FILE_PATH = r"C:\Users\Arnold\Desktop\typesdk.md"
+# Resource URI: file://pythonsdk
+# Returns the contents of README-pythonSdk.md
+```
+
+**File Configuration**: The server reads from these local files:
+```python
+TS_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-typeSdk.md")
+PY_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-pythonSdk.md")
 ```
 
 ### Meeting Summary Prompt
@@ -107,18 +121,15 @@ Add to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "multi-tool-server": {
+    "calculator-server": {
       "command": "uv",
       "args": [
         "--directory",
-        "/path/to/your/server/directory",
+        "D:\\development\\mcp-BuildAgents\\MCP-Example",
         "run",
         "python",
         "server.py"
-      ],
-      "env": {
-        "UV_PROJECT_ENVIRONMENT": ".venv"
-      }
+      ]
     }
   }
 }
@@ -133,32 +144,41 @@ After updating the configuration, restart Claude Desktop to load the server.
 ### Project Structure
 
 ```
-mcp-multi-tool-server/
+MCP-Example/
 ├── server.py                 # Main server implementation
+├── main.py                   # Alternative entry point
 ├── templates/
 │   └── Prompt.md             # Meeting summary template
+├── README-typeSdk.md         # TypeScript SDK documentation
+├── README-pythonSdk.md       # Python SDK documentation
 ├── pyproject.toml            # Project configuration
 ├── claude_desktop_config.json # Claude Desktop config example
 ├── README.md                 # This file
-└── .venv/                    # Virtual environment
+├── uv.lock                   # UV lock file
+└── __pycache__/              # Python cache directory
 ```
 
 ### Testing
 
 **MCP Inspector (Recommended)**
 ```bash
+# Using NPX (more reliable)
+npx @modelcontextprotocol/inspector -- uv run python server.py
+
+# Or using MCP CLI (after installing mcp[cli])
+uv add "mcp[cli]"
 uv run mcp dev server.py
 ```
 
 **Direct Server Testing**
 ```bash
-python server.py
+uv run python server.py
 ```
 
 **Testing Individual Components**
 
 1. **Calculator Tools**: Use MCP Inspector to call each tool with test parameters
-2. **Resource Access**: Check the resource tab in MCP Inspector for `file://typesdk`  
+2. **Resource Access**: Check the resource tab in MCP Inspector for `file://typesdk` and `file://pythonsdk`  
 3. **Prompt Templates**: Test the `meeting_summary` prompt with sample data
 
 ### Customization
@@ -203,11 +223,14 @@ The server includes comprehensive error handling:
 
 ### File Paths
 
-Update these paths in `server.py` for your environment:
+The server uses these file paths (already configured correctly):
 
 ```python
 # TypeScript SDK documentation path
-DESKTOP_FILE_PATH = r"C:\Users\YourUser\Desktop\typesdk.md"
+TS_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-typeSdk.md")
+
+# Python SDK documentation path  
+PY_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-pythonSdk.md")
 
 # Prompt template path (relative to server.py)
 PROMPT_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "templates", "Prompt.md")
@@ -217,7 +240,7 @@ PROMPT_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "templates", "Pro
 
 Change the server name in `server.py`:
 ```python
-mcp = FastMCP("Your Server Name")
+mcp = FastMCP("Calculator Server")  # Current server name
 ```
 
 ## Troubleshooting
@@ -235,9 +258,9 @@ mcp = FastMCP("Your Server Name")
 - Restart Claude Desktop after config changes
 
 **Resource file not found**:
-- Verify `DESKTOP_FILE_PATH` points to correct file
+- Verify `README-typeSdk.md` and `README-pythonSdk.md` exist in the project directory
 - Check file permissions
-- Ensure file exists and is readable
+- Ensure files exist and are readable
 
 **Prompt template errors**:
 - Verify `templates/Prompt.md` exists
@@ -271,4 +294,4 @@ This project is licensed under the MIT License. See LICENSE file for details.
 
 ---
 
-**Built with FastMCP** - A high-level Python library for building MCP servers. 
+**Built with FastMCP** - A high-level Python library for building MCP servers.
