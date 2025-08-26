@@ -4,13 +4,17 @@ A comprehensive Model Context Protocol (MCP) server built with FastMCP that prov
 
 ## Features
 
+### 🛡️ Security
+- **Path Traversal Protection**: All file system operations use a custom `_secure_join` function to prevent path traversal attacks.
+- **Secure File Operations**: All file system operations are wrapped in `try...except` blocks to handle exceptions gracefully.
+
 ### 🧮 Calculator Tools
 - **Basic Operations**: Addition, subtraction, multiplication, division
-- **Advanced Math**: Power, square root, factorial calculations  
+- **Advanced Math**: Power, square root, factorial calculations
 - **Utility Functions**: Percentage calculations
 - **Error Handling**: Division by zero protection, negative square root protection, factorial range limits
 
-### 📖 Document Resources  
+### 📖 Document Resources
 - **TypeScript SDK Resource**: Access to MCP TypeScript SDK documentation (`file://typesdk`)
 - **Python SDK Resource**: Access to MCP Python SDK documentation (`file://pythonsdk`)
 - **Dynamic File Reading**: Reads from local markdown files
@@ -20,6 +24,14 @@ A comprehensive Model Context Protocol (MCP) server built with FastMCP that prov
 - **Meeting Summary Template**: Executive meeting summary generator
 - **Variable Substitution**: Dynamic template variable replacement
 - **Structured Output**: Professional meeting summary format
+
+## SonarQube Compliance
+
+The codebase has been updated to be compliant with SonarQube rules. This includes:
+
+- **Reduced Code Duplication**: The `get_typesdk_resource` and `get_pythonsdk_resource` functions have been refactored to reduce code duplication.
+- **Specific Exception Handling**: Broad `except` clauses have been replaced with more specific ones.
+- **Improved Readability**: The code has been made more readable and easier to maintain.
 
 ## Quick Start
 
@@ -99,7 +111,7 @@ Generate structured meeting summaries:
 # Prompt: meeting_summary
 # Required parameters:
 # - meeting_date: Date of the meeting
-# - meeting_title: Title or purpose of the meeting  
+# - meeting_title: Title or purpose of the meeting
 # - transcript: Meeting transcript or notes
 ```
 
@@ -167,7 +179,6 @@ npx @modelcontextprotocol/inspector -- uv run python server.py
 
 # Or using MCP CLI (after installing mcp[cli])
 uv add "mcp[cli]"
-uv run mcp dev server.py
 ```
 
 **Direct Server Testing**
@@ -178,7 +189,7 @@ uv run python server.py
 **Testing Individual Components**
 
 1. **Calculator Tools**: Use MCP Inspector to call each tool with test parameters
-2. **Resource Access**: Check the resource tab in MCP Inspector for `file://typesdk` and `file://pythonsdk`  
+2. **Resource Access**: Check the resource tab in MCP Inspector for `file://typesdk` and `file://pythonsdk`
 3. **Prompt Templates**: Test the `meeting_summary` prompt with sample data
 
 ### Customization
@@ -186,27 +197,16 @@ uv run python server.py
 **Adding New Calculator Tools**:
 ```python
 @mcp.tool()
-def new_calculation(param1: float, param2: float) -> float:
-    """Description of the new calculation."""
-    return param1 + param2  # Your calculation logic
 ```
 
 **Adding New Resources**:
 ```python
 @mcp.resource("file://your-resource")
-async def get_your_resource() -> str:
-    """Description of your resource."""
-    # Your resource logic
-    return "Resource content"
 ```
 
 **Adding New Prompts**:
 ```python
 @mcp.prompt("your_prompt")
-async def your_prompt(param1: str, param2: str) -> str:
-    """Description of your prompt."""
-    # Your prompt logic
-    return f"Processed: {param1}, {param2}"
 ```
 
 ## Error Handling
@@ -229,7 +229,7 @@ The server uses these file paths (already configured correctly):
 # TypeScript SDK documentation path
 TS_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-typeSdk.md")
 
-# Python SDK documentation path  
+# Python SDK documentation path
 PY_SDK_FILE_PATH = os.path.join(os.path.dirname(__file__), "README-pythonSdk.md")
 
 # Prompt template path (relative to server.py)
