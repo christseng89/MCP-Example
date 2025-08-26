@@ -1,18 +1,26 @@
 # MCP Calculator Server
 
-A comprehensive Model Context Protocol (MCP) server built with FastMCP that provides calculator tools, SDK documentation resources, and prompt templates. This server demonstrates multiple MCP capabilities including tools, resources, and prompts in a single implementation.
+A comprehensive Model Context Protocol (MCP) server built with FastMCP that provides 24 tools across calculator and file system operations, SDK documentation resources, and prompt templates. This server demonstrates multiple MCP capabilities including tools, resources, and prompts with robust security features and dual transport support (stdio/HTTP).
 
 ## Features
 
 ### 🛡️ Security
-- **Path Traversal Protection**: All file system operations use a custom `_secure_join` function to prevent path traversal attacks.
-- **Secure File Operations**: All file system operations are wrapped in `try...except` blocks to handle exceptions gracefully.
+- **Path Traversal Protection**: All file system operations use a custom `_secure_join` function to prevent path traversal attacks
+- **Secure File Operations**: All file system operations are wrapped in `try...except` blocks to handle exceptions gracefully
+- **Environment Variable Access**: Safe access to OS environment variables
 
 ### 🧮 Calculator Tools
 - **Basic Operations**: Addition, subtraction, multiplication, division
 - **Advanced Math**: Power, square root, factorial calculations
 - **Utility Functions**: Percentage calculations
 - **Error Handling**: Division by zero protection, negative square root protection, factorial range limits
+
+### 📁 File System Tools
+- **File Operations**: Read file contents, get file metadata, check file existence
+- **Directory Operations**: List directories, create directories, get current working directory
+- **Path Utilities**: Get absolute paths, join paths, extract filenames and extensions
+- **Permission Management**: Change file permissions (where supported)
+- **System Information**: Access home directory, environment variables
 
 ### 📖 Document Resources
 - **TypeScript SDK Resource**: Access to MCP TypeScript SDK documentation (`file://typesdk`)
@@ -81,6 +89,29 @@ The server provides 8 calculator tools:
 | `factorial` | Calculate factorial | `factorial(5) → 120` |
 | `calculate_percentage` | Calculate percentage | `calculate_percentage(200, 15) → 30` |
 
+### File System Tools
+
+The server provides 16 file system tools:
+
+| Tool | Description | Example |
+|------|-------------|---------|
+| `get_file_content` | Read and return file contents | `get_file_content("test.txt")` |
+| `list_files` | List files in directory | `list_files("./")` |
+| `get_os_environment_variable` | Get environment variable value | `get_os_environment_variable("PATH")` |
+| `get_current_working_directory` | Get current working directory | `get_current_working_directory()` |
+| `create_directory` | Create new directory | `create_directory("new_folder")` |
+| `get_file_metadata` | Get file metadata (size, dates) | `get_file_metadata("file.txt")` |
+| `change_file_permissions` | Change file permissions | `change_file_permissions("file.txt", 0o755)` |
+| `get_absolute_path` | Convert relative to absolute path | `get_absolute_path("./file.txt")` |
+| `check_path_exists` | Check if path exists | `check_path_exists("file.txt")` |
+| `get_path_type` | Determine if file or directory | `get_path_type("path")` |
+| `get_home_directory` | Get user's home directory | `get_home_directory()` |
+| `get_file_extension` | Extract file extension | `get_file_extension("file.txt") → .txt` |
+| `join_paths` | Safely join path components | `join_paths("dir", "file.txt")` |
+| `get_parent_directory` | Get parent directory | `get_parent_directory("/path/file.txt")` |
+| `get_filename` | Extract filename from path | `get_filename("/path/file.txt") → file.txt` |
+| `get_filename_without_extension` | Get filename without extension | `get_filename_without_extension("file.txt") → file` |
+
 ### SDK Documentation Resources
 
 Access MCP SDK documentation for both TypeScript and Python:
@@ -121,6 +152,29 @@ Generate structured meeting summaries:
 - Action Items (next steps, responsibilities, deadlines)
 - Follow-up Required (pending discussions, future meetings)
 
+## Transport Options
+
+The server supports two transport methods:
+
+### 1. Standard I/O (stdio) - Default
+Used for integration with Claude Desktop and other MCP clients:
+```bash
+# Run with stdio (default)
+uv run python server.py
+
+# Or explicitly set transport
+TRANSPORT=stdio uv run python server.py
+```
+
+### 2. Streamable HTTP
+For web-based integrations and HTTP clients:
+```bash
+# Run with HTTP transport
+TRANSPORT=http uv run python server.py
+```
+
+The transport method is controlled by the `TRANSPORT` environment variable. If not set, it defaults to `stdio`.
+
 ## Claude Desktop Integration
 
 ### Configuration
@@ -157,7 +211,7 @@ After updating the configuration, restart Claude Desktop to load the server.
 
 ```
 MCP-Example/
-├── server.py                 # Main server implementation
+├── server.py                 # Main server implementation (24 tools total)
 ├── main.py                   # Alternative entry point
 ├── templates/
 │   └── Prompt.md             # Meeting summary template
@@ -165,6 +219,7 @@ MCP-Example/
 ├── README-pythonSdk.md       # Python SDK documentation
 ├── pyproject.toml            # Project configuration
 ├── claude_desktop_config.json # Claude Desktop config example
+├── security_checklist.md     # Security guidelines and checklist
 ├── README.md                 # This file
 ├── uv.lock                   # UV lock file
 └── __pycache__/              # Python cache directory
@@ -188,9 +243,10 @@ uv run python server.py
 
 **Testing Individual Components**
 
-1. **Calculator Tools**: Use MCP Inspector to call each tool with test parameters
-2. **Resource Access**: Check the resource tab in MCP Inspector for `file://typesdk` and `file://pythonsdk`
-3. **Prompt Templates**: Test the `meeting_summary` prompt with sample data
+1. **Calculator Tools**: Use MCP Inspector to call each of the 8 calculator tools with test parameters
+2. **File System Tools**: Test the 16 file system tools with appropriate paths and parameters
+3. **Resource Access**: Check the resource tab in MCP Inspector for `file://typesdk` and `file://pythonsdk`
+4. **Prompt Templates**: Test the `meeting_summary` prompt with sample data
 
 ### Customization
 
@@ -218,6 +274,9 @@ The server includes comprehensive error handling:
 - **Factorial Limits**: Restricts calculations to reasonable ranges (n ≤ 100)
 - **File Not Found**: Graceful handling of missing resource files
 - **Template Errors**: Proper error reporting for prompt template issues
+- **Path Traversal Protection**: Prevents unauthorized file system access
+- **Permission Errors**: Graceful handling of file permission issues
+- **Invalid Paths**: Proper validation and error reporting for malformed paths
 
 ## Configuration Options
 
@@ -266,6 +325,11 @@ mcp = FastMCP("Calculator Server")  # Current server name
 - Verify `templates/Prompt.md` exists
 - Check template syntax
 - Ensure proper variable placeholders: `{{ variable_name }}`
+
+**File system tool errors**:
+- Check file paths are within allowed directory boundaries
+- Verify file permissions for read/write operations
+- Ensure target files and directories exist before operations
 
 ### Debug Mode
 
