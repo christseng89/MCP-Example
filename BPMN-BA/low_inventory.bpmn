@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Defs_LowInventory" targetNamespace="http://example.com/bpmn/low-inventory">
+  <bpmn:process id="Process_LowInventory" name="Low Inventory Replenishment" isExecutable="true">
+    <bpmn:startEvent id="Start_Conditional" name="Start: Inventory &#60; 100">
+      <bpmn:conditionalEventDefinition>
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">${inventory &lt; 100}</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_Notify" name="Notify Procurement Department" />
+    <bpmn:task id="Task_CreatePO" name="Create Purchase Order (PO)" />
+    <bpmn:task id="Task_SendToVendor" name="Send Order to Supplier" />
+    <bpmn:task id="Task_UpdateInventory" name="Update Inventory System / ERP" />
+    <bpmn:endEvent id="End_Done" name="Replenishment Completed" />
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_Conditional" targetRef="Task_Notify" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_Notify" targetRef="Task_CreatePO" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_CreatePO" targetRef="Task_SendToVendor" />
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="Task_SendToVendor" targetRef="Task_UpdateInventory" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_UpdateInventory" targetRef="End_Done" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_LowInventory">
+    <bpmndi:BPMNPlane id="BPMNPlane_LowInventory" bpmnElement="Process_LowInventory">
+      <bpmndi:BPMNShape id="DI_Start" bpmnElement="Start_Conditional">
+        <dc:Bounds x="140" y="120" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DI_Notify" bpmnElement="Task_Notify">
+        <dc:Bounds x="210" y="100" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DI_CreatePO" bpmnElement="Task_CreatePO">
+        <dc:Bounds x="400" y="100" width="180" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DI_Send" bpmnElement="Task_SendToVendor">
+        <dc:Bounds x="610" y="100" width="200" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DI_Update" bpmnElement="Task_UpdateInventory">
+        <dc:Bounds x="850" y="100" width="200" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DI_End" bpmnElement="End_Done">
+        <dc:Bounds x="1090" y="120" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1071" y="156" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DI_Flow1" bpmnElement="Flow_1">
+        <di:waypoint x="176" y="138" />
+        <di:waypoint x="210" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DI_Flow2" bpmnElement="Flow_2">
+        <di:waypoint x="370" y="138" />
+        <di:waypoint x="400" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DI_Flow3" bpmnElement="Flow_3">
+        <di:waypoint x="580" y="138" />
+        <di:waypoint x="610" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DI_Flow4" bpmnElement="Flow_4">
+        <di:waypoint x="810" y="138" />
+        <di:waypoint x="850" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DI_Flow5" bpmnElement="Flow_5">
+        <di:waypoint x="1050" y="138" />
+        <di:waypoint x="1090" y="138" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
