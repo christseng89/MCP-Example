@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Defs_Loan_1" targetNamespace="http://example.bpmn/loan">
+  <bpmn:process id="Process_LoanApproval" name="银行贷款审批流程" isExecutable="true">
+    <bpmn:dataObject id="DO_Application" name="贷款申请表" />
+    <bpmn:dataObject id="DO_Precheck" name="初审意见" />
+    <bpmn:dataObject id="DO_RiskReport" name="风险评估报告" />
+    <bpmn:dataObject id="DO_Contract" name="贷款合同" />
+    <bpmn:dataObject id="DO_DisburseVoucher" name="放款凭证" />
+    <bpmn:dataObject id="DO_RejectNotice" name="拒绝通知" />
+    <bpmn:startEvent id="Start_Submit" name="客户提交贷款申请" />
+    <bpmn:task id="Task_Precheck" name="初审">
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1ndzmwq">
+        <bpmn:targetRef>DOR_Precheck</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0k33mk4">
+        <bpmn:targetRef>DOR_Application</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:task id="Task_RiskAssess" name="风险评估">
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1du3hdg">
+        <bpmn:targetRef>DOR_Risk</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_Pass" name="是否通过？" />
+    <bpmn:task id="Task_GenerateContract" name="合同生成（系统）">
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_012dmbp">
+        <bpmn:targetRef>DOR_Contract</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0qirhrg">
+        <bpmn:targetRef>DataStoreReference_084wzik</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:task id="Task_Disburse" name="放款">
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_12fwdhk">
+        <bpmn:targetRef>DOR_Voucher</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0avnghi">
+        <bpmn:targetRef>DataStoreReference_1ei56eu</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:task id="Task_NotifyReject" name="发送拒绝通知">
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_15pg8um">
+        <bpmn:targetRef>DOR_Reject</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:task>
+    <bpmn:endEvent id="End_Success" name="流程完成" />
+    <bpmn:endEvent id="End_Reject" name="拒绝结束" />
+    <bpmn:dataObjectReference id="DOR_Application" name="贷款申请表" dataObjectRef="DO_Application" />
+    <bpmn:dataObjectReference id="DOR_Precheck" name="初审意见" dataObjectRef="DO_Precheck" />
+    <bpmn:dataObjectReference id="DOR_Risk" name="风险评估报告" dataObjectRef="DO_RiskReport" />
+    <bpmn:dataObjectReference id="DOR_Contract" name="贷款合同" dataObjectRef="DO_Contract" />
+    <bpmn:dataObjectReference id="DOR_Voucher" name="放款凭证" dataObjectRef="DO_DisburseVoucher" />
+    <bpmn:dataObjectReference id="DOR_Reject" name="拒绝通知" dataObjectRef="DO_RejectNotice" />
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_Submit" targetRef="Task_Precheck" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_Precheck" targetRef="Task_RiskAssess" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_RiskAssess" targetRef="Gateway_Pass" />
+    <bpmn:sequenceFlow id="Flow_4_yes" sourceRef="Gateway_Pass" targetRef="Task_GenerateContract" />
+    <bpmn:sequenceFlow id="Flow_4_no_a" sourceRef="Gateway_Pass" targetRef="Task_NotifyReject" />
+    <bpmn:sequenceFlow id="Flow_4_no_b" sourceRef="Task_NotifyReject" targetRef="End_Reject" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_GenerateContract" targetRef="Task_Disburse" />
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_Disburse" targetRef="End_Success" />
+    <bpmn:dataStoreReference id="DataStoreReference_1ei56eu" name="Loan" />
+    <bpmn:dataStoreReference id="DataStoreReference_084wzik" name="Agreement" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_LoanApproval">
+      <bpmndi:BPMNShape id="Start_Submit_di" bpmnElement="Start_Submit">
+        <dc:Bounds x="170" y="220" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="144" y="263" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Precheck_di" bpmnElement="Task_Precheck">
+        <dc:Bounds x="360" y="198" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RiskAssess_di" bpmnElement="Task_RiskAssess">
+        <dc:Bounds x="550" y="198" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Pass_di" bpmnElement="Gateway_Pass" isMarkerVisible="true">
+        <dc:Bounds x="740" y="213" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="737" y="189" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_GenerateContract_di" bpmnElement="Task_GenerateContract">
+        <dc:Bounds x="930" y="198" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Disburse_di" bpmnElement="Task_Disburse">
+        <dc:Bounds x="1130" y="198" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_NotifyReject_di" bpmnElement="Task_NotifyReject">
+        <dc:Bounds x="695" y="410" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Success_di" bpmnElement="End_Success">
+        <dc:Bounds x="1330" y="220" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1326" y="256" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Reject_di" bpmnElement="End_Reject">
+        <dc:Bounds x="930" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="926" y="473" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_Application_di" bpmnElement="DOR_Application">
+        <dc:Bounds x="364" y="100" width="40" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="353" y="76" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_Precheck_di" bpmnElement="DOR_Precheck">
+        <dc:Bounds x="438" y="100" width="40" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="435" y="76" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_Risk_di" bpmnElement="DOR_Risk">
+        <dc:Bounds x="585" y="100" width="40" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="572" y="76" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_Contract_di" bpmnElement="DOR_Contract">
+        <dc:Bounds x="980" y="100" width="40" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="978" y="76" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_Voucher_di" bpmnElement="DOR_Voucher">
+        <dc:Bounds x="1170" y="100" width="40" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1168" y="76" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DOR_Reject_di" bpmnElement="DOR_Reject">
+        <dc:Bounds x="746" y="535" width="40" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="744" y="585" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_1ei56eu_di" bpmnElement="DataStoreReference_1ei56eu">
+        <dc:Bounds x="1165" y="325" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1178" y="382" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_084wzik_di" bpmnElement="DataStoreReference_084wzik">
+        <dc:Bounds x="975" y="325" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="973" y="382" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1ndzmwq_di" bpmnElement="DataOutputAssociation_1ndzmwq">
+        <di:waypoint x="434" y="198" />
+        <di:waypoint x="451" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0k33mk4_di" bpmnElement="DataOutputAssociation_0k33mk4">
+        <di:waypoint x="407" y="198" />
+        <di:waypoint x="391" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1du3hdg_di" bpmnElement="DataOutputAssociation_1du3hdg">
+        <di:waypoint x="608" y="198" />
+        <di:waypoint x="606" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_012dmbp_di" bpmnElement="DataOutputAssociation_012dmbp">
+        <di:waypoint x="1000" y="198" />
+        <di:waypoint x="1000" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0qirhrg_di" bpmnElement="DataOutputAssociation_0qirhrg">
+        <di:waypoint x="1000" y="278" />
+        <di:waypoint x="1000" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_12fwdhk_di" bpmnElement="DataOutputAssociation_12fwdhk">
+        <di:waypoint x="1190" y="198" />
+        <di:waypoint x="1190" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0avnghi_di" bpmnElement="DataOutputAssociation_0avnghi">
+        <di:waypoint x="1190" y="278" />
+        <di:waypoint x="1190" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_15pg8um_di" bpmnElement="DataOutputAssociation_15pg8um">
+        <di:waypoint x="765" y="490" />
+        <di:waypoint x="766" y="535" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="206" y="238" />
+        <di:waypoint x="360" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="480" y="238" />
+        <di:waypoint x="550" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="670" y="238" />
+        <di:waypoint x="740" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_yes_di" bpmnElement="Flow_4_yes">
+        <di:waypoint x="790" y="238" />
+        <di:waypoint x="930" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_no_a_di" bpmnElement="Flow_4_no_a">
+        <di:waypoint x="765" y="263" />
+        <di:waypoint x="765" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_no_b_di" bpmnElement="Flow_4_no_b">
+        <di:waypoint x="835" y="450" />
+        <di:waypoint x="930" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="1070" y="238" />
+        <di:waypoint x="1130" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="1250" y="238" />
+        <di:waypoint x="1330" y="238" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
