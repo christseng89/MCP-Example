@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Defs_ContractLoop" targetNamespace="http://example.bpmn/contract_loop">
+  <bpmn:process id="Process_ContractLoop" name="Contract Negotiation (Loop)" isExecutable="true">
+    <bpmn:startEvent id="Start" name="Start" />
+    <bpmn:userTask id="Task_Negotiate" name="Negotiate contract">
+      <bpmn:outgoing>Flow_128ombu</bpmn:outgoing>
+      <bpmn:standardLoopCharacteristics />
+    </bpmn:userTask>
+    <bpmn:endEvent id="End" name="Contract signed">
+      <bpmn:incoming>Flow_128ombu</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Task_Negotiate" />
+    <bpmn:sequenceFlow id="Flow_128ombu" sourceRef="Task_Negotiate" targetRef="End" />
+    <bpmn:textAnnotation id="TextAnnotation_0ebj4ea">
+      <bpmn:text>Repeat until agreement reached.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0w57hi1" associationDirection="None" sourceRef="Task_Negotiate" targetRef="TextAnnotation_0ebj4ea" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram1">
+    <bpmndi:BPMNPlane id="Plane1" bpmnElement="Process_ContractLoop">
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="160" y="200" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Negotiate_di" bpmnElement="Task_Negotiate">
+        <dc:Bounds x="250" y="180" width="160" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="462" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="441" y="238" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0w57hi1_di" bpmnElement="Association_0w57hi1">
+        <di:waypoint x="317" y="180" />
+        <di:waypoint x="303" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1">
+        <di:waypoint x="196" y="218" />
+        <di:waypoint x="250" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0ebj4ea_di" bpmnElement="TextAnnotation_0ebj4ea">
+        <dc:Bounds x="240" y="80" width="99.9969253540039" height="54.996925354003906" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_128ombu_di" bpmnElement="Flow_128ombu">
+        <di:waypoint x="410" y="220" />
+        <di:waypoint x="462" y="220" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
