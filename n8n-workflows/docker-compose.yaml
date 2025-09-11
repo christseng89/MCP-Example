@@ -10,10 +10,13 @@ services:
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
       - N8N_HOST=localhost
-      - GENERIC_TIMEZONE=Europe/Berlin
-      - TZ=Europe/Berlin
+      - GENERIC_TIMEZONE=Asia/Singapore
+      - TZ=Asia/Singapore
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       - N8N_RUNNERS_ENABLED=true
+      # 让 OAuth2 回调正确使用宿主机端口 5778
+      - N8N_EDITOR_BASE_URL=http://localhost:5778
+      - WEBHOOK_URL=http://localhost:5778
       # Optional basic auth
       # - N8N_BASIC_AUTH_ACTIVE=true
       # - N8N_BASIC_AUTH_USER=youruser

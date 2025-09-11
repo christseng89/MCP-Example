@@ -50,6 +50,7 @@ nmake /F Makefile.win install
 
 ```cmd
 psql -U postgres
+  使用者 postgres 的密碼: t0nnnn#Xxxxx
 ```
 
 ```sql test vector
