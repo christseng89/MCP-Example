@@ -59,3 +59,7 @@ curl -X POST "https://679e817d34bc.ngrok-free.app/webhook/d707d430-f73a-4378-a6d
 5. Install and authorize our app
 
 ---
+
+## n8n workflow
+
+* 03 Qdrant w Slack
