@@ -1,4 +1,4 @@
-# Travel CoPilot
+# Travel CoPilot - n8n Cloud
 
 ## Use case
 
