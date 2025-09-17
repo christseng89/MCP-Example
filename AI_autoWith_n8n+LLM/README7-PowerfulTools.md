@@ -39,6 +39,29 @@ Takes the draft output from Analyst team and polishes report
 <https://site.financialmodelingprep.com/developer/docs>
 <https://site.financialmodelingprep.com/developer/docs#ratios-ttm-statement-analysis>
 
+#### Test API Call
+
+```bash
+curl "https://financialmodelingprep.com/stable/ratios-ttm?symbol=NVDA&apikey=YourApiKey"
+
+  [
+    {
+      "symbol": "NVDA",
+      "grossProfitMarginTTM": 0.6984711108959072,
+      "ebitMarginTTM": 0.5841917950828602,
+      "ebitdaMarginTTM": 0.6034451452020966,
+      "operatingProfitMarginTTM": 0.5809354912902952,
+      ...
+
+    }
+  ]    
+```
+
+```bash
+curl "https://financialmodelingprep.com/stable/owner-earnings?symbol=NVDA&apikey=c4SQBWg1aoS8yPCENJ6jHextOx1NVUK9"
+
+````
+
 ## Additional insights with tools
 
 **Balance Sheet and Income Statement Analysis** 資產負債表與損益表分析
@@ -58,3 +81,7 @@ NVIDIA Corporation, as per the latest financial metrics available, exhibits stro
   * The return on equity (ROE) is notably high at 92.81%, indicating efficient utilization of shareholder funds.
 
 ---
+
+## n8n Workflows
+
+*05.2 Nvidia Sec10K Stock Analysis - Analysis v2
