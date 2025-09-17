@@ -13,7 +13,7 @@
 ## n8n Workflow
 
 *05.1 Nvidia Sec10K Stock Analysis - RAG **Activate**
-*05.2 Nvidia Sec10K Stock Analysis - Analysis
+*05.2 Nvidia Sec10K Stock Analysis - Analysis v1
 
 ```note
 Use n8n in Docker, change the localhost:5778 to n8n:5678 for 'webhook_url_sec10k_data' in 'Settings' node.
