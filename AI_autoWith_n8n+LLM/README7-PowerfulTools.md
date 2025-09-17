@@ -85,3 +85,5 @@ NVIDIA Corporation, as per the latest financial metrics available, exhibits stro
 ## n8n Workflows
 
 *05.2 Nvidia Sec10K Stock Analysis - Analysis v2
+*05.2 Nvidia Sec10K Stock Analysis - Analysis v3
+*05.2 Nvidia Sec10K Stock Analysis - Analysis v3 Owner Earnings SubFlow (WorkflowID: aHtXwFZXHTBy7fSZ)
