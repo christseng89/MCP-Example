@@ -128,3 +128,26 @@ do technical analysis for MSFT
 Best practice to scan maven projects by using open sources via CI/CD
 Effective parenting methods
 ```
+
+## 06.6 From Data to Insights Faster
+
+<https://nocodb.com/>
+<https://app.nocodb.com/#/wyacm8xy/pzfyqtxn1mbhi4p/mq0qyzxouxjapt5>
+
+```note
+Import Data => Excel => US+Stock+Valuation+Data+Set.xlsx => Import Files => Import
+Table ID: mq0qyzxouxjapt5
+Host: https://app.nocodb.com
+Workspace: samfire5200
+```
+
+```chat
+what was the total debt for AAPL in 2023?
+what was the total debt for GOOG in 2023?
+what was the total debt for MSFT in 2023?
+what was the total debt for AAPL in 2021, 2022, and 2023?
+```
+
+### n8n workflow for Data to Insights
+
+*06.6 From Data to Insights Faster
