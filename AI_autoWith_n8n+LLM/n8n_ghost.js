@@ -1,6 +1,11 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
-const key = '68ca96da4254690001aa6327:ad1d2fc7e222df8231bf27e5adf5c5b2879dfc28c014867d6a407b8ec62ea597';
+const key = process.env.GHOST_ADMIN_KEY;
+if (!key) {
+  throw new Error("Missing GHOST_ADMIN_KEY in .env");
+}
+
 const [id, secret] = key.split(':');
 
 const token = jwt.sign({}, Buffer.from(secret, 'hex'), {
