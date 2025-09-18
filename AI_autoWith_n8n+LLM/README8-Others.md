@@ -66,7 +66,7 @@ curl -X POST https://ai-automation-with-n8n.ghost.io/ghost/api/admin/posts/?sour
     ]
   }'
 
-### n8n workflow
+### n8n workflow for PDF to Ghost Blog
 
 *06.2 Multi-agent PDF to Ghost Blog
 
@@ -78,6 +78,10 @@ curl -X POST https://ai-automation-with-n8n.ghost.io/ghost/api/admin/posts/?sour
 
 <https://jina.ai/>
 <https://r.jina.ai/http://books.toscrape.com/catalogue/category/books/historical-fiction_4/index.html>
+
+### n8n workflow for AI Powered Web Scraping
+
+*06.3 AI Powered Web Scraping
 
 ## 06.4 Technical Analyst AI Agent
 
@@ -102,7 +106,7 @@ curl -X POST "https://api.chart-img.com/v2/tradingview/advanced-chart/storage" \
   -o bits-chart.json
 ```
 
-### n8n workflow
+### n8n workflow for Technical Analyst AI Agent
 
 * 06.4 Technical Analyst for Stock AI Agent
 
@@ -110,4 +114,17 @@ curl -X POST "https://api.chart-img.com/v2/tradingview/advanced-chart/storage" \
 do technical analysis for BITS
 do technical analysis for AAPL
 do technical analysis for MSFT
+```
+
+## 06.5 Research AI Agent with Auto Citation
+
+<https://www.perplexity.ai/account/details> # Cannot get API key
+
+### n8n workflow
+
+*06.5 Research AI Agent Team with Auto Citation
+
+```chat
+Best practice to scan maven projects by using open sources via CI/CD
+Effective parenting methods
 ```
