@@ -19,7 +19,7 @@ give me the details about freight rate
 *💰 Financial Reports -> 📊 Insightful Market Analysis
 *🎓 Academic Papers -> 📄 Engaging Blog Posts
 
-## Setup Ghost
+### Setup Ghost
 
 ID: samfire5200
 Password: t0nnn#Xxxxx
@@ -69,3 +69,45 @@ curl -X POST https://ai-automation-with-n8n.ghost.io/ghost/api/admin/posts/?sour
 ### n8n workflow
 
 *06.2 Multi-agent PDF to Ghost Blog
+
+## 06.3 AI Powered Web Scraping
+
+<https://docs.google.com/spreadsheets/d/1VDbfi2PpeheD2ZlO6feX3RdMeSsm0XukQlNVW8uVcuo/edit?pli=1&gid=258629074#gid=258629074>
+
+### Jina AI
+
+<https://jina.ai/>
+<https://r.jina.ai/http://books.toscrape.com/catalogue/category/books/historical-fiction_4/index.html>
+
+## 06.4 Technical Analyst AI Agent
+
+### Chart Image Generation
+
+<https://chart-img.com/>
+<https://doc.chart-img.com/#introduction>
+
+```bash test
+curl -X POST "https://api.chart-img.com/v2/tradingview/advanced-chart/storage" \
+  -H "x-api-key: Your-Chart-Img-API-Key" \
+  -H "content-type: application/json" \
+  -d '{
+    "symbol": "NASDAQ:BITS",
+    "theme": "dark",
+    "studies": [
+      {"name": "Bollinger Bands"},
+      {"name": "Volume"},
+      {"name": "Relative Strength Index"}
+    ]
+  }' \
+  -o bits-chart.json
+```
+
+### n8n workflow
+
+* 06.4 Technical Analyst for Stock AI Agent
+
+```Chat
+do technical analysis for BITS
+do technical analysis for AAPL
+do technical analysis for MSFT
+```
