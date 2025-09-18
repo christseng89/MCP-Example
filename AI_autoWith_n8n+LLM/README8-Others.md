@@ -21,7 +21,10 @@ give me the details about freight rate
 
 ## Setup Ghost
 
-## Create a custom integration (where the keys are issued)
+ID: samfire5200
+Password: t0nnn#Xxxxx
+
+### Create a custom integration (where the keys are issued)
 
 1. Log into your Ghost Admin panel as an **Owner** (owner-level access is required):
    `https://your-ghost-site.com/ghost/`
