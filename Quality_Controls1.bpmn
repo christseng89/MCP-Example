@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" id="Defs_QC_Process_1" targetNamespace="http://example.com/quality-controls">
+  <process id="QC_Process_1" name="End-to-End Quality Controls" isExecutable="false">
+    <startEvent id="Start_1" name="Start" />
+    <task id="Task_Core" name="Core Dev: JUnit5 + Sonar + Snyk" />
+    <exclusiveGateway id="GW_Core" name="Quality Gate" />
+    <task id="Task_Baseline" name="Baseline: Golden/Schema Tests + Sonar" />
+    <exclusiveGateway id="GW_Baseline" name="Quality Gate" />
+    <task id="Task_QA" name="QA: API/E2E + JMeter + ZAP/Veracode">
+      <outgoing>Flow_0wbgs1l</outgoing>
+    </task>
+    <exclusiveGateway id="GW_QA" name="Release Gate">
+      <incoming>Flow_0wbgs1l</incoming>
+    </exclusiveGateway>
+    <task id="Task_Project" name="Project Integration: Contract/API Tests" />
+    <exclusiveGateway id="GW_Project" name="Go/No-Go" />
+    <endEvent id="End_1" name="End" />
+    <sequenceFlow id="Flow_1" sourceRef="Start_1" targetRef="Task_Core" />
+    <sequenceFlow id="Flow_2" sourceRef="Task_Core" targetRef="GW_Core" />
+    <sequenceFlow id="Flow_3" sourceRef="GW_Core" targetRef="Task_Baseline" />
+    <sequenceFlow id="Flow_4" sourceRef="Task_Baseline" targetRef="GW_Baseline" />
+    <sequenceFlow id="Flow_5" sourceRef="GW_Baseline" targetRef="Task_QA" />
+    <sequenceFlow id="Flow_7" sourceRef="GW_QA" targetRef="Task_Project" />
+    <sequenceFlow id="Flow_8" sourceRef="Task_Project" targetRef="GW_Project" />
+    <sequenceFlow id="Flow_9" sourceRef="GW_Project" targetRef="End_1" />
+    <sequenceFlow id="Flow_0wbgs1l" sourceRef="Task_QA" targetRef="GW_QA" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_QC_Process_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_QC_Process_1" bpmnElement="QC_Process_1">
+      <bpmndi:BPMNShape id="GW_QA_di" bpmnElement="GW_QA" isMarkerVisible="true">
+        <omgdc:Bounds x="320" y="200" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_1_di" bpmnElement="Start_1">
+        <omgdc:Bounds x="60" y="72" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="66" y="108" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Core_di" bpmnElement="Task_Core">
+        <omgdc:Bounds x="185" y="60" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Core_di" bpmnElement="GW_Core" isMarkerVisible="true">
+        <omgdc:Bounds x="425" y="65" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="419" y="115" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Baseline_di" bpmnElement="Task_Baseline">
+        <omgdc:Bounds x="555" y="60" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Baseline_di" bpmnElement="GW_Baseline" isMarkerVisible="true">
+        <omgdc:Bounds x="825" y="65" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="819" y="115" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_QA_di" bpmnElement="Task_QA">
+        <omgdc:Bounds x="945" y="60" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Project_di" bpmnElement="Task_Project">
+        <omgdc:Bounds x="455" y="195" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Project_di" bpmnElement="GW_Project" isMarkerVisible="true">
+        <omgdc:Bounds x="735" y="200" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="735" y="250" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_1_di" bpmnElement="End_1">
+        <omgdc:Bounds x="892" y="207" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="900" y="243" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <omgdi:waypoint x="96" y="90" />
+        <omgdi:waypoint x="185" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <omgdi:waypoint x="355" y="90" />
+        <omgdi:waypoint x="425" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <omgdi:waypoint x="475" y="90" />
+        <omgdi:waypoint x="555" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <omgdi:waypoint x="725" y="90" />
+        <omgdi:waypoint x="825" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <omgdi:waypoint x="875" y="90" />
+        <omgdi:waypoint x="945" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <omgdi:waypoint x="370" y="225" />
+        <omgdi:waypoint x="455" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
+        <omgdi:waypoint x="625" y="225" />
+        <omgdi:waypoint x="735" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <omgdi:waypoint x="785" y="225" />
+        <omgdi:waypoint x="892" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wbgs1l_di" bpmnElement="Flow_0wbgs1l">
+        <omgdi:waypoint x="1030" y="120" />
+        <omgdi:waypoint x="1030" y="160" />
+        <omgdi:waypoint x="345" y="160" />
+        <omgdi:waypoint x="345" y="200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

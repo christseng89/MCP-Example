@@ -11,7 +11,7 @@ const [id, secret] = key.split(':');
 const token = jwt.sign({}, Buffer.from(secret, 'hex'), {
   keyid: id,
   algorithm: 'HS256',
-  expiresIn: '5m',
+  expiresIn: '60m',
   audience: '/admin/'
 });
 

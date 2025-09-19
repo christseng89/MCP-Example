@@ -146,8 +146,34 @@ what was the total debt for AAPL in 2023?
 what was the total debt for GOOG in 2023?
 what was the total debt for MSFT in 2023?
 what was the total debt for AAPL in 2021, 2022, and 2023?
+what was the total assets of AAPL in 2023?
 ```
+
+### Install nocodb in Docker
+
+```cmd
+cd nocodb
+docker-compose up -d
+```
+
+<http://localhost:8090/>
 
 ### n8n workflow for Data to Insights
 
-*06.6 From Data to Insights Faster
+*06.6 From Data to Insights Faster - Part I
+
+## 06.6 From Data to Insights Faster - Part II Visualization
+
+```chat
+what was AAPL EPS 2019-2023?
+what was GOOG EPS 2019-2023?
+compare the two with visualization
+visualize the profit margins
+include MSFT in the comparison
+what data would be useful to visualize with a radar chart?
+what about a bubble chart?
+```
+
+### n8n workflow for Data to Insights Visualization
+
+*06.6 From Data to Insights Faster - Part II Visualization

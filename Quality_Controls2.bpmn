@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" id="Defs_QC_Process_2" targetNamespace="http://example.com/quality-controls">
+  <process id="QC_Process_2" name="CI Quality Gates" isExecutable="false">
+    <startEvent id="Start_2" name="Start" />
+    <task id="Task_Build" name="Build &#38; Unit (JUnit5)" />
+    <task id="Task_Sonar" name="SonarQube Analysis" />
+    <task id="Task_Snyk" name="Snyk SCA" />
+    <task id="Task_ZAP" name="OWASP ZAP Baseline DAST" />
+    <task id="Task_JMeter" name="JMeter Performance" />
+    <task id="Task_VeraSAST" name="Veracode SAST" />
+    <task id="Task_VeraDAST" name="Veracode Dynamic" />
+    <exclusiveGateway id="GW_Release" name="Quality Gate (All Green?)" />
+    <endEvent id="End_2" name="End" />
+    <sequenceFlow id="Flow_1" sourceRef="Start_2" targetRef="Task_Build" />
+    <sequenceFlow id="Flow_2" sourceRef="Task_Build" targetRef="Task_Sonar" />
+    <sequenceFlow id="Flow_3" sourceRef="Task_Sonar" targetRef="Task_Snyk" />
+    <sequenceFlow id="Flow_4" sourceRef="Task_Snyk" targetRef="Task_ZAP" />
+    <sequenceFlow id="Flow_5" sourceRef="Task_ZAP" targetRef="Task_JMeter" />
+    <sequenceFlow id="Flow_6" sourceRef="Task_JMeter" targetRef="Task_VeraSAST" />
+    <sequenceFlow id="Flow_7" sourceRef="Task_VeraSAST" targetRef="Task_VeraDAST" />
+    <sequenceFlow id="Flow_8" sourceRef="Task_VeraDAST" targetRef="GW_Release" />
+    <sequenceFlow id="Flow_9" sourceRef="GW_Release" targetRef="End_2" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_QC_Process_2">
+    <bpmndi:BPMNPlane id="BPMNPlane_QC_Process_2" bpmnElement="QC_Process_2">
+      <bpmndi:BPMNShape id="Task_Build_di" bpmnElement="Task_Build">
+        <omgdc:Bounds x="320" y="60" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Sonar_di" bpmnElement="Task_Sonar">
+        <omgdc:Bounds x="580" y="60" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Release_di" bpmnElement="GW_Release" isMarkerVisible="true">
+        <omgdc:Bounds x="840" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="825" y="255" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_2_di" bpmnElement="Start_2">
+        <omgdc:Bounds x="162" y="72" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="168" y="108" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_2_di" bpmnElement="End_2">
+        <omgdc:Bounds x="1002" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1010" y="248" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_VeraSAST_di" bpmnElement="Task_VeraSAST">
+        <omgdc:Bounds x="365" y="200" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_VeraDAST_di" bpmnElement="Task_VeraDAST">
+        <omgdc:Bounds x="605" y="200" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Snyk_di" bpmnElement="Task_Snyk">
+        <omgdc:Bounds x="835" y="60" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ZAP_di" bpmnElement="Task_ZAP">
+        <omgdc:Bounds x="1065" y="60" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_JMeter_di" bpmnElement="Task_JMeter">
+        <omgdc:Bounds x="135" y="200" width="170" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <omgdi:waypoint x="198" y="90" />
+        <omgdi:waypoint x="320" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <omgdi:waypoint x="490" y="90" />
+        <omgdi:waypoint x="580" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <omgdi:waypoint x="750" y="90" />
+        <omgdi:waypoint x="835" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <omgdi:waypoint x="1005" y="90" />
+        <omgdi:waypoint x="1065" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <omgdi:waypoint x="1105" y="120" />
+        <omgdi:waypoint x="1105" y="170" />
+        <omgdi:waypoint x="220" y="170" />
+        <omgdi:waypoint x="220" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <omgdi:waypoint x="305" y="230" />
+        <omgdi:waypoint x="365" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <omgdi:waypoint x="535" y="230" />
+        <omgdi:waypoint x="605" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
+        <omgdi:waypoint x="775" y="230" />
+        <omgdi:waypoint x="840" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <omgdi:waypoint x="890" y="230" />
+        <omgdi:waypoint x="1002" y="230" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
