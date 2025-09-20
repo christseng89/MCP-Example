@@ -31,7 +31,7 @@
 避免舊 URL 還掛著，先清掉：
 
 ```bash
-curl -s "https://api.telegram.org/bot8274628539:AAEACLFU41-PTCBaXnm0oeZZXvvQz2uT4UQ/deleteWebhook"
+curl -s "https://api.telegram.org/bot123456789:AAxxxxxxxxxxxxxxxxxxxxxxxxxx/deleteWebhook"
 ```
 
 成功會回：
