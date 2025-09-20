@@ -4,27 +4,12 @@ services:
     container_name: n8n
     restart: unless-stopped
     ports:
-      - "5778:5678"
+      - "5778:5678" # 本機訪問編輯器 http://localhost:5778
+    env_file:
+      - .env # 讀取上一步建立的 .env
     environment:
-      - NODE_ENV=production
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      - N8N_HOST=localhost
-      - GENERIC_TIMEZONE=Asia/Singapore
-      - TZ=Asia/Singapore
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      - N8N_RUNNERS_ENABLED=true
-      # 让 OAuth2 回调正确使用宿主机端口 5778
-      - N8N_EDITOR_BASE_URL=http://localhost:5778
-      - WEBHOOK_URL=http://localhost:5778
-      # Optional basic auth
-      # - N8N_BASIC_AUTH_ACTIVE=true
-      # - N8N_BASIC_AUTH_USER=youruser
-      # - N8N_BASIC_AUTH_PASSWORD=yourpass
-      - NODE_FUNCTION_ALLOW_EXTERNAL=jsonwebtoken
-      - NODE_FUNCTION_ALLOW_BUILTIN=*
+      - N8N_HOST=0.0.0.0 # 在容器內綁到所有介面
+      - N8N_PROTOCOL=http # 內部使用 http；對外用 WEBHOOK_URL 的 https
     volumes:
-      # Persist data (Windows path on left)
       - C:/n8n/n8n-data:/home/node/.n8n
-      # Optional shared files
       - C:/n8n/local-files:/files

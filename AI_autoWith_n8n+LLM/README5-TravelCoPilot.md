@@ -31,6 +31,7 @@ Keep your token secure and store it safely, it can be used by anyone to control 
 
 ```
 
+n8n => This **token** is required to connect to the Telegram Bot API.
 click **t.me/travelercopilotChrisT_bot** to start the bot.
 
 ## n8n Workflow

@@ -168,8 +168,8 @@ docker-compose up -d
 what was AAPL EPS 2019-2023?
 what was GOOG EPS 2019-2023?
 compare the two with visualization
-visualize the profit margins
 include MSFT in the comparison
+visualize the profit margins
 what data would be useful to visualize with a radar chart?
 what about a bubble chart?
 ```
@@ -177,3 +177,29 @@ what about a bubble chart?
 ### n8n workflow for Data to Insights Visualization
 
 *06.6 From Data to Insights Faster - Part II Visualization
+
+## 06.7 From Data to Insights Faster - Part III DeepSeek + Telegram
+
+### **DeepSeek Cost Comparison**
+
+*For input processing, **DeepSeek-V3 (\$0.27 /1M tokens)** is 9.3x cheaper than **GPT-4o (\$2.50 /1M tokens)**.
+*For output processing, **DeepSeek-V3 (\$1.10 /1M tokens)** is 9.1x cheaper than **GPT-4o (\$10.00 /1M tokens)**.
+*In conclusion, **DeepSeek-V3** is more cost-effective overall.
+
+```Telegram chat
+what was AAPL EPS 2019-2023?
+what was GOOG EPS 2019-2023?
+compare the two with visualization
+include MSFT in the comparison
+visualize the profit margins
+what data would be useful to visualize with a radar chart?
+what about a bubble chart?
+```
+
+### n8n workflow for Data to Insights DeepSeek + Telegram
+
+*06.7 From Data to Insights Faster - Part III DeepSeek + Telegram
+
+```note
+Settings -> Table ID: mq0qyzxouxjapt5
+```
