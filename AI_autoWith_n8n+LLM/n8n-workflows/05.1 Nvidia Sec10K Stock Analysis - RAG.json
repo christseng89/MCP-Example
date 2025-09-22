@@ -1,0 +1,472 @@
+{
+  "name": "05.1 Nvidia Sec10K Stock Analysis - RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Step 2: Setup the Q&A \n### The incoming message from the webhook is queried from the Supabase Vector Store.  The response is provided in the response webhook.  ",
+        "height": 734,
+        "width": 1031,
+        "color": 6
+      },
+      "id": "1dd47be8-3827-4089-b070-97a6f722f47b",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1536,
+        -688
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "79bb5214-402e-4fb8-98f9-00f74e23c545",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        480,
+        -544
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1pHwrWNQCb4iKWgumLxqED91y8bey2vji",
+          "mode": "list",
+          "cachedResultName": "Nvidia10K_2025.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1pHwrWNQCb4iKWgumLxqED91y8bey2vji/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "id": "57017897-2a25-4958-a77f-02116840583f",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        784,
+        -544
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Yw0S1sz8cjf1RiDF",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Step 1: Upserting the PDF\n### Fetch file from Google Drive, split it into chunks and insert into Supabase index\n\n",
+        "height": 732.3675002130781,
+        "width": 772.0680602743597,
+        "color": 6
+      },
+      "id": "a9ffeeaa-7fc4-4dec-87ed-6d4becff8ca3",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        736,
+        -688
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Start here: Step-by Step Youtube Tutorial :star:\n\n[![Building an AI Crew to Analyze Financial Data with CrewAI and n8n](https://img.youtube.com/vi/pMvizUx5n1g/sddefault.jpg)](https://www.youtube.com/watch?v=pMvizUx5n1g)\n",
+        "height": 726.4452519516944,
+        "width": 710.9124489067698,
+        "color": 6
+      },
+      "id": "f4176d37-cfa1-466a-8377-4300f993b091",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        784,
+        304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {
+          "splitPages": true
+        }
+      },
+      "id": "5693c44e-07a6-4fdf-9718-4a2a06dbc0ee",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        1232,
+        -368
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "id": "526679c1-adab-4d5e-ba0d-50019869cbe6",
+      "name": "Recursive Character Text Splitter1",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        1264,
+        -224
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "nvda",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "4355282a-236f-4fc1-8e9b-20ecd3cd89b0",
+      "name": "Qdrant Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "position": [
+        1120,
+        -544
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "qdrantApi": {
+          "id": "xp0jjZCLOdOEVv76",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "19f5499a-3083-4783-93a0-e8ed76a9f742",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "deabe41b-7682-4737-9ca6-18c5cf5e16fe",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        1584,
+        -208
+      ],
+      "webhookId": "55b825ad-8987-4618-ae92-d9b08966324b",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {}
+      },
+      "id": "44e8e0ab-bc97-49ce-b06a-c5614072839e",
+      "name": "Retrieval QA Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "position": [
+        1968,
+        -560
+      ],
+      "typeVersion": 1.5
+    },
+    {
+      "parameters": {
+        "topK": 10
+      },
+      "id": "7f651f6f-87bb-423d-8f62-c25dbd7a22d5",
+      "name": "Vector Store Retriever",
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "position": [
+        2128,
+        -384
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "nvda",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "29cf3865-5537-4c5c-a7a9-32d52b606616",
+      "name": "Qdrant Vector Store1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "position": [
+        2080,
+        -240
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "qdrantApi": {
+          "id": "xp0jjZCLOdOEVv76",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "f85993f7-f690-477d-9c6e-0250e55de276",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1888,
+        -384
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "81ba6fcb-2bec-44ce-9a0a-9c78fbfcd9a7",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        2064,
+        -96
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "03d688c2-5a9d-49a5-a52f-2deb1ba186e0",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        1056,
+        -368
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.response }}",
+        "options": {}
+      },
+      "id": "9d42d56b-7bb1-4465-8035-47352a3e0172",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        2384,
+        -560
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "id": "20b2caf3-392e-4c48-88ee-f472d96ab93c",
+      "name": "On new manual Chat Message",
+      "type": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+      "position": [
+        1584,
+        -560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "jsCode": "const query = $json.input              // Manual Chat\n            || $json.body?.input        // Webhook\n            || '';\n\nconst response_url = $json.body?.response_url   // Slack-style\n                  || $json.body?.webhookUrl     // n8n test/webhook style\n                  || $json.response_url\n                  || $json.webhookUrl\n                  || '';\n\nreturn [{ json: { query, response_url } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        -560
+      ],
+      "id": "430ba4a2-d78a-45c4-883e-02b8c51caa1e",
+      "name": "Prepare Query"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieval QA Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieval QA Chain": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Retriever",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Retriever": {
+      "ai_retriever": [
+        [
+          {
+            "node": "Retrieval QA Chain",
+            "type": "ai_retriever",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On new manual Chat Message": {
+      "main": [
+        [
+          {
+            "node": "Prepare Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Query": {
+      "main": [
+        [
+          {
+            "node": "Retrieval QA Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "c0485536-3026-4ad0-8ee9-af5d248bd800",
+  "meta": {
+    "templateId": "2183",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "NwSHcFqYAHJt9TOW",
+  "tags": []
+}

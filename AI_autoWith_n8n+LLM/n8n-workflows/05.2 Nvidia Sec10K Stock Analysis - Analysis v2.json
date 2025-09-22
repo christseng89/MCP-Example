@@ -1,0 +1,759 @@
+{
+  "name": "05.2 Nvidia Sec10K Stock Analysis - Analysis v2",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Senior Research Analyst Plans work 💭\n\n**Plan the work for the team**\n**Trigger the FMP 'Execute Workflow' below**",
+        "height": 555,
+        "width": 400,
+        "color": 7
+      },
+      "id": "2d9f91cb-e73a-45f9-92bb-651f184d8aa6",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        320,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5defb0a2-d921-4909-b10d-da59e1768496",
+              "name": "sections",
+              "type": "number",
+              "value": "=5"
+            },
+            {
+              "id": "230ebd0b-73c2-4265-9b3c-57af7fbc48c8",
+              "name": "words",
+              "type": "number",
+              "value": "=2000"
+            },
+            {
+              "id": "ce289c1f-c20d-4ae5-9192-52f129b704e6",
+              "name": "company",
+              "type": "string",
+              "value": "nvda"
+            },
+            {
+              "id": "bd4c5470-b798-4f7e-8139-a13864742412",
+              "name": "webhook_url_sec10k_data",
+              "type": "string",
+              "value": "http://n8n:5678/webhook/19f5499a-3083-4783-93a0-e8ed76a9f742"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "64d0036b-1de7-4dce-8b3e-3bb65cfd8824",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        16,
+        192
+      ],
+      "typeVersion": 3.3
+    },
+    {
+      "parameters": {
+        "content": "## Settings ✨\n\n**Start here to configure settings for this workflow**\n\n1. The company to research\n2. The level detail of the report by specifying the number of words and sections",
+        "height": 555.9314234313579,
+        "width": 371.64121982039524,
+        "color": 7
+      },
+      "id": "89d2f0f8-a3d0-469b-9b4c-6922cd726824",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Delegates work 🧑‍🤝‍🧑\n\n**Delegate work to team of Researchers**",
+        "height": 553,
+        "width": 262,
+        "color": 7
+      },
+      "id": "4f8a9164-fc09-44ae-904c-28702eeb92ef",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        768,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Researchers at work 🗠\n\n**Researchers collaborating from Senior Researcher plan**\n**Trigger the FMP 'Execute Workflow' below**",
+        "height": 556,
+        "width": 413,
+        "color": 7
+      },
+      "id": "9bbe946e-4e58-40df-8c09-123d57260e8b",
+      "name": "Sticky Note19",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1072,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Senior Editor ✍️\n\n**Make writing story of the report high quality**\n",
+        "height": 555.3391014753818,
+        "width": 666.4253447940705,
+        "color": 7
+      },
+      "id": "27bec8be-4184-4dc7-94dc-c3f4763099bd",
+      "name": "Sticky Note21",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1504,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "aade7e2f-5725-4f23-bbc8-92ff54fe1a6b",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "position": [
+        432,
+        416
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "d38a71a3-d8f2-46f9-b501-8e12be240a4c",
+      "name": "Wikipedia1",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "position": [
+        1184,
+        432
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "74c547ba-b51b-4072-80d8-088d3e466a63",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -288,
+        192
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "sec10_k_nvda",
+        "description": "=Use this tool to answer fundamental questions about {{ $json.company }} from SEC 10-K. The input to this tool should be the question to be asked about {{ $json.company }}. For example, what does {{ $json.company }}  do to earn money?",
+        "jsCode": "options = {\n\turl: $('Settings').item.json.webhook_url_sec10k_data,\n    method: 'POST',\n    body: {\"input\": query, \"company\": $('Settings').item.json.company}\n}\n      \ntry {\n  const response = await this.helpers.httpRequest(options);\n  console.log(response)\n  return response\n  } catch (error) {\n    return \"error\";\n}"
+      },
+      "id": "cbec677c-508a-4bb5-b5c3-0dada9cc761c",
+      "name": "SEC10 Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "position": [
+        336,
+        416
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.sections",
+        "options": {}
+      },
+      "id": "e026fd4a-92e3-4337-b0b6-21e3f53fbb3f",
+      "name": "Delegate work",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        864,
+        192
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "1bb1a20b-f206-42b6-8523-3486a8b39bdc",
+      "name": "Combine all sections from researchers",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1552,
+        192
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "jsCode": "let article = \"\";\n\n// Introduction\narticle += $('Plan work for team').first().json.message.content.introduction;\narticle += \"\\n\\n\";\n\nfor (const item of $input.all()) {\n  article += \"**\" + item.json.title + \"**\";\n  article += \"\\n\";\n  article += item.json.message.content;\n  article += \"\\n\\n\";\n}\n\n// Conclusions\narticle += \"**Conclusions**\";\narticle += \"\\n\\n\";\narticle += $('Plan work for team').first().json.message.content.conclusions;\n\n\nreturn [\n  {\n    \"article\": article\n  }\n];"
+      },
+      "id": "b9cc0106-a3b3-40bf-b0cc-83a8be6cd844",
+      "name": "Draft report",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1728,
+        192
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Publish\n\n**Publish to Google docs.  Update the report name.**",
+        "height": 557.9049487870623,
+        "width": 446,
+        "color": 7
+      },
+      "id": "96667df6-6c58-4e85-9855-25126dd63267",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2224,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "sec10_k_nvda",
+        "description": "=Use this tool to answer fundamental questions about {{ $('Settings').item.json.company }}\n from SEC 10-K. The input to this tool should be the question to be asked about {{ $('Settings').item.json.company }}. For example, what does {{ $('Settings').item.json.company }}  do to earn money?",
+        "jsCode": "options = {\n\turl: $('Settings').item.json.webhook_url_sec10k_data,\n    method: 'POST',\n    body: {\"input\": query, \"company\": $('Settings').item.json.company}\n}\n      \ntry {\n  const response = await this.helpers.httpRequest(options);\n  console.log(response)\n  return response\n  } catch (error) {\n    return `error: ${JSON.stringify(error.message)}`;\n}"
+      },
+      "id": "88368928-a357-4235-942e-59383b36575b",
+      "name": "SEC10 Tool1",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "position": [
+        1088,
+        432
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a details-oriented senior editor known for your insightful and engaging articles.\n\nYour task is to paraphrase the draft report produced by the Research team.  This report is targeted towards the investor community  Please ensure that the report is written in a professional tone and style. Do not leave any important information out from the research team. \n\nHere is the draft report:\n{{ $json.article }} \n"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 4095
+        }
+      },
+      "id": "673f6364-29ad-47c3-bbdb-6986de86be8e",
+      "name": "Polish report",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1888,
+        192
+      ],
+      "typeVersion": 1,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# v2\nYou work as a Senior Research Analyst at Goldman Sachs, focusing on fundamental research for tech companies.  You have a team of Research analysts that will help you with various aspects of fundamental stock research.  \n\nYour task is to break down the work of this analysis report:\n- Write the title\n- The subtitle\n- The section details\n- The introduction\n- The conclusions\n- an image prompt for a SEO-friendly article about the company {{ $json.company }}.  \n\nThis analysis report will be a comprehensive analysis of {{ $json.company }} using the latest SEC 10-K filing. The analysis should include the following key sections : Business Overview, Company Strategy, Balance Sheet and Income Statement Analysis, SWOT (Strength, Weakness, Opportunities, Threats), Insights from earnings transcript,Top 3 Risk Factors, Management's Discussion and Analysis (MD&A), and Future Outlook\n\nDetailed Instructions:\n- All information is sourced mainly from {{ $json.company }} latest SEC 10-K filing and that the analysis is unbiased and factual.\n- When necessary, use wikipedia to help with the analysis\n- Use financial metrics tool to get the most up-to-date metrics net Debt To EBITDA, roic, peRatio\n- Place the article title in a JSON field called `title`\n- Place the subtitle in a JSON field called `subtitle`\n- Place the introduction in a JSON field called `introduction`\n- In the introduction introduce the topic that is then explored in depth in the rest of the text\n- The introduction should be around 60 words\n- Place the conclusions in a JSON field called `conclusions`\n- The conclusions should be around 60 words\n- Use the conclusions to sum all said in the article and offer a conclusion to the reader\n- The image prompt will be used to produce a photographic cover image for the article and should depict the topics discussed in the article\n- Place the image prompt in a JSON field called `imagePrompt`\n- There should be {{ $json.words.toString() }} sections.\n- For each section provide a title and an exhaustive prompt that your team mates of Researchers can follow that will be used to write the section text.\n- Place the sections in an array field called `sections`\n- For each section provide the fields `title` and `prompt`\n- The section should follow a logical flow and not repeat the same concepts.\n- The section should be one related to the other and not isolated blocks of text. The text should be fluent and folow a linear logic.\n- Don't start the section with \"section 1\", \"section 2\", \"section 3\"... just write the title of the section\n- For the title and the section's titles don't use colons (`:`)\n- For the text, use markdown language for formatting\n- Use the SEC 10K tool for {{ $json.company }} to get information about the company\n- Go deep in the topic you treat, don't just throw some superficial info"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "maxTokens": 2048
+        }
+      },
+      "id": "7d83b4ff-26df-42ff-8b19-20f34a3d3584",
+      "name": "Plan work for team",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        400,
+        192
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# v2\nYou are a research analyst in the finance industry who works with a senior research analyst to produce an insight report \n\nYour task it to write a section for the report analyzing  {{ $('Settings').item.json.company }}.  Here is the context for the report that the senior research analyst created:\nOverall report title: {{ $('Plan work for team').item.json.message.content.title }}\nOverall report subtitle:  {{ $('Plan work for team').item.json.message.content.subtitle  }}\n\nUse the prompt the Senior research analyst created and write a section titled {{ $json.title }} using this prompt as starting point : {{ $json.prompt }}.\n\nGuidelines:\n- All information is primarily sourced from {{ $('Settings').item.json.company }} latest SEC 10-K filing and that the analysis is unbiased and factual.\n- When necessary, use wikipedia to help with the analysis\n- When doing analysis that requires financial ratios, use the available financial metrics tool as appropriate to get the most up-to-date metrics such net Debt To EBITDA, roic, peRatio.  Only use this tool as needed.\n- Just return the plain text for each section (no JSON structure).\n- Use markdown for formatting.\n- Don't add internal titles or headings.\n- The length of each section should be around {{ Math.round(($('Settings').item.json.words - 120)/ $('Settings').item.json.sections) }} words long\n- Go deep in the topic you treat, don't just throw some superficial info\n{{ $itemIndex > 0 ? \"- The previous section talks about \" + $input.all()[$itemIndex-1].json.title : \"\" }}\n{{ $itemIndex > 0 ? \"- The prompt for the previous section is \" + $input.all()[$itemIndex-1].json.prompt : \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The following section will talk about \" + $input.all()[$itemIndex+1].json.title: \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The prompt for the following section is \" + $input.all()[$itemIndex+1].json.prompt : \"\" }}\n- Consider the previous and following section what writing the text for this section. The text must be coherent with the previous and following sections.\n- This section should not repeat the concepts already exposed in the previous section.\n- This section is a part of a larger report so don't include an introduction or conclusions. This section should merge with the rest of the report.\n"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 2048
+        }
+      },
+      "id": "5fe47996-7808-4961-b867-2b56b34ed010",
+      "name": "Do detailed research",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1152,
+        192
+      ],
+      "typeVersion": 1,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "message.content",
+        "options": {
+          "encoding": "utf8"
+        }
+      },
+      "id": "10d1f434-f97d-457a-95bc-c5f279bf313e",
+      "name": "Convert to File",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2272,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "name": "nvidia_10kReport2025.txt",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1wsNIHKds58g3i8RGTldeC_JKfkS8iT4o",
+          "mode": "list",
+          "cachedResultName": "n8n_output",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1wsNIHKds58g3i8RGTldeC_JKfkS8iT4o"
+        },
+        "options": {}
+      },
+      "id": "30065ef5-15ef-4ee6-8ca4-a9b67ad3aa29",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2496,
+        192
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Yw0S1sz8cjf1RiDF",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "financial_metrics",
+        "description": "call this tool to get financial metrics for a stock ticker",
+        "workflowId": "vTNutydll5tioUwE",
+        "fields": {
+          "values": [
+            {
+              "name": "ticker",
+              "stringValue": "={{ $('Settings').item.json.company}}"
+            }
+          ]
+        }
+      },
+      "id": "9c427c12-9f70-4b9f-9f61-ce0212d03302",
+      "name": "financial metrics",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        576,
+        416
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "1327bba8-176c-40a5-8b5d-26c398b45cf7",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        608,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0ac4cf4f-bee7-4b2a-ab4b-ee7881152628",
+              "name": "API_KEY",
+              "value": "c4SQBWg1aoS8yPCENJ6jHextOx1NVUK9",
+              "type": "string"
+            },
+            {
+              "id": "fd773eb3-2542-4083-b875-ee8bde007ecf",
+              "name": "company",
+              "value": "={{ $json.ticker }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f043bf2d-9237-48c3-ad3c-b12fd07cf069",
+      "name": "FMP Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        832,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://financialmodelingprep.com/stable/ratios-ttm?symbol={{ $json.company }}&apikey={{ $json.API_KEY }}",
+        "options": {}
+      },
+      "id": "39b824c0-4ec4-4f78-893b-07fc6a473efa",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1056,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "03c27cf3-02e9-4425-97e6-ea2d57daed5e",
+              "name": "response",
+              "value": "={{ $json.toJsonString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a763b870-1285-43a0-a525-46e4e4fce389",
+      "name": "Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        1280,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "name": "financial_metrics",
+        "description": "call this tool to get financial metrics for a stock ticker",
+        "workflowId": "vTNutydll5tioUwE",
+        "fields": {
+          "values": [
+            {
+              "name": "ticker",
+              "stringValue": "={{ $('Settings').item.json.company}}"
+            }
+          ]
+        }
+      },
+      "id": "8fb9f6c1-ff38-4aee-87f9-972318182be9",
+      "name": "financial metrics1",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        1328,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Trigger from\n= financial metrics\n= financial metrics1",
+        "height": 320,
+        "width": 1056
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        480,
+        640
+      ],
+      "typeVersion": 1,
+      "id": "4be97943-e4b9-4a4f-937e-cef829e60848",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Plan work for team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "Plan work for team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEC10 Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Plan work for team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Do detailed research",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEC10 Tool1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Do detailed research",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft report": {
+      "main": [
+        [
+          {
+            "node": "Polish report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delegate work": {
+      "main": [
+        [
+          {
+            "node": "Combine all sections from researchers",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Do detailed research",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Polish report": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine all sections from researchers": {
+      "main": [
+        [
+          {
+            "node": "Draft report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan work for team": {
+      "main": [
+        [
+          {
+            "node": "Delegate work",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Do detailed research": {
+      "main": [
+        [
+          {
+            "node": "Combine all sections from researchers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "financial metrics": {
+      "ai_tool": [
+        [
+          {
+            "node": "Plan work for team",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "FMP Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FMP Settings": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "financial metrics1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Do detailed research",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "30e8654c-1518-475c-87d7-9d82f88994e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "vTNutydll5tioUwE",
+  "tags": []
+}

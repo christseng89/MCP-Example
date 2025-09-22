@@ -3,7 +3,8 @@
 ## Test n8n Webhook
 
 ```bash
-curl -X POST "http://localhost:5778/webhook-test/d707d430-f73a-4378-a6da-b7427c704cf9"   --data "text=what is overtime policy?"
+curl -X POST "http://localhost:5778/webhook/d707d430-f73a-4378-a6da-b7427c704cf9"  
+ --data "text=what is overtime policy?"
 
     {"message":"Workflow was started"}
     
@@ -25,19 +26,21 @@ ngrok http 5778
     Region                        Japan (jp)
     Latency                       105ms
     Web Interface                 http://127.0.0.1:4040
-    Forwarding                    https://679e817d34bc.ngrok-free.app -> http://localhost:5778
+    Forwarding                    https://e09bd5e2322e.ngrok-free.app -> http://localhost:5778
                                      
 ```
 
 ```bash
-curl -X POST "https://679e817d34bc.ngrok-free.app/webhook/d707d430-f73a-4378-a6da-b7427c704cf9"   --data "text=what is overtime policy?"
+curl -X POST "https://e09bd5e2322e.ngrok-free.app/webhook/d707d430-f73a-4378-a6da-b7427c704cf9"   --data "text=what is overtime policy?"
 ```
 
 ## Setup of Slack API Bot
 
 <https://api.slack.com/start/quickstart>
 
-### **Setup Steps**
+### **Slack App Setup Steps**
+
+<https://api.slack.com/apps>
 
 1. Creating an app => from scratch
 
@@ -50,7 +53,7 @@ curl -X POST "https://679e817d34bc.ngrok-free.app/webhook/d707d430-f73a-4378-a6d
 
 3. Slash Command => Create New Command
    *Command: `/askHRn8n`
-   *Request URL: `https://679e817d34bc.ngrok-free.app/webhook/d707d430-f73a-4378-a6da-b7427c704cf9`
+   *Request URL: `https://e09bd5e2322e.ngrok-free.app/webhook/d707d430-f73a-4378-a6da-b7427c704cf9`
    (replace with your actual n8n webhook URL)
    *Short Description: `Ask HR n9n Policy` => Save
 
@@ -63,3 +66,24 @@ curl -X POST "https://679e817d34bc.ngrok-free.app/webhook/d707d430-f73a-4378-a6d
 ## n8n workflow
 
 * 03 Qdrant w Slack
+
+```chat
+what is overtime policy?
+```
+
+### Docker compose
+
+```cmd
+cd n8n-workflows
+// Edit .evn PUBLIC_BASE_URL=https://e09bd5e2322e.ngrok-free.app
+docker compose down
+docker compose up -d
+```
+
+```bash
+curl -X POST "https://e09bd5e2322e.ngrok-free.app/webhook/d707d430-f73a-4378-a6da-b7427c704cf9"   --data "text=what is overtime policy?"
+```
+
+```note
+ngrok URL will be revised each time.  Need to update all the above mentioned steps accordingly.
+```

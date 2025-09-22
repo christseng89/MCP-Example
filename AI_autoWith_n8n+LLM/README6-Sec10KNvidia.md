@@ -13,16 +13,28 @@
 ## n8n Workflow
 
 *05.1 Nvidia Sec10K Stock Analysis - RAG **Activate**
+
+```chat
+what is NVDA 2024 total revenue
+
+Explain the economic and regulatory risks faced by Nvidia including international trade restrictions, tariffs, and compliance challenges as detailed in the latest SEC 10-K filing. Discuss how these risks may affect Nvidia's financial performance and strategic plans.
+
+Explain the supply chain and manufacturing risks caused by long lead times and reliance on third-party suppliers as disclosed in Nvidia's latest SEC 10-K filing and discuss how these risks may impact Nvidia's business and financial performance
+
+Explain the implications of cybersecurity risks including system breaches and operational disruptions for Nvidia as disclosed in its latest SEC 10-K filing.
+```
+
+```bash *Use curl to test the webhook*
+curl -X POST https://e09bd5e2322e.ngrok-free.app/webhook/19f5499a-3083-4783-93a0-e8ed76a9f742 -H "Content-Type: application/json"   -d '{"input":"What is NVDA 2024 total revenue","company":"nvda"}'       
+```
+
 *05.2 Nvidia Sec10K Stock Analysis - Analysis v1
+*05.2 Nvidia Sec10K Stock Analysis - Analysis v2 (with financial metrics)
 
 ```note
 Use n8n in Docker, change the localhost:5778 to n8n:5678 for 'webhook_url_sec10k_data' in 'Settings' node.
 Such as: http://n8n:5678/webhook/19f5499a-3083-...
 
-```
-
-```bash test 05.1 Nvidia Sec10K Stock Analysis - RAG
-curl -X POST http://localhost:5778/webhook/19f5499a-3083-4783-93a0-e8ed76a9f742   -H "Content-Type: application/json"   -d '{"input":"Provide SWOT Analysis for NVDA from the SEC 10-K filing","company":"nvda"}'       
 ```
 
 ```cmd

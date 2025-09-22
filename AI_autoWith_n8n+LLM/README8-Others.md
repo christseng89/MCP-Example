@@ -2,10 +2,13 @@
 
 ## 06.1 PDF to Chat with AI Vision
 
+<https://go.freightforwarding.dhl.com/glo/ocean-freight-market-update-gated>
+
 *glo-dgf-ocean-market-update.pdf
+*OFR_Market_Update_Sep25.pdf
 *06.1 PDF to Chat with AI Vision
 
-```note
+```chat
 what is the purpose of this document
 please summarize the main insights of the document
 give me the details about freight rate
@@ -203,3 +206,9 @@ what about a bubble chart?
 ```note
 Settings -> Table ID: mq0qyzxouxjapt5
 ```
+
+## 06.8 Build Your AI News Research Team - 24/7 Newsletter Automation with Citations
+
+### n8n workflow for AI News Research Team
+
+*06.8 Build Your AI News Research Team

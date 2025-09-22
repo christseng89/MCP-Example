@@ -32,8 +32,19 @@ curl \
 
 *02.1 Upserting Qdrant
 *02.2 Upserting and Querying Qdrant v1 (LLMs)
+
+```chat
+What is overtime policy?
+what is the dress code policy?
+```
+
 *02.2 Upserting and Querying Qdrant v2 (AI Agents)
-  
+
+```chat
+What is overtime policy from Qdrant?
+what is the dress code policy from Qdrant?
+```
+
 ## PostgreSQL with pgvector
 
 * Create n8n Database => n8n => Query Tool
