@@ -1,0 +1,628 @@
+{
+  "name": "06.2 Multi-agent PDF to Ghost Blog",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "af6df9fb-217b-4f92-9f7d-85a919fa68bc",
+      "name": "Merge chapters title and text",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1760,
+        128
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "jsCode": "let article = \"\";\n\n// Introduction\narticle += $('Project Planner').first().json.message.content.introduction;\n\nfor (const item of $input.all()) {\n  article += \"<strong>\" + item.json.title + \"</strong>\";\n  article += item.json.output;\n  article += \"<br>\";\n}\n\n// Conclusions\narticle += \"<strong> Conclusions </strong>\";\narticle += $('Project Planner').first().json.message.content.conclusions;\n\n\nreturn [\n  {\n    \"article\": article\n  }\n];"
+      },
+      "id": "2ee88172-1eff-45b4-bc97-c37b85c2134c",
+      "name": "Final article text",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2032,
+        128
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "path": "f3822072-36a2-4f5a-8fe8-ca4b513f354c",
+        "formTitle": "PDF",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Tone",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Professional"
+                  },
+                  {
+                    "option": "Causal"
+                  },
+                  {
+                    "option": "Witty"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Number of words",
+              "placeholder": "1000",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Number of sections",
+              "placeholder": "6",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "File",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "ghost-admin-api-key",
+              "placeholder": "68ca96da4254...",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0e6700c7-49d6-4e5e-9e4c-5e3a615d3fd1",
+      "name": "n8n Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        128
+      ],
+      "webhookId": "f3822072-36a2-4f5a-8fe8-ca4b513f354c"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "File",
+        "options": {}
+      },
+      "id": "af967fd1-303e-493b-baa8-18fa2830423b",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        32,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "eb5086c0-f23c-4ff9-a685-5351c790a295",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2528,
+        304
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.chapters",
+        "options": {}
+      },
+      "id": "3f5117fa-9f31-4663-b664-7f65d2616a16",
+      "name": "Delegate to Writers",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        1040,
+        128
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=Article to edit:\n {{ $json.article }}\n\nProvide polished output in html format. ",
+        "options": {
+          "systemMessage": "=You are an expert Editor specializing in refining and polishing content to ensure it meets the highest quality standards. Your role is to review and improve the written material produced by the Writer. Your task is to provide an highly polished article. \n\nInstructions:\n1. Carefully read the entire content piece.\n2. Check for grammar, spelling, and punctuation errors.\n3. Ensure consistency in tone, style, and voice throughout the piece.\n4. Verify that the content aligns with the original brief and project requirements.\n5. Improve sentence structure and flow for better readability.\n6. Fact-check and verify the accuracy of information and citations.\n7. Optimize headlines, subheadings, and formatting for better engagement.\n8. Suggest improvements or additions to enhance the overall quality of the content.\n\n"
+        }
+      },
+      "id": "5d78d2a9-7d6c-40a1-8036-1608fea65611",
+      "name": "Editor",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        2240,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Suggest an engaging title based on the following article.  Please use plain text, no formating of any kind.\n {{ $json.output }}"
+      },
+      "id": "1e3c7df2-a8ba-4354-b2cf-2ae81ce27f51",
+      "name": "Create title",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2720,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f74e5e87-9231-4140-8ca3-ec7987b33364",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        224,
+        304
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You are a Content Analyst specialized in document analysis and content structuring. Your task is to analyze a given document and create a comprehensive table of contents that can serve as the basis for a blog post. Follow these steps:\n\n1. Carefully read and understand the entire document provided.\n\n2. Identify the main topic or theme of the document.\n\n3. Recognize the key points, arguments, or sections within the document.\n\n4. Organize these key elements into a logical and hierarchical structure.\n\n5. Create a table of contents with main sections and subsections that accurately reflect the document's content and flow.\n\n6. Ensure that the table of contents is suitable for a blog post format, with clear and engaging headings.\n\n7. Include a brief introduction at the beginning of the table of contents to summarize the main topic.\n\n8. Add a conclusion section at the end to wrap up the key points.\n\nPlease format your response as follows:\n\nDocument Topic: [Brief statement of the main topic]\n\nTable of Contents:\n\nI. Introduction\n   A. [Subtopic]\n   B. [Subtopic]\n\nII. [Main Section 1]\n    A. [Subtopic]\n    B. [Subtopic]\n    C. [Subtopic]\n\nIII. [Main Section 2]\n     A. [Subtopic]\n     B. [Subtopic]\n\n[Continue with additional main sections as needed]\n\nX. Conclusion\n   A. [Summary of key points]\n   B. [Final thoughts or call to action]"
+        }
+      },
+      "id": "f9426572-74fa-4d22-a266-631b2485f280",
+      "name": "Content Analyst",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        240,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write the title, the subtitle, the chapters details, the introduction, the conclusions, and an image prompt for a SEO-friendly article.  \n\nPlease use this set of topics to create chapters:\n{{ $json.output }}\n\n\nInstructions:\n- Place the article title in a JSON field called `title`\n- Place the subtitle in a JSON field called `subtitle`\n- Place the introduction in a JSON field called `introduction`\n- In the introduction introduce the topic that is then explored in depth in the rest of the text\n- The introduction should be around 100 words\n- Place the conclusions in a JSON field called `conclusions`\n- The conclusions should be around 100 words\n- Use the conclusions to sum all said in the article and offer a conclusion to the reader\n- The image prompt will be used to produce a photographic cover image for the article and should depict the topics discussed in the article\n- Place the image prompt in a JSON field called `imagePrompt`\n- There should be {{ $('n8n Form Trigger').item.json['Number of sections'].toString() }} chapters.\n- For each chapter provide a title and an exaustive prompt that will be used to write the chapter text.\n- Place the chapters in an array field called `chapters`\n- For each chapter provide the fields `title` and `prompt`\n- The chapters should follow a logical flow and not repeat the same concepts.\n- The chapters should be one related to the other and not isolated blocks of text. The text should be fluent and folow a linear logic.\n- Don't start the chapters with \"Chapter 1\", \"Chapter 2\", \"Chapter 3\"... just write the title of the chapter\n- For the title and the capthers' titles don't use colons (`:`)\n- For the text, use html format\n- Please write in a style that is {{ $('n8n Form Trigger').item.json.Tone }}\n- Go deep in the topic you treat, don't just throw some superficial info\n\n\nPlease use this text as the source for all the information needed to create the chapter:\n{{ $('Extract from File').item.json.text }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "maxTokens": 2048
+        }
+      },
+      "id": "7edc4c40-ea0f-48da-9f7e-eeaaee5e9ea5",
+      "name": "Project Planner",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        640,
+        128
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Extract PDF and analyze content ⛏️\n",
+        "height": 479,
+        "width": 524,
+        "color": 5
+      },
+      "id": "495258fc-9190-431b-a341-02020414162a",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ca3f524c-e097-4916-964a-9ae137389424",
+      "name": "OpenAI Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        304
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Plan the work and Delegate to writers 📅\n",
+        "height": 511,
+        "width": 577,
+        "color": 5
+      },
+      "id": "8cdbbc9a-d084-4d1f-a6cd-1b714cdc757c",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Team of writers working on each chapter ✍️",
+        "height": 523,
+        "width": 649,
+        "color": 5
+      },
+      "id": "0c4c992e-ae10-4f8d-ba22-0a94e245bcf8",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Editor polishing draft 📝 ",
+        "height": 525,
+        "width": 651,
+        "color": 5
+      },
+      "id": "71dad219-c3ad-42b3-9f0c-0993524a6bd8",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Publish to Ghost 📰",
+        "height": 525,
+        "width": 542,
+        "color": 5
+      },
+      "id": "5e16fa9d-3237-4aa2-9fd6-aee3a54a0913",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=Write a chapter for the article: {{ $('Project Planner').item.json.message.content.title }}, {{ $('Project Planner').item.json.message.content.subtitle }}\n\nWrite the chapter titled {{ $json.title }}that {{ $json.prompt }}.\n\nDocument text as source of information to use to write the chapter:\n{{ $('Extract from File').item.json.text }}",
+        "options": {
+          "systemMessage": "=You are a skilled writer specializing in creating engaging and informative content. Your task is to write a chapter in the blog.\n\nGuidelines:\n- Just return the plain text for each chapter (no JSON structure).\n- Use html format for output\n- Don't add internal titles or headings.\n- The length of each chapther should be around {{ Math.round($('n8n Form Trigger').item.json['Number of words'] - 120)/ $('n8n Form Trigger').item.json['Number of sections']}} words long- Go deep in the topic you treat, don't just throw some superficial info\n{{ $itemIndex > 0 ? \"- The previous chapter talks about \" + $input.all()[$itemIndex-1].json.title : \"\" }}\n{{ $itemIndex > 0 ? \"- The promt for the previous chapter is \" + $input.all()[$itemIndex-1].json.prompt : \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The following chapter will talk about \" + $input.all()[$itemIndex+1].json.title: \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The prompt for the following chapter is \" + $input.all()[$itemIndex+1].json.prompt : \"\" }}\n- Consider the previous and following chapters what writing the text for this chapter. The text must be coherent with the previous and following chapters.\n- This chapter should not repeat the concepts already exposed in the previous chapter.\n- This chapter is a part of a larger article so don't include an introduction or conclusions. This chapter should merge with the rest of the article.\n- Please write in a style that is {{ $('n8n Form Trigger').item.json.Tone }}\n"
+        }
+      },
+      "id": "d92ddcc4-4a1a-4c7c-a7e6-c5a590bd63d8",
+      "name": "Writers",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1344,
+        128
+      ],
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "={{ $('Editor').item.json.output }}",
+        "name": "={{$items(\"n8n Form Trigger\")[0].json.File.filename.replace(/\\.[^/.]+$/, \"\")}}.html",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1wsNIHKds58g3i8RGTldeC_JKfkS8iT4o",
+          "mode": "list",
+          "cachedResultName": "n8n_output",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1wsNIHKds58g3i8RGTldeC_JKfkS8iT4o"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3072,
+        128
+      ],
+      "id": "83610e2f-f57a-4031-ae37-71c269d5b1e8",
+      "name": "Create file from text",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Yw0S1sz8cjf1RiDF",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ai-automation-with-n8n.ghost.io/ghost/api/admin/posts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "source",
+              "value": "html"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Ghost {{ $json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"posts\": [\n    {\n      \"title\": \"{{ $('Create title').item.json.text }}\",\n      \"html\": \"{{ $('Editor').item.json.output }}\",\n      \"status\": \"published\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3072,
+        336
+      ],
+      "id": "54074f9f-e7df-431a-8c7d-cb56d74c0d09",
+      "name": "HTTP Post to Ghost"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Import built-in crypto ---\nconst crypto = require('crypto');\n\n// --- Get form values ---\nconst title = $input.first().json.text//$input.first().json.text; \nconst html = $('Editor').first().json.output//$('Editor').first().json.output;\nconst status = \"published\";\n\n// --- Build Ghost posts body ---\nconst body = {\n  posts: [\n    {\n      title,\n      html: String(html)\n        .replace(/\\\\/g, \"\\\\\\\\\")\n        .replace(/\"/g, '\\\\\"')\n        .replace(/\\r?\\n/g, \"\\\\n\"),\n      status\n    }\n  ]\n};\n\n// --- Get Ghost Admin Key from Form Trigger (format: \"<id>:<secretHex>\") ---\nconst key = $('n8n Form Trigger').first().json['ghost-admin-api-key'] // $('n8n Form Trigger').first().json['ghost-admin-api-key'];\nif (!key) {\n  throw new Error(\"Missing ghost-admin-api-key from Form Trigger\");\n}\n\nconst [id, secretHex] = key.split(':');\nif (!id || !secretHex) {\n  throw new Error(\"Invalid GHOST_ADMIN_KEY format.\");\n}\n\n// --- Helper for base64url ---\nfunction base64url(input) {\n  return Buffer.from(input)\n    .toString('base64')\n    .replace(/=/g, '')\n    .replace(/\\+/g, '-')\n    .replace(/\\//g, '_');\n}\n\n// --- JWT Header & Payload ---\nconst now = Math.floor(Date.now() / 1000);\nconst header = { alg: 'HS256', typ: 'JWT', kid: id };\nconst payload = { iat: now, exp: now + 60 * 60, aud: '/admin/' };\n\n// --- Encode ---\nconst encodedHeader = base64url(JSON.stringify(header));\nconst encodedPayload = base64url(JSON.stringify(payload));\nconst signingInput = `${encodedHeader}.${encodedPayload}`;\n\n// --- Sign with HMAC-SHA256 ---\nconst signature = crypto\n  .createHmac('sha256', Buffer.from(secretHex, 'hex'))\n  .update(signingInput)\n  .digest();\nconst encodedSig = base64url(signature);\n\n// --- Final JWT ---\nconst token = `${signingInput}.${encodedSig}`;\n\n// --- Return both post body & token ---\nreturn [{\n  json: {\n    token,\n    body\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2800,
+        336
+      ],
+      "id": "137cacf8-9730-4b0a-9266-c1640aa054e5",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Merge chapters title and text": {
+      "main": [
+        [
+          {
+            "node": "Final article text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Editor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Create title",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Content Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delegate to Writers": {
+      "main": [
+        [
+          {
+            "node": "Merge chapters title and text",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Writers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final article text": {
+      "main": [
+        [
+          {
+            "node": "Editor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor": {
+      "main": [
+        [
+          {
+            "node": "Create title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create title": {
+      "main": [
+        [
+          {
+            "node": "Create file from text",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Analyst",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Analyst": {
+      "main": [
+        [
+          {
+            "node": "Project Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Planner": {
+      "main": [
+        [
+          {
+            "node": "Delegate to Writers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Writers",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writers": {
+      "main": [
+        [
+          {
+            "node": "Merge chapters title and text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Post to Ghost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bc0735cf-9de8-4936-99cd-2fb0f0b2ff0a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "2Pak92YEvIZroLhw",
+  "tags": []
+}

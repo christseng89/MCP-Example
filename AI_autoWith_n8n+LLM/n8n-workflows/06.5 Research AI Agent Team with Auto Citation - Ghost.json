@@ -1,0 +1,751 @@
+{
+  "name": "06.5 Research AI Agent Team with Auto Citation - Ghost",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "bf84dc71-84fc-4bc2-acc4-f04572707cde",
+      "name": "Merge chapters title and text",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2544,
+        160
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "jsCode": "let article = \"\";\n\n// Introduction\narticle += $('Project Planner').first().json.output.introduction;\n\nfor (const item of $input.all()) {\n  article += \"<strong>\" + item.json.title + \"</strong>\";\n  article += item.json.output;\n  article += \"<br>\";\n}\n\n// Conclusions\narticle += \"<strong> Conclusions </strong>\";\narticle += $('Project Planner').first().json.output.conclusions;\n\n\nreturn [\n  {\n    \"article\": article\n  }\n];"
+      },
+      "id": "c6eb3bcc-9f69-41c1-bced-846932075b62",
+      "name": "Final article text",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2800,
+        160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "path": "b3c081e2-0f5c-4b59-9cd6-257d808d280f",
+        "formTitle": "Topic Researcher",
+        "formDescription": "Provides in depth report on topic",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic",
+              "placeholder": "Effective parenting methods",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Tone",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Professional"
+                  },
+                  {
+                    "option": "Causal"
+                  },
+                  {
+                    "option": "Witty"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Number of words",
+              "placeholder": "1000",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Number of sections",
+              "placeholder": "6",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "ghost-admin-api-key",
+              "placeholder": "68ca96da4254690001aa6327: ...",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "66787a04-2f18-486b-ac87-61304716ffd7",
+      "name": "n8n Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        704,
+        160
+      ],
+      "webhookId": "b3c081e2-0f5c-4b59-9cd6-257d808d280f",
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Suggest an engaging title based on the following article.  Please use plain text, no formating of any kind. Less than 10 words in the title.\n {{ $json.output }}"
+      },
+      "id": "63ca723c-7fb2-4c37-895e-015b2071b278",
+      "name": "Create title",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        3504,
+        160
+      ],
+      "typeVersion": 1.4
+    },
+    {
+      "parameters": {
+        "content": "## Research Leader 🔬\nBuild table of contents\n\n",
+        "height": 428.96012242189374,
+        "width": 457.8111495531946,
+        "color": 7
+      },
+      "id": "aba83eb9-9c63-46c9-94be-84079c200b70",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        880,
+        48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Plan the work and Delegate to writers 📅\n",
+        "height": 430.74703747002076,
+        "width": 576.6288165877254,
+        "color": 7
+      },
+      "id": "80946f67-1e4e-484b-8a7d-3e2f7a623277",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1376,
+        48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Team of Research Assistants  ✍️\nEach Assistant works on a chapter",
+        "height": 434.28473716292865,
+        "width": 677.4186673497638,
+        "color": 7
+      },
+      "id": "49439033-d119-42f1-a9b0-0747222775b4",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2048,
+        48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Editor polishing draft 📝 ",
+        "height": 428.9420572202205,
+        "width": 650.6330068295307,
+        "color": 7
+      },
+      "id": "1c01ecc2-4506-443b-8855-9c1a858fd6a9",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2768,
+        48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Publish and sent Gmail 📰\nGmail node is also provided in de-activated mode. \nThis can be activated and used instead of Ghost",
+        "height": 701,
+        "width": 606,
+        "color": 7
+      },
+      "id": "ba7e08f3-8063-46d3-901b-8ac98d2d66b5",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3472,
+        48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.chapters",
+        "options": {}
+      },
+      "id": "3660947e-fae8-4b2f-914c-90a17da0fb00",
+      "name": "Delegate to Research Assistants",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        1808,
+        160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a chapter for the article: {{ $('Project Planner').item.json.output.subtitle }}\n\nWrite the chapter titled {{ $json.title }}that {{ $json.prompt }}.\n\nMake sure to include citations in the final output.  They are provided by the SerpAPI search tool\n",
+        "options": {
+          "systemMessage": "=You are a dedicated Research Assistant AI agent, working as part of a research team under the guidance of a Research Leader and Project Planner. Your task is to write a chapter in the as part of the overall research into a topic.\n\nGuidelines:\n- Just return the plain text for each chapter (no JSON structure).\n- Use the SerpAPI search tool to research the topic in the chapter\n- Use html format for output\n- Don't add internal titles or headings.\n- The length of each chapther should be around {{ Math.round($('n8n Form Trigger').item.json['Number of words'] - 120)/ $('n8n Form Trigger').item.json['Number of sections']}} words long- Go deep in the topic you treat, don't just throw some superficial info\n{{ $itemIndex > 0 ? \"- The previous chapter talks about \" + $input.all()[$itemIndex-1].json.title : \"\" }}\n{{ $itemIndex > 0 ? \"- The promt for the previous chapter is \" + $input.all()[$itemIndex-1].json.prompt : \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The following chapter will talk about \" + $input.all()[$itemIndex+1].json.title: \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The prompt for the following chapter is \" + $input.all()[$itemIndex+1].json.prompt : \"\" }}\n- Consider the previous and following chapters what writing the text for this chapter. The text must be coherent with the previous and following chapters.\n- This chapter should not repeat the concepts already exposed in the previous chapter.\n- This chapter is a part of a larger article so don't include an introduction or conclusions. This chapter should merge with the rest of the article.\n- Please write in a style that is {{ $('n8n Form Trigger').item.json.Tone }}\n- Please use the SerpAPI search tool as source of information to use to write the chapter\n- Make sure to include citations from the SerpAPI search tool in your writing\n\nCitation Guidelines:\n- Use the SerpAPI search tool to gather information and cite sources\n- For each major claim or piece of information, include a hyperlinked inline citation\n- Format citations as HTML links with descriptive text:\n  <a href=\"[URL]\">[Source: Publication Name]</a>\n  Examples of proper citation format:\n  - \"According to recent data <a href=\"https://www.mckinsey.com/article-url\">[Source: McKinsey & Company]</a>...\"\n- When directly quoting from a source, use quotation marks and include the citation\n- Integrate citations naturally into the flow of the text without disrupting readability\n- Ensure all cited information is relevant and supports the chapter's main points\n- Verify that citations are accurate and come directly from the SerpAPI search results\n- Balance cited content with original analysis and synthesis\n- When citing statistics or specific data points, include the year if available in the citation\n\n\nContent Integration:\n- Smoothly blend cited information with original analysis\n- Use transitions to connect cited material with your own insights\n- Maintain the specified tone while incorporating citations\n- Ensure citations support rather than dominate the narrative\n- Use a mix of paraphrasing and direct quotes when citing sources\n\nSources Section Requirements:\n- At the end of your chapter, include a \"Sources\" section\n- Format the sources section as follows:\n\n<hr>\n<h3>Sources</h3>\n<ul>\n<li><a href=\"[URL]\">[Publication Name] - [Article Title]</a></li>\n[Additional sources...]\n</ul>\n\nSource List Guidelines:\n- List each unique source used in your chapter\n- Include the full URL from the SerpAPI search results\n- Order sources alphabetically by publication name\n- Include article titles when available\n- Each source should only appear once in the list\n- Ensure all URLs are functional and properly formatted\n- Include all sources referenced in your in-text citations\n- Match source names exactly as used in in-text citations\n\nExample Source Entry:\n<li><a href=\"https://www.mckinsey.com/article-path\">McKinsey & Company - The Future of AI in Business</a></li>\n\nQuality Control:\n- Verify that every in-text citation has a corresponding entry in the Sources section\n- Check that all URLs are complete and accurate\n- Ensure consistency between in-text citation names and source list entries\n- Confirm all cited information is relevant and supports the chapter's main points\n- Balance cited content with original analysis and synthesis\n\n\nToday's date is : {{ $now }}\n",
+          "maxIterations": 5
+        }
+      },
+      "id": "2aaf0e74-48aa-42b1-8378-f5a17040e6a2",
+      "name": "Research Assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2128,
+        160
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=Article to edit:\n {{ $json.article }}\n\nProvide polished output in html format. ",
+        "options": {
+          "systemMessage": "=You are an expert editor. Refine and SEO-optimize the article while preserving meaning and citations.\n\n- Correct grammar, tone, flow, and readability.\n- Optimize headings and formatting for SEO.\n- Keep inline citations [Source: Publication Name] → hyperlink the name [Source: [Publication](URL)].\n- Deduplicate and standardize citations; add a single \"Sources\" section at the end with <li><a href=\"[URL]\">[Publication] – [Article Title]</a></li>.\n- Use semantic HTML tags (<h1>, <h2>, <p>).\n- Return only the polished article as HTML, no extra text.\n\nToday’s date: {{ $now }}"
+        }
+      },
+      "id": "732e9d9e-28fb-44a9-bb3f-8d5647d3196a",
+      "name": "Editor",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3024,
+        160
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "content": "## Start here: Step-by Step Youtube Tutorial :star:\n\n[![Multi-Agent Research team ](https://img.youtube.com/vi/LSPmrCX_cJI/sddefault.jpg)](https://youtu.be/LSPmrCX_cJI)\n",
+        "height": 550,
+        "width": 567,
+        "color": 7
+      },
+      "id": "8eedb0c3-6d99-4b88-99c7-503b1c04eaf7",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1296,
+        656
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxRetries": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        368
+      ],
+      "id": "1feca39a-c68d-4cf3-a967-2349ce0a3350",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "timeout": 100000,
+          "maxRetries": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        992,
+        352
+      ],
+      "id": "089afd4c-efae-48cd-b954-5bacf5ba2ad2",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseFormat": "json_object",
+          "maxRetries": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        368
+      ],
+      "id": "624be4cb-ec7a-4a30-aeda-abf9203d4e3e",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxRetries": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        3312,
+        368
+      ],
+      "id": "f068a7db-ebe1-456a-9fa4-b7e5d653cac0",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "samfire5200@gmail.com",
+        "subject": "={{ $json.text }}",
+        "message": "={{ $('Editor').item.json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3840,
+        160
+      ],
+      "id": "9121f49a-562e-4fdf-802c-ad7847ef3049",
+      "name": "Send a message1",
+      "webhookId": "a7e27158-83d4-4a95-9bd2-69b973827a41",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jErIXCJwUvolRuhq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ai-automation-with-n8n.ghost.io/ghost/api/admin/posts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "source",
+              "value": "html"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Ghost {{ $json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"posts\": [\n    {\n      \"title\": \"{{ $json.body.posts[0].title }}\",\n      \"html\": \"{{ $json.body.posts[0].html }}\",\n      \"status\": \"published\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3856,
+        416
+      ],
+      "id": "d8ff3d63-b9b0-4990-8022-ebd5da5fb097",
+      "name": "HTTP Post to Ghost"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Import built-in crypto ---\nconst crypto = require('crypto');\n\n// --- Get form values ---\nconst title = $input.first().json.text; \nconst html = $('Editor').first().json.output;\nconst status = \"published\";\n\n// --- Build Ghost posts body ---\nconst body = {\n  posts: [\n    {\n      title,\n      html: String(html)\n        .replace(/\\\\/g, \"\\\\\\\\\")\n        .replace(/\"/g, '\\\\\"')\n        .replace(/\\r?\\n/g, \"\\\\n\"),\n      status\n    }\n  ]\n};\n\n// --- Get Ghost Admin Key from Form Trigger (format: \"<id>:<secretHex>\") ---\nconst key = $('n8n Form Trigger').first().json['ghost-admin-api-key'];\nif (!key) {\n  throw new Error(\"Missing ghost-admin-api-key from Form Trigger\");\n}\n\nconst [id, secretHex] = key.split(':');\nif (!id || !secretHex) {\n  throw new Error(\"Invalid GHOST_ADMIN_KEY format.\");\n}\n\n// --- Helper for base64url ---\nfunction base64url(input) {\n  return Buffer.from(input)\n    .toString('base64')\n    .replace(/=/g, '')\n    .replace(/\\+/g, '-')\n    .replace(/\\//g, '_');\n}\n\n// --- JWT Header & Payload ---\nconst now = Math.floor(Date.now() / 1000);\nconst header = { alg: 'HS256', typ: 'JWT', kid: id };\nconst payload = { iat: now, exp: now + 60 * 60, aud: '/admin/' };\n\n// --- Encode ---\nconst encodedHeader = base64url(JSON.stringify(header));\nconst encodedPayload = base64url(JSON.stringify(payload));\nconst signingInput = `${encodedHeader}.${encodedPayload}`;\n\n// --- Sign with HMAC-SHA256 ---\nconst signature = crypto\n  .createHmac('sha256', Buffer.from(secretHex, 'hex'))\n  .update(signingInput)\n  .digest();\nconst encodedSig = base64url(signature);\n\n// --- Final JWT ---\nconst token = `${signingInput}.${encodedSig}`;\n\n// --- Return both post body & token ---\nreturn [{\n  json: {\n    token,\n    body\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        416
+      ],
+      "id": "eba31bed-1957-40b3-8ec8-b5b77033391e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write the title, the subtitle, the chapters details, the introduction, the conclusions, and an image prompt for a SEO-friendly article.  \n\nPlease use this set of topics to create chapters:\n{{ $json.output }}\n\n\nInstructions:\n- Place the article title in a JSON field called `title`\n- Place the subtitle in a JSON field called `subtitle`\n- Place the introduction in a JSON field called `introduction`\n- In the introduction introduce the topic that is then explored in depth in the rest of the text\n- The introduction should be around 100 words\n- Place the conclusions in a JSON field called `conclusions`\n- The conclusions should be around 100 words\n- Use the conclusions to sum all said in the article and offer a conclusion to the reader\n- The image prompt will be used to produce a photographic cover image for the article and should depict the topics discussed in the article\n- Place the image prompt in a JSON field called `imagePrompt`\n- There should be {{ $('n8n Form Trigger').item.json['Number of sections'].toString() }} chapters.\n- For each chapter provide a title and an exaustive prompt that will be used to write the chapter text.\n- Place the chapters in an array field called `chapters`\n- For each chapter provide the fields `title` and `prompt`\n- The chapters should follow a logical flow and not repeat the same concepts.\n- The chapters should be one related to the other and not isolated blocks of text. The text should be fluent and folow a linear logic.\n- Don't start the chapters with \"Chapter 1\", \"Chapter 2\", \"Chapter 3\"... just write the title of the chapter\n- For the title and the capthers' titles don't use colons (`:`)\n- For the text, use html format\n- Please write in a style that is {{ $('n8n Form Trigger').item.json.Tone }}\n- Go deep in the topic you treat, don't just throw some superficial info\n- Please use SerpAPI tool as source to do research on the topics needed to create the chapter:\n\nToday's date is : {{ $now }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a helpful assistant.\n\nYou must output one JSON object only.\nDo not include markdown fences, explanations, or any keys not listed below.\n\nTop-level keys (and only these):\n\n* subtitle (string)\n* introduction (string)\n* conclusions (string)\n* imagePrompt (string)\n* chapters (array of chapter objects)\n\nChapters rules:\n\n* chapters is an array.\n* Each item is an object with exactly these two keys:\n\n  * title (string)\n  * prompt (string)\n* No other keys are allowed inside chapter objects.\n\nValidation constraints to follow:\n\n* All required: subtitle, introduction, conclusions, imagePrompt, chapters.\n* No additional properties anywhere (top level or inside chapters).\n* Return valid JSON (parseable).\n\nOutput format reminder:\nReturn only the JSON object matching the schema above. No prose, no code blocks, no comments."
+        }
+      },
+      "id": "46a7504c-c3f2-407f-817c-0afc6bb54124",
+      "name": "Project Planner",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1440,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic to research: {{ $json.Topic }}",
+        "options": {
+          "systemMessage": "=You are Research Leader specialized in comprehensive topic analysis, research and content structuring. Your task is to create an enriched, research-backed table of contents for a given topic. \n\nFollow these steps:\n1. Analyze the provided topic thoroughly.\n\n2. Conduct web research to gather current insights, trends, and expert perspectives on the topic.\n\n3. Synthesize the gathered information to identify:\n   - Core concepts and principles\n   - Current trends and developments\n   - Expert opinions and best practices\n   - Real-world applications and examples\n   - Potential challenges and solutions\n\n4. Create a comprehensive table of contents that:\n   - Reflects both foundational knowledge and current developments\n   - Incorporates relevant case studies and examples\n   - Addresses common questions and concerns\n   - Includes practical applications and future implications\n\n5. Structure the content hierarchically, ensuring:\n   - Logical flow and progression\n   - Clear relationships between sections\n   - Balanced coverage of theoretical and practical aspects\n   - Integration of research-backed insights\n\nPlease format your response as follows:\n\nTopic Analysis:\n[Brief overview of the topic and its significance based on current research]\n\nKey Research Insights:\n- [Insight 1 from web research]\n- [Insight 2 from web research]\n- [Insight 3 from web research]\n\nProposed Table of Contents:\n\nI. Introduction\n   A. Topic Overview and Current Relevance\n   B. Key Trends and Developments\n   C. Why This Matters Now\n\nII. Background and Context\n    A. Historical Development\n    B. Fundamental Concepts\n    C. Current State of the Field\n\nIII. [Main Theme 1 from Research]\n     A. [Key Finding/Aspect]\n     B. [Expert Perspectives]\n     C. [Real-world Applications]\n\nIV. [Main Theme 2 from Research]\n    A. [Key Finding/Aspect]\n    B. [Case Studies]\n    C. [Practical Implications]\n\n[Continue with additional research-based sections]\n\nIX. Future Perspectives\n    A. Emerging Trends\n    B. Potential Developments\n    C. Recommendations\n\nX. Conclusion\n   A. Summary of Key Insights\n   B. Actionable Takeaways\n   C. Final Thoughts\n\nResearch Sources:\n[List of key sources consulted]\n\nUsage Instructions:\n1. Provide a specific topic you want to analyze\n2. The AI will conduct web research using available tools including SerpAPI search tool\n3. Based on the research, it will generate a comprehensive, current, and well-structured table of contents\n4. Each section will be enriched with recent findings and expert insights\n5. The final structure will be suitable for various content formats (blog posts, articles, whitepapers)\n\nToday's date is {{ $now }}"
+        }
+      },
+      "id": "c8fb20b8-a123-4768-a1a0-5387399d60a0",
+      "name": "Research Leader 🔬",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        960,
+        160
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"subtitle\": {\n      \"type\": \"string\"\n    },\n    \"introduction\": {\n      \"type\": \"string\"\n    },\n    \"conclusions\": {\n      \"type\": \"string\"\n    },\n    \"imagePrompt\": {\n      \"type\": \"string\"\n    },\n    \"chapters\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"title\": {\n            \"type\": \"string\"\n          },\n          \"prompt\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"title\",\n          \"prompt\"\n        ]\n      }\n    }\n  },\n  \"required\": [\n    \"subtitle\",\n    \"introduction\",\n    \"conclusions\",\n    \"imagePrompt\",\n    \"chapters\"\n  ]\n}"
+      },
+      "id": "29231ff8-71e6-4576-ba74-1447b79e1462",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        352
+      ],
+      "id": "50c2e156-a20c-4e94-b1e9-8b542bc29dfc",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "Au453rAcdgfMSQFp",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        368
+      ],
+      "id": "12286df4-b408-42a3-aa12-b83a887117cc",
+      "name": "SerpAPI1",
+      "credentials": {
+        "serpApi": {
+          "id": "Au453rAcdgfMSQFp",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        368
+      ],
+      "id": "94c973b5-c962-47ae-a643-7a13aae42256",
+      "name": "SerpAPI2",
+      "credentials": {
+        "serpApi": {
+          "id": "Au453rAcdgfMSQFp",
+          "name": "SerpAPI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create title": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Research Leader 🔬",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final article text": {
+      "main": [
+        [
+          {
+            "node": "Editor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge chapters title and text": {
+      "main": [
+        [
+          {
+            "node": "Final article text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delegate to Research Assistants": {
+      "main": [
+        [
+          {
+            "node": "Merge chapters title and text",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Research Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Assistant": {
+      "main": [
+        [
+          {
+            "node": "Merge chapters title and text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor": {
+      "main": [
+        [
+          {
+            "node": "Create title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Leader 🔬",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Project Planner",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Editor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Create title",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Post to Ghost": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Post to Ghost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Project Planner",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Leader 🔬": {
+      "main": [
+        [
+          {
+            "node": "Project Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Planner": {
+      "main": [
+        [
+          {
+            "node": "Delegate to Research Assistants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Leader 🔬",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Project Planner",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2ae10e14-b627-4661-bad0-e9be2a05567a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "A9yGzQvGtWNwO6Iw",
+  "tags": []
+}

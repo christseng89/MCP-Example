@@ -1,0 +1,442 @@
+{
+  "name": "06.4 Technical Analyst for Stock AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        -160
+      ],
+      "id": "7022e942-8cc4-4c09-b5fc-6d683baf254f",
+      "name": "When chat message received",
+      "webhookId": "b0ceb9f0-f3dc-450e-99c6-0fd151f7de4a"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        48
+      ],
+      "id": "4166ef8d-3351-4a1c-8fd1-565eef5bbd5d",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "NqtAvQ04WzK0AIdK",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        48
+      ],
+      "id": "1b18871d-a2ff-432d-bbef-1446b7e5b133",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e37e64f6-64e7-4fbd-9ea1-e9d3ef99b39c",
+              "name": "response",
+              "type": "string",
+              "value": "={{ $json.text }}\n\nHere is the URL to the graph :\n\n{{ $('Tradingview Chart').item.json.url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dc200abd-df16-4b63-9d1d-c82095c505d6",
+      "name": "Set 'response' value",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2496,
+        -112
+      ],
+      "typeVersion": 3.3
+    },
+    {
+      "parameters": {
+        "content": "## Technical analysis\n### Please update the exchange in settings.  Defaults to NYSE",
+        "height": 368,
+        "width": 1456,
+        "color": 7
+      },
+      "id": "45ed769f-3922-45c5-b851-30e055e3c670",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "94bab3d9-9ca4-4d50-8dea-626b1a65145b",
+      "name": "Download Chart",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1936,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert financial analyst tasked with providing a comprehensive technical analysis of a stock. Your analysis will be based on various technical indicators and will provide detailed insights for potential investors or traders in html format.\n\nThe company you will analyze is:\n{{ $('Settings').item.json.company }}\n\n\nPlease provide a thorough technical analysis of {{ $('Settings').item.json.company }}'s stock using the following indicators. For each indicator, first explain its significance and how to interpret it, then analyze the specific aspects requested. Use numerical values and specific price levels wherever possible.\n\n1. Candlestick Patterns & Price Trends\n\nBefore analyzing, list out the key aspects you need to consider for this indicator. \n\n- Explain the significance of candlestick patterns and price trends in technical analysis.\n- Describe how to interpret green and red candles, long wicks, and common patterns like doji, hammers, or engulfing patterns.\n- Analyze the following aspects for {{ $('Settings').item.json.company }}:\n  - Overall trend direction\n  - Significant candlestick patterns observed\n  - Key price levels, including any breakouts or breakdowns\n- State any assumptions you're making based on the available information.\n\n2. Relative Strength Index (RSI)\n\nBefore analyzing, list out the key aspects you need to consider for this indicator. \n\n- Explain what the RSI measures and how to interpret its values, including overbought and oversold conditions.\n- Describe the significance of RSI divergences from price.\n- Analyze the following for {{ $('Settings').item.json.company }}:\n  - Current RSI value and its direction\n  - Presence of any divergences between RSI and price\n  - Any overbought or oversold conditions\n- State any assumptions you're making based on the available information.\n\n3. Directional Movement Index (DMI)\n\nBefore analyzing, list out the key aspects you need to consider for this indicator.:\n\n- Describe the components of the DMI (+DMI, -DMI, and ADX) and explain how to interpret them.\n- Include explanations of what constitutes strong trends and the significance of crossovers.\n- Analyze the following for {{ $('Settings').item.json.company }}:\n  - Current ADX value and what it indicates about trend strength\n  - Positioning of +DMI versus -DMI\n  - Any recent crossovers and their implications\n- State any assumptions you're making based on the available information.\n\n4. Volume Analysis\n\nBefore analyzing, list out the key aspects you need to consider for this indicator. \n\n- Explain the importance of volume in confirming price movements and its role in technical analysis.\n- Describe how to interpret volume trends in relation to price trends.\n- Analyze the following for {{ $('Settings').item.json.company }}:\n  - Relationship between volume trend and price trend\n  - Any notable volume patterns\n  - How volume is confirming or contradicting recent price moves\n- State any assumptions you're making based on the available information.\n\n5. Final Technical Outlook\n\nBefore providing your final outlook, list out the key points from previous analyses that you'll consider. \n\n- Synthesize the information from all the previous analyses to provide a comprehensive technical outlook.\n- Consider how the different indicators complement or contradict each other.\n- Provide the following:\n  - Overall market position (bullish, bearish, or neutral)\n  - Key support and resistance levels\n  - Potential entry and exit points for trades\n  - Suggested stop loss levels\n  - Risk/reward ratio for potential trades\n- State any final assumptions or caveats about your analysis.\n\nPlease format your response using markdown. Ensure that your explanations are detailed and thorough, providing context for your analysis at each step.\n\nToday is {{ $now }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "messageType": "imageBinary"
+            }
+          ]
+        }
+      },
+      "id": "d22e1620-b52d-4f09-86f2-d5f215cd2ef5",
+      "name": "Extract analyst question and management response",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2144,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1eb4f1e8-207e-4fe7-8f05-37076d549d7d",
+              "name": "company",
+              "value": "={{ $json.query || \"AAPL\" }}",
+              "type": "string"
+            },
+            {
+              "id": "10712ba2-d809-4dfe-870f-fc5d332ab556",
+              "name": "exchange",
+              "value": "NASDAQ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1552,
+        -112
+      ],
+      "id": "7ab2fa46-ecef-4d1d-8e62-f0f7d4cf45ed",
+      "name": "Settings"
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        2224,
+        32
+      ],
+      "id": "0376d307-28af-465c-abaa-54844f694822",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "NqtAvQ04WzK0AIdK",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "11496fea-9ed8-4ed3-a9ee-628f1e8400cb",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "name": "technical_analysis",
+        "description": "This tool is useful for technical analysis of a stock. When processing the output of the tool, URLs returned should always be in markdown format. for example,![](url)",
+        "workflowId": "={{ $workflow.id}}"
+      },
+      "id": "d4ea1674-78c5-43c3-9f22-25fecb987249",
+      "name": "Technical analysis",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        864,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "options": {
+          "systemMessage": "=Assistant is a large language model trained by OpenAI.\n\nAssistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nAssistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, Assistant is a powerful system that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.\n\nWhen doing a technical analysis, please display the resulting URL graph in markdown format\n\nToday's date is {{ $now }} "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        608,
+        -160
+      ],
+      "id": "0c4a69a2-a91d-47d3-b7d6-2daa22eb0bda",
+      "name": "Technical Analysis Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Start here: Step-by Step Youtube Tutorial :star:\n\n[![Technical Analyst AI Agent using LLM Vision](https://img.youtube.com/vi/yjBHheCB6Ek/sddefault.jpg)](https://youtu.be/yjBHheCB6Ek)\n",
+        "height": 550,
+        "width": 507,
+        "color": 7
+      },
+      "id": "55296e84-f56b-4c22-902e-ad15eafd0ae1",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        768,
+        336
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.chart-img.com/v2/tradingview/advanced-chart/storage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "uxiA9ItOBT7T3YLdPZRbz6ybB8iaoRL34FFJLNaL"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $json.exchange }}:{{ $json.company }}"
+            },
+            {
+              "name": "studies",
+              "value": "={{\n[\n      {\n        \"name\": \"Volume\"\n      },\n      {\n        \"name\": \"Relative Strength Index\"\n      },\n      {\n        \"name\": \"Directional Movement\",\n        \"override\": {\n          \"+DI.visible\": true,\n          \"+DI.linewidth\": 1,\n          \"+DI.plottype\": \"line\",\n          \"+DI.color\": \"rgb(33,150,243)\",\n          \"-DI.visible\": true,\n          \"-DI.linewidth\": 1,\n          \"-DI.plottype\": \"line\",\n          \"-DI.color\": \"rgb(255,109,0)\",\n          \"DX.visible\": false,\n          \"DX.linewidth\": 1,\n          \"DX.plottype\": \"line\",\n          \"DX.color\": \"rgba(255,255,255,0)\",\n          \"ADX.visible\": true,\n          \"ADX.linewidth\": 2,\n          \"ADX.plottype\": \"line\",\n          \"ADX.color\": \"rgb(245,0,87)\",\n          \"ADXR.visible\": false,\n          \"ADXR.linewidth\": 1,\n          \"ADXR.plottype\": \"line\",\n          \"ADXR.color\": \"rgba(255,255,255,0)\"\n        }\n      }\n    ]\n}}"
+            },
+            {
+              "name": "format",
+              "value": "jpeg"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "75d8da40-8b25-4691-9b0c-568fd93aa23a",
+      "name": "Tradingview Chart",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "samfire5200@gmail.com",
+        "subject": "=Technical Analysis for {{ $('Settings').item.json.exchange }}/{{ $('Settings').item.json.company }}",
+        "message": "={{ $('Extract analyst question and management response').item.json.text }}\n\n<p></p>\n\n<a href=\"{{ $('Download Chart').item.json.url }}\" target=\"_blank\">\n  Download Chart\n</a>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2704,
+        -112
+      ],
+      "id": "842e0c2e-9175-4fa4-9e13-0d509022bba6",
+      "name": "Send a message",
+      "webhookId": "315f8c6b-22f3-42ae-aef7-69f087495366",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jErIXCJwUvolRuhq",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Technical Analysis Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Technical Analysis Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Technical Analysis Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Chart": {
+      "main": [
+        [
+          {
+            "node": "Extract analyst question and management response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract analyst question and management response": {
+      "main": [
+        [
+          {
+            "node": "Set 'response' value",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Tradingview Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract analyst question and management response",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical analysis": {
+      "ai_tool": [
+        [
+          {
+            "node": "Technical Analysis Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tradingview Chart": {
+      "main": [
+        [
+          {
+            "node": "Download Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 'response' value": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e0a3358e-6cdb-4ba7-858e-f6d565b216a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "s27wNLUuKf3RaVcH",
+  "tags": []
+}

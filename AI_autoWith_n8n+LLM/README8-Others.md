@@ -49,13 +49,6 @@ Password: t0nnn#Xxxxx
 <https://docs.ghost.org/content-api>
 <https://docs.ghost.org/admin-api/posts/creating-a-post>
 
-#### Create a JWT token
-
-```cmd
-node n8n_ghost.js
-   eyJhbGciOiJIUzI1NiI...
-```
-
 curl -X POST https://ai-automation-with-n8n.ghost.io/ghost/api/admin/posts/?source=html \
   -H "Authorization: Ghost <JWT_Token>" \
   -H "Content-Type: application/json" \
@@ -72,6 +65,8 @@ curl -X POST https://ai-automation-with-n8n.ghost.io/ghost/api/admin/posts/?sour
 ### n8n workflow for PDF to Ghost Blog
 
 *06.2 Multi-agent PDF to Ghost Blog
+*Gartner’s Top Strategic Predictions for 2024.pdf
+*Gartner's-2025-top-tech-trends-ebook.pdf
 
 ## 06.3 AI Powered Web Scraping
 
@@ -130,6 +125,7 @@ do technical analysis for MSFT
 ```chat
 Best practice to scan maven projects by using open sources via CI/CD
 Effective parenting methods
+The best practices SCA open-source tools for Maven projects
 ```
 
 ## 06.6 From Data to Insights Faster

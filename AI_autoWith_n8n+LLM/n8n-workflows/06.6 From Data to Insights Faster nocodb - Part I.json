@@ -1,0 +1,288 @@
+{
+  "name": "06.6 From Data to Insights Faster nocodb - Part I",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fb33897b-0be9-4917-9ef0-f886e2f15667",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        960,
+        16
+      ],
+      "webhookId": "cd05f517-9aec-4e7d-bba8-3747bc8f5ddb",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Chat Trigger').item.json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1920,
+        256
+      ],
+      "id": "9f3369fc-bdf7-488a-8fff-2ef5ba5a7445",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5d1f5ab-91dd-4067-ad51-7707ef1ec8bb",
+              "name": "columns",
+              "value": "={{ $json.columns.map(item => item.title).toJsonString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        16
+      ],
+      "id": "6d297c32-916a-4f67-99de-49e96b9a099f",
+      "name": "Extract_Columns"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "wyacm8xy",
+        "projectId": "pzfyqtxn1mbhi4p",
+        "table": "={{ $('Settings').item.json.table_id }}",
+        "options": {
+          "where": "={{ $fromAI('filter_formula','formula to filter.  for example, (Ticker,eq,IMMR) will filter for Ticker column equal to IMMR.  the operators are neq for not equal, gt for greater than, etc.  Compound conditions can be expressed like (MCAP,gt,500000000)~or(MCAP,lt,1000000000)') }}"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDbTool",
+      "typeVersion": 3,
+      "position": [
+        2080,
+        256
+      ],
+      "id": "d65f8b2b-0172-4909-a326-b2937762a50d",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "vs4ARUyIeNq1BsSs",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "968e6040-5ff3-40d1-901a-ba1fa7576c0c",
+              "name": "table_id",
+              "value": "mq0qyzxouxjapt5",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        16
+      ],
+      "id": "d3b2e1b8-2e33-43be-a219-cf46f8f68327",
+      "name": "Settings"
+    },
+    {
+      "parameters": {
+        "url": "=https://app.nocodb.com/api/v2/meta/tables/{{ $json.table_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        16
+      ],
+      "id": "844f0d92-5316-45af-82ff-45aa625d1c42",
+      "name": "nocodb_extract_table",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "vs4ARUyIeNq1BsSs",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Chat Trigger').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a helpful Data Analyst assistant who is skilled at working with a database called nocodb.  \n\nYou goal is to help the user understand the table that is specified.\n\nHere are the column names for the table.\n{{ $json.columns }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1824,
+        16
+      ],
+      "id": "b77276e4-9e76-4857-ba8b-bf1826da3ae8",
+      "name": "Data Analyst Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Prepare meta information\n",
+        "height": 280,
+        "width": 580,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -64
+      ],
+      "id": "ad5557bd-67cd-4ed7-8a80-288f96d9cee7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        256
+      ],
+      "id": "a2eaf30e-3d1c-4e66-87c1-a15a4db951c6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Start here: Step-by Step Youtube Tutorial :star:\n\n[![Multi-Agent Research team ](https://img.youtube.com/vi/eScD4Y7nRBQ/sddefault.jpg)](https://youtu.be/eScD4Y7nRBQ)\n",
+        "height": 550,
+        "width": 567,
+        "color": 7
+      },
+      "id": "1035a6e0-6225-49e9-b267-15a291a50636",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        416
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract_Columns": {
+      "main": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "nocodb_extract_table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nocodb_extract_table": {
+      "main": [
+        [
+          {
+            "node": "Extract_Columns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0071bdf7-c99e-45c9-a00d-afe1c6c3132f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "UC5kcXaLYwBy7d4R",
+  "tags": []
+}
