@@ -8,8 +8,10 @@ services:
     env_file:
       - .env # 讀取上一步建立的 .env
     environment:
-      - N8N_HOST=0.0.0.0 # 在容器內綁到所有介面
-      - N8N_PROTOCOL=http # 內部使用 http；對外用 WEBHOOK_URL 的 https
+      N8N_HOST: 0.0.0.0 # 在容器內綁到所有介面
+      N8N_PROTOCOL: http # 內部使用 http；對外用 WEBHOOK_URL 的 https
+      CHART_API_KEY: ${CHART_API_KEY} # 顯式帶入
+      JINA_API_KEY: ${JINA_API_KEY} # 顯式帶入
     volumes:
       - C:/n8n/n8n-data:/home/node/.n8n
       - C:/n8n/local-files:/files

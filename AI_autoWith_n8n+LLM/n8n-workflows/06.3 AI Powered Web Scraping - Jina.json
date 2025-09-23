@@ -163,8 +163,8 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "Bearer jina_62791ecea58f4c6c8771f7e35861752elJD5pXLH78hxn-Zyriz89naqggbU"
+              "name": "=Authorization",
+              "value": "={{ 'Bearer ' + $env.JINA_API_KEY }}"
             }
           ]
         },
@@ -260,7 +260,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "94529c2a-bd1c-41a6-bab9-888f279198c9",
+  "versionId": "2cd7bce8-56b8-4879-afb8-68c860f907bc",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"

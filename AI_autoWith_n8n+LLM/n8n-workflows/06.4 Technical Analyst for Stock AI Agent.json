@@ -246,7 +246,7 @@
             },
             {
               "name": "x-api-key",
-              "value": "uxiA9ItOBT7T3YLdPZRbz6ybB8iaoRL34FFJLNaL"
+              "value": "={{ $env.CHART_API_KEY }}"
             }
           ]
         },
@@ -432,7 +432,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "e0a3358e-6cdb-4ba7-858e-f6d565b216a1",
+  "versionId": "0ad15d75-a9a3-463d-8cf8-72df25b68372",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
