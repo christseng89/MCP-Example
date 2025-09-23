@@ -1,0 +1,478 @@
+{
+  "name": "06.6 From Data to Insights Faster nocodb - Part II Visualization",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b828eadd-5803-4dbf-9ecc-afa922e214b0",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        576,
+        -16
+      ],
+      "webhookId": "2b7fc8a8-2670-4569-9d8f-cd469dcbf206",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Chat Trigger').item.json.sessionId }}",
+        "contextWindowLength": 8
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1632,
+        208
+      ],
+      "id": "00a0ef35-79cf-418b-863f-456e5e22e710",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5d1f5ab-91dd-4067-ad51-7707ef1ec8bb",
+              "name": "columns",
+              "value": "={{ $json.columns.map(item => item.title).toJsonString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        -16
+      ],
+      "id": "b9d014fa-e69e-48d1-ba49-d822afcc9872",
+      "name": "Extract_Columns"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "wyacm8xy",
+        "projectId": "ppltdbh6c0a30cj",
+        "table": "={{ $('Settings').item.json.table_id }}",
+        "options": {
+          "where": "={{ $fromAI('filter_formula','formula to filter.  for example, (Ticker,eq,IMMR) will filter for Ticker column equal to IMMR.  the operators are neq for not equal, gt for greater than, etc.  Compound conditions can be expressed like (MCAP,gt,500000000)~or(MCAP,lt,1000000000)') }}"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDbTool",
+      "typeVersion": 3,
+      "position": [
+        1904,
+        208
+      ],
+      "id": "6a32aa76-10c0-4582-8223-884b4fc5f332",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "vs4ARUyIeNq1BsSs",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "968e6040-5ff3-40d1-901a-ba1fa7576c0c",
+              "name": "table_id",
+              "value": "mq0qyzxouxjapt5",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        -16
+      ],
+      "id": "23ad9708-2547-4aac-841a-037859c1f7f5",
+      "name": "Settings"
+    },
+    {
+      "parameters": {
+        "url": "=https://app.nocodb.com/api/v2/meta/tables/{{ $json.table_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        976,
+        -16
+      ],
+      "id": "238a8a07-e0e4-4188-879b-ec95e3bf39e7",
+      "name": "nocodb_extract_table",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "vs4ARUyIeNq1BsSs",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Chat Trigger').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a helpful Data Analyst assistant who is skilled at working with a database called nocodb.  \nYou goal is to help the user understand the table that is specified.  \n\nGuidelines:\n- Only use the chart tool when the user asks to do so.\n- When generating charts, please display the resulting URL graph in markdown format\n\n\nHere are the column names for the table.\n{{ $json.columns }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1584,
+        -16
+      ],
+      "id": "98fc03c2-9a2a-4ed9-884c-1eb43a2a3f0a",
+      "name": "Data Analyst Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Prepare meta information\n",
+        "height": 440,
+        "width": 580,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        736,
+        -96
+      ],
+      "id": "88a0567c-2b03-4460-be87-0ff406b31d35",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "id": "bf744c6f-fac3-4e40-b522-6dc165dd2a15",
+      "name": "Execute \"Generate a chart\" tool",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        2144,
+        -16
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "37512e1a-8376-4ba0-bdcd-34bb9329ae4b",
+              "name": "response",
+              "type": "string",
+              "value": "={{\"https://quickchart.io/chart?width=400&c=\"+ encodeURIComponent($json.output.toJsonString()) }}\n\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fc3f9dad-d182-43a8-8f4e-86495068dbf6",
+      "name": "Set response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2720,
+        -16
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        208
+      ],
+      "id": "000ec8eb-d0b6-474a-a532-e4b7e9a0ebbf",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "NqtAvQ04WzK0AIdK",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        192
+      ],
+      "id": "188a4bb9-824e-45d8-82a3-704dac1f4cd4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n    \"name\": \"chart_configuration\",\n    \"description\": \"Configuration schema for Chart.js charts\",\n    \"strict\": true,\n    \"schema\": {\n  \"type\": \"object\",\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\",\n      \"enum\": [\"bar\", \"line\", \"radar\", \"pie\", \"doughnut\", \"polarArea\", \"bubble\", \"scatter\", \"area\"]\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"labels\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          }\n        },\n        \"datasets\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"label\": {\n                \"type\": [\"string\", \"null\"]\n              },\n              \"data\": {\n                \"type\": \"array\",\n                \"items\": {\n                  \"type\": \"number\"\n                }\n              },\n              \"backgroundColor\": {\n                \"type\": [\"array\", \"null\"],\n                \"items\": {\n                  \"type\": \"string\"\n                }\n              },\n              \"borderColor\": {\n                \"type\": [\"array\", \"null\"],\n                \"items\": {\n                  \"type\": \"string\"\n                }\n              },\n              \"borderWidth\": {\n                \"type\": [\"number\", \"null\"]\n              }\n            },\n            \"required\": [\"data\", \"label\", \"backgroundColor\", \"borderColor\", \"borderWidth\"],\n            \"additionalProperties\": false\n          }\n        }\n      },\n      \"required\": [\"labels\", \"datasets\"],\n      \"additionalProperties\": false\n    },\n    \"options\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"scales\": {\n          \"type\": [\"object\", \"null\"],\n          \"properties\": {\n            \"yAxes\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": [\"object\", \"null\"],\n                \"properties\": {\n                  \"ticks\": {\n                    \"type\": [\"object\", \"null\"],\n                    \"properties\": {\n                      \"max\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"min\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"stepSize\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"beginAtZero\": {\n                        \"type\": [\"boolean\", \"null\"]\n                      }\n                    },\n                    \"required\": [\"max\", \"min\", \"stepSize\", \"beginAtZero\"],\n                    \"additionalProperties\": false\n                  },\n                  \"stacked\": {\n                    \"type\": [\"boolean\", \"null\"]\n                  }\n                },\n                \"required\": [\"ticks\", \"stacked\"],\n                \"additionalProperties\": false\n              }},\n              \"xAxes\": {\n                \"type\": [\"object\", \"null\"],\n                \"properties\": {\n                  \"stacked\": {\n                    \"type\": [\"boolean\", \"null\"]\n                  }\n                },\n                \"required\": [\"stacked\"],\n                \"additionalProperties\": false\n              }\n          },\n          \"required\": [\"yAxes\", \"xAxes\"],\n          \"additionalProperties\": false\n        },\n        \"plugins\": {\n          \"type\": [\"object\", \"null\"],\n          \"properties\": {\n            \"title\": {\n              \"type\": [\"object\", \"null\"],\n              \"properties\": {\n                \"display\": {\n                  \"type\": [\"boolean\", \"null\"]\n                },\n                \"text\": {\n                  \"type\": [\"string\", \"null\"]\n                }\n              },\n              \"required\": [\"display\", \"text\"],\n              \"additionalProperties\": false\n            },\n            \"legend\": {\n              \"type\": [\"object\", \"null\"],\n              \"properties\": {\n                \"display\": {\n                  \"type\": [\"boolean\", \"null\"]\n                },\n                \"position\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"enum\": [\"top\", \"left\", \"bottom\", \"right\", null]\n                }\n              },\n              \"required\": [\"display\", \"position\"],\n              \"additionalProperties\": false\n            }\n          },\n          \"required\": [\"title\", \"legend\"],\n          \"additionalProperties\": false\n        }\n      },\n      \"required\": [\"scales\", \"plugins\"],\n      \"additionalProperties\": false\n    }\n  },\n  \"required\": [\"type\", \"data\", \"options\"],\n  \"additionalProperties\": false\n}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2544,
+        192
+      ],
+      "id": "5bde6c66-861f-4e25-ba3d-cdd9a8dc4fae",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Input data:{{ $json.query.query }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=I want you to act as a Chart.js visualization expert. Your primary goal is to generate valid and clearly labeled Chart.js configuration objects based on user requests.  These configurations should be directly usable within a Chart.js environment.\n\nInput: You will receive user requests describing the desired visualization. These requests may include:\n\nChart Type: (e.g., bar, line, pie, scatter, radar, bubble, etc.)\nData: The data to be visualized. This can be provided in various formats (CSV, JSON, lists). Clarify ambiguous data formats with the user. Handle data extraction as needed.\nLabels: Labels for data points, axes, and other elements. Specifically, the user must provide clear axis titles and units (if applicable). Ask clarifying questions if this information is missing.\nStyling: Customization options (colors, fonts, gridlines, titles, legends, tooltips, axis scales). Use Chart.js defaults if no specific styling is requested.\nSpecific Chart.js options: Users might request specific Chart.js features (logarithmic scales, animations, plugins).\nNatural language descriptions: Interpret less structured descriptions and translate them into valid Chart.js configurations.\nAxis information: Request and expect clear details on axis labels, including:\nAxis Titles: Concise titles for x and y axes. (e.g., \"Month\", \"Sales (USD)\")\nUnits: Units of measurement, if relevant. (e.g., \"(USD)\", \"kg\")\nData Type: The type of data on each axis (categorical, numerical, time series).\nSpecific Formatting: Requirements for date/number formats, currency symbols, etc.\nOutput:  A valid, well-formatted, and easily readable JSON object representing a Chart.js configuration, ready to be used in a new Chart() constructor.  The output must include properly configured axis labels based on the provided input. This includes adding titles and units to both axes within the options.scales section of the JSON.\n\nExample Input (Improved):\n\n\"Create a bar chart showing the monthly sales for the first quarter of 2024.  January had $10,000 in sales, February had $12,000, and March had $15,000.  Use blue for the bars. The chart title should be 'Q1 2024 Sales'. The x-axis represents the 'Month' and the y-axis represents 'Sales (USD)'.\"\n\nExample Output (Improved):  (See previous response for the updated JSON with axis labels)\n\nImportant Considerations:\n\nData Validation: Perform basic validation and ask for clarification if data is inconsistent or incomplete.\nError Handling: Handle errors gracefully and inform the user if their request cannot be fulfilled.\nChart.js Version: Assume the latest stable version unless specified otherwise.\nBest Practices: Adhere to Chart.js best practices for effective visualizations.\nClear Axis Labels: Prioritize clear and informative axis labels in all generated Chart.js configurations."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2368,
+        -16
+      ],
+      "id": "d40b61e4-e522-4d34-8367-299423596226",
+      "name": "Visualization Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Data Visualization Tool\n",
+        "height": 440,
+        "width": 840,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        -96
+      ],
+      "id": "82fae7ef-2c2e-4c8a-b162-64f31b56d85e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "name": "generate_a_chart",
+        "description": "Call this tool whenever you need to generate a chart. All string values must be properly escaped, especially for multi-line strings.  When processing the output of the tool, URLs returned should always be in markdown format. for example,![](url)",
+        "workflowId": "={{ $workflow.id }}",
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"query\": {\n\t\t\"type\": \"string\",\n\t\t\"description\": \"a query describing the chart to generate in json format\"\n\t\t}\n\t}\n}"
+      },
+      "id": "5b8b2062-edde-4d39-8b4d-c577464cd345",
+      "name": "Generate chart",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        1776,
+        208
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## Data Analysis\n",
+        "height": 440,
+        "width": 660,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -96
+      ],
+      "id": "9742e616-1d90-4207-983b-6e34f04023bc",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Start here: Step-by Step Youtube Tutorial :star:\n\n[![Multi-Agent Research team ](https://img.youtube.com/vi/AHNPT9eJulw/sddefault.jpg)](https://youtu.be/AHNPT9eJulw)\n",
+        "height": 550,
+        "width": 567,
+        "color": 7
+      },
+      "id": "ad3fa3bf-ca73-46e1-baa2-2601f3b6b8f1",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        768,
+        480
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract_Columns": {
+      "main": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "nocodb_extract_table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nocodb_extract_table": {
+      "main": [
+        [
+          {
+            "node": "Extract_Columns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute \"Generate a chart\" tool": {
+      "main": [
+        [
+          {
+            "node": "Visualization Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Visualization Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Visualization Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visualization Agent": {
+      "main": [
+        [
+          {
+            "node": "Set response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate chart": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d6cf782d-9e69-4f07-b50c-edbbed4465c6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "CKo0fRQKsOCRJjLK",
+  "tags": []
+}

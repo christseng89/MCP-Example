@@ -1,0 +1,638 @@
+{
+  "name": "06.7 From Data to Insights Faster - Part III DeepSeek + Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Listen for incoming events').item.json.message.chat.id }}",
+        "contextWindowLength": 6
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        304
+      ],
+      "id": "dbe1982b-401d-41b2-a928-092ae3494f3c",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5d1f5ab-91dd-4067-ad51-7707ef1ec8bb",
+              "name": "columns",
+              "value": "={{ $json.columns.map(item => item.title).toJsonString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        80
+      ],
+      "id": "7985d5d0-25f7-4957-aa50-79ee6caf5d85",
+      "name": "Extract_Columns"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "workspaceId": "wse2vl0o",
+        "projectId": "ppltdbh6c0a30cj",
+        "table": "={{ $('Settings').item.json.table_id }}",
+        "options": {
+          "where": "={{ $fromAI('filter_formula','formula to filter. for example, (Ticker,eq,IMMR) will filter for Ticker column equal to IMMR. the operators are neq for not equal, gt for greater than, gte Greater than or equal to, lt: Less than, lte: Less than or equal to, like: SQL LIKE operation, nlike: Not LIKE, in: In a list of values, nin: Not in a list of values, empty: Is empty, notempty: Is not empty, null: Is null, notnull: Is not nulletc.  Compound conditions can be expressed like (MCAP,gt,500000000)~or(MCAP,lt,1000000000)' ) }}"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDbTool",
+      "typeVersion": 3,
+      "position": [
+        1168,
+        304
+      ],
+      "id": "e2082535-8f7a-4302-851a-c44ad4d6ab7f",
+      "name": "NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "vs4ARUyIeNq1BsSs",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "968e6040-5ff3-40d1-901a-ba1fa7576c0c",
+              "name": "table_id",
+              "value": "mq0qyzxouxjapt5",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        80
+      ],
+      "id": "adbaa8fc-ebe2-40a4-a019-599ff8c76ea6",
+      "name": "Settings"
+    },
+    {
+      "parameters": {
+        "url": "=https://app.nocodb.com/api/v2/meta/tables/{{ $json.table_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "nocoDbApiToken",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        80
+      ],
+      "id": "44bdd0eb-e819-4790-96c0-655314b35187",
+      "name": "nocodb_extract_table",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "vs4ARUyIeNq1BsSs",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Listen for incoming events').item.json.message.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful Data Analyst assistant who is skilled at working with a database called nocodb.  \n\nYou goal is to help the user understand the table that is specified.  \n\nGuidelines:\n\n-Only use the chart tool when the user asks to do so.\n-For each answer, always send reply to Telegram text tool. Never include chart URL in the reply. It is really important not to include chart URL in the reply. Do NOT do this.\n- Please only generate one chart per user request.  Don't generate multiple.\n-Always use the nocodb tool to get the relevant data. If the data is not available from nocodb tool, reply with \"Data not available\"\n\nHere is the query language for nocodb:\n\nBasic Syntax\nThe basic structure is:\ntext\n(column,operator,value)\n\nOperators\nNocoDB supports various operators:\neq: Equal to\nneq: Not equal to\ngt: Greater than\ngte: Greater than or equal to\nlt: Less than\nlte: Less than or equal to\nlike: SQL LIKE operation\nnlike: Not LIKE\nin: In a list of values\nnin: Not in a list of values\nempty: Is empty\nnotempty: Is not empty\nnull: Is null\nnotnull: Is not null\n\nCompound Conditions\nFor compound conditions, NocoDB uses:\n~and: for AND operations\n~or: for OR operations\n\nExamples\nSingle condition:\ntext\n(Ticker,eq,IMMR)\nMultiple conditions with AND:\ntext\n(MCAP,gt,500000000)~and(MCAP,lt,1000000000)\nMultiple conditions with OR:\ntext\n(Ticker,eq,AAPL)~or(Ticker,eq,GOOGL)\nComplex query:\ntext\n(MCAP,gt,1000000000)~and((Sector,eq,Technology)~or(Sector,eq,Healthcare))\nThis syntax is particularly useful when using NocoDB's REST API for querying data or when setting up advanced filters in the user interface.\n\n\n\nHere are the column names for the table.\n{{ $json.columns }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        848,
+        80
+      ],
+      "id": "7e5c40b5-9f76-458e-8a29-32d5b5a96182",
+      "name": "Data Analyst Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "content": "## Prepare meta information\n",
+        "height": 440,
+        "width": 580,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "64ba5f0b-65be-4f89-9184-9e7956b9d85f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n    \"name\": \"chart_configuration\",\n    \"description\": \"Configuration schema for Chart.js charts\",\n    \"strict\": true,\n    \"schema\": {\n  \"type\": \"object\",\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\",\n      \"enum\": [\"bar\", \"line\", \"radar\", \"pie\", \"doughnut\", \"polarArea\", \"bubble\", \"scatter\", \"area\"]\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"labels\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          }\n        },\n        \"datasets\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"label\": {\n                \"type\": [\"string\", \"null\"]\n              },\n              \"data\": {\n                \"type\": \"array\",\n                \"items\": {\n                  \"type\": \"number\"\n                }\n              },\n              \"backgroundColor\": {\n                \"type\": [\"array\", \"null\"],\n                \"items\": {\n                  \"type\": \"string\"\n                }\n              },\n              \"borderColor\": {\n                \"type\": [\"array\", \"null\"],\n                \"items\": {\n                  \"type\": \"string\"\n                }\n              },\n              \"borderWidth\": {\n                \"type\": [\"number\", \"null\"]\n              }\n            },\n            \"required\": [\"data\", \"label\", \"backgroundColor\", \"borderColor\", \"borderWidth\"],\n            \"additionalProperties\": false\n          }\n        }\n      },\n      \"required\": [\"labels\", \"datasets\"],\n      \"additionalProperties\": false\n    },\n    \"options\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"scales\": {\n          \"type\": [\"object\", \"null\"],\n          \"properties\": {\n            \"yAxes\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": [\"object\", \"null\"],\n                \"properties\": {\n                  \"ticks\": {\n                    \"type\": [\"object\", \"null\"],\n                    \"properties\": {\n                      \"max\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"min\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"stepSize\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"beginAtZero\": {\n                        \"type\": [\"boolean\", \"null\"]\n                      }\n                    },\n                    \"required\": [\"max\", \"min\", \"stepSize\", \"beginAtZero\"],\n                    \"additionalProperties\": false\n                  },\n                  \"stacked\": {\n                    \"type\": [\"boolean\", \"null\"]\n                  }\n                },\n                \"required\": [\"ticks\", \"stacked\"],\n                \"additionalProperties\": false\n              }},\n              \"xAxes\": {\n                \"type\": [\"object\", \"null\"],\n                \"properties\": {\n                  \"stacked\": {\n                    \"type\": [\"boolean\", \"null\"]\n                  }\n                },\n                \"required\": [\"stacked\"],\n                \"additionalProperties\": false\n              }\n          },\n          \"required\": [\"yAxes\", \"xAxes\"],\n          \"additionalProperties\": false\n        },\n        \"plugins\": {\n          \"type\": [\"object\", \"null\"],\n          \"properties\": {\n            \"title\": {\n              \"type\": [\"object\", \"null\"],\n              \"properties\": {\n                \"display\": {\n                  \"type\": [\"boolean\", \"null\"]\n                },\n                \"text\": {\n                  \"type\": [\"string\", \"null\"]\n                }\n              },\n              \"required\": [\"display\", \"text\"],\n              \"additionalProperties\": false\n            },\n            \"legend\": {\n              \"type\": [\"object\", \"null\"],\n              \"properties\": {\n                \"display\": {\n                  \"type\": [\"boolean\", \"null\"]\n                },\n                \"position\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"enum\": [\"top\", \"left\", \"bottom\", \"right\", null]\n                }\n              },\n              \"required\": [\"display\", \"position\"],\n              \"additionalProperties\": false\n            }\n          },\n          \"required\": [\"title\", \"legend\"],\n          \"additionalProperties\": false\n        }\n      },\n      \"required\": [\"scales\", \"plugins\"],\n      \"additionalProperties\": false\n    }\n  },\n  \"required\": [\"type\", \"data\", \"options\"],\n  \"additionalProperties\": false\n}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        768
+      ],
+      "id": "1e489cc6-c7d1-46dd-ad5b-21c07f29157d",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Input data:{{ $json.query.query }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=I want you to act as a Chart.js visualization expert. Your primary goal is to generate valid and clearly labeled Chart.js configuration objects based on user requests.  These configurations should be directly usable within a Chart.js environment.\n\nInput: You will receive user requests describing the desired visualization. These requests may include:\n\nChart Type: (e.g., bar, line, pie, scatter, radar, bubble, etc.)\nData: The data to be visualized. This can be provided in various formats (CSV, JSON, lists). Clarify ambiguous data formats with the user. Handle data extraction as needed.\nLabels: Labels for data points, axes, and other elements. Specifically, the user must provide clear axis titles and units (if applicable). Ask clarifying questions if this information is missing.\nStyling: Customization options (colors, fonts, gridlines, titles, legends, tooltips, axis scales). Use Chart.js defaults if no specific styling is requested.\nSpecific Chart.js options: Users might request specific Chart.js features (logarithmic scales, animations, plugins).\nNatural language descriptions: Interpret less structured descriptions and translate them into valid Chart.js configurations.\nAxis information: Request and expect clear details on axis labels, including:\nAxis Titles: Concise titles for x and y axes. (e.g., \"Month\", \"Sales (USD)\")\nUnits: Units of measurement, if relevant. (e.g., \"(USD)\", \"kg\")\nData Type: The type of data on each axis (categorical, numerical, time series).\nSpecific Formatting: Requirements for date/number formats, currency symbols, etc.\n\nOutput:  A valid, well-formatted, and easily readable JSON object representing a Chart.js configuration, ready to be used in a new Chart() constructor.  The output must include properly configured axis labels based on the provided input. This includes adding titles and units to both axes within the options.scales section of the JSON.  The output should be of the form:\n\n{\n  width: string;                        // Pixel width\n  height: string;                       // Pixel height\n  devicePixelRatio: number;             // Pixel ratio (2.0 by default)\n  format: string;                       // png, svg, or webp\n  backgroundColor: string;              // Canvas background\n  version: string;                      // Chart.js version\n  key: string;                          // API key (optional)\n  chart: string | ChartConfiguration;   // Chart.js configuration\n}\n\n\nExample Input (Improved):\n\n\"Create a bar chart showing the monthly sales for the first quarter of 2024.  January had $10,000 in sales, February had $12,000, and March had $15,000.  Use blue for the bars. The chart title should be 'Q1 2024 Sales'. The x-axis represents the 'Month' and the y-axis represents 'Sales (USD)'.\"\n\nImportant Considerations:\n\nData Validation: Perform basic validation and ask for clarification if data is inconsistent or incomplete.\nError Handling: Handle errors gracefully and inform the user if their request cannot be fulfilled.\nChart.js Version: Assume the latest stable version unless specified otherwise.\nBest Practices: Adhere to Chart.js best practices for effective visualizations.\nClear Axis Labels: Prioritize clear and informative axis labels in all generated Chart.js configurations."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        384,
+        560
+      ],
+      "id": "8051492a-1f74-417b-9026-f2cbfbbbd234",
+      "name": "Visualization Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "content": "## Data Visualization Tool\n",
+        "height": 420,
+        "width": 1580,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        512
+      ],
+      "id": "09084c19-0baf-43c5-adca-37c9898b5150",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "name": "generate_a_chart",
+        "description": "Call this tool whenever you need to generate a chart. All string values must be properly escaped, especially for multi-line strings. The response from the tool is success or fail.\n",
+        "workflowId": "={{ $workflow.id }}",
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"query\": {\n\t\t\"type\": \"string\",\n\t\t\"description\": \"a query describing the chart to generate in json format\"\n\t\t}\n\t}\n}"
+      },
+      "id": "01290cc4-eb23-4213-8769-9903e0705ba4",
+      "name": "Generate chart",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        1040,
+        304
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## Data Analysis\n",
+        "height": 440,
+        "width": 980,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        608,
+        0
+      ],
+      "id": "fc463520-cb4a-4f95-b075-98d9865cae89",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Start here: Step-by Step Youtube Tutorial :star:\n\n[![Multi-Agent Research team ](https://img.youtube.com/vi/AHNPT9eJulw/sddefault.jpg)](https://youtu.be/AHNPT9eJulw)\n",
+        "height": 550,
+        "width": 567,
+        "color": 7
+      },
+      "id": "3ce6e5e5-e739-4449-8c7c-6da5b2a79a1c",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        1120
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "79dbd0f6-7537-405d-a71a-dd884aa8753c",
+      "name": "Listen for incoming events",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        -400,
+        80
+      ],
+      "webhookId": "0e3e1894-4fbd-4f4c-bbcc-ca4c46ce789a",
+      "typeVersion": 1,
+      "credentials": {
+        "telegramApi": {
+          "id": "3ZyDTc7LhmF78EIc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "37512e1a-8376-4ba0-bdcd-34bb9329ae4b",
+              "name": "response",
+              "type": "string",
+              "value": "=Success\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3b44fb1c-f0d9-4de5-a776-a9290d535b89",
+      "name": "Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1392,
+        560
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{$('Get Chat id').item.json.chat_id }}",
+        "binaryData": true,
+        "binaryPropertyName": "=data",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        560
+      ],
+      "id": "42fdd14f-8758-4706-bb85-94ae0f258211",
+      "name": "Send Chart",
+      "webhookId": "3124758a-4c70-4b99-bfc0-55cf93da2034",
+      "credentials": {
+        "telegramApi": {
+          "id": "3ZyDTc7LhmF78EIc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// initialize staticData object\nconst workflowStaticData = $getWorkflowStaticData('global');\n\n// initialize accessToken on staticData if it desn't exist yet\nif (!workflowStaticData.hasOwnProperty('chat_id')) {\n  workflowStaticData.chat_id = $input.all()[0].json.message\n}\n\n\nreturn [\n  {\n      // data: $input.all(),\n      chat_id: workflowStaticData.chat_id.from.id \n  }\n];"
+      },
+      "id": "920db83e-abef-41ab-8489-40338840c758",
+      "name": "Store chat id",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -208,
+        80
+      ],
+      "notesInFlow": false,
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsCode": "// initialize staticData object\nconst workflowStaticData = $getWorkflowStaticData('global');\n\n\nreturn [\n  {\n      // data: $input.all(),\n      chat_id: workflowStaticData.chat_id.from.id \n  }\n];"
+      },
+      "id": "1c4710a8-049a-465f-bb26-cd0192475835",
+      "name": "Get Chat id",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        784,
+        560
+      ],
+      "notesInFlow": false,
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Listen for incoming events').first().json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        80
+      ],
+      "id": "da7edb71-0e18-4c28-8497-9576d01bb694",
+      "name": "Telegram",
+      "webhookId": "c2647ae1-4cdb-4dd7-9134-96a2097d9c82",
+      "credentials": {
+        "telegramApi": {
+          "id": "3ZyDTc7LhmF78EIc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://quickchart.io/chart",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('Visualization Agent').item.json.output.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        992,
+        560
+      ],
+      "id": "1a4269e7-470f-4678-8fab-e63d992a0639",
+      "name": "QuickChart"
+    },
+    {
+      "parameters": {},
+      "id": "83df8b6a-17a9-4186-9c9a-2f1b2839dc0b",
+      "name": "Generate_tool",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        80,
+        560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        720,
+        288
+      ],
+      "id": "1b10fd99-983b-40ee-8462-42f167e765f8",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "REbwnFyaPCn3YX4h",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        240,
+        768
+      ],
+      "id": "67c0387a-5d7c-4053-820b-31d0883f0d6a",
+      "name": "DeepSeek Chat Model1",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "REbwnFyaPCn3YX4h",
+          "name": "DeepSeek account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract_Columns": {
+      "main": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NocoDB": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "nocodb_extract_table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "nocodb_extract_table": {
+      "main": [
+        [
+          {
+            "node": "Extract_Columns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Visualization Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visualization Agent": {
+      "main": [
+        [
+          {
+            "node": "Get Chat id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate chart": {
+      "ai_tool": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listen for incoming events": {
+      "main": [
+        [
+          {
+            "node": "Store chat id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Analyst Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Chart": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chat id": {
+      "main": [
+        [
+          {
+            "node": "QuickChart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store chat id": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QuickChart": {
+      "main": [
+        [
+          {
+            "node": "Send Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate_tool": {
+      "main": [
+        [
+          {
+            "node": "Visualization Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Data Analyst Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Visualization Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "acbfe150-64ec-4c92-b61f-2d81dd45050f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "A2hNP2YBFCBIWhM7",
+  "tags": []
+}

@@ -173,11 +173,63 @@ what data would be useful to visualize with a radar chart?
 what about a bubble chart?
 ```
 
+### Radar chart 
+
+#### 1. **ROE (Return on Equity，股東權益報酬率)**
+
+* **公式**：淨利 / 股東權益
+* **意涵**：衡量公司運用股東投入的資本賺錢的能力。
+* **適用對象**：股東或投資人，關注自己投資的報酬率。
+* **重點**：ROE 高，表示公司善於利用股東資本創造利潤；但如果公司高負債，ROE 也可能被「槓桿」放大。
+
+---
+
+#### 2. **ROA (Return on Assets，總資產報酬率)**
+
+* **公式**：淨利 / 總資產
+* **意涵**：衡量公司運用全部資產（包含股東權益＋負債）創造獲利的能力。
+* **適用對象**：債權人、管理層，因為 ROA 不只考慮股東資本，也考慮債務。
+* **重點**：反映資產使用效率，比 ROE 更「保守」，不受財務槓桿影響。
+
+---
+
+#### 3. **ROIC (Return on Invested Capital，投入資本報酬率)**
+
+* **公式**：稅後營業利益 (NOPAT) / 投入資本 (股東權益＋有息負債 − 現金等非營運資產)
+* **意涵**：衡量公司對「實際投入營運的資本」的報酬率。
+* **適用對象**：投資人、長期策略分析，用來看公司是否創造「超過資本成本 (WACC)」的報酬。
+* **重點**：比 ROE 與 ROA 更精準，因為它排除了閒置現金、非營運資產，專注在投入經營的資本。
+
+---
+
+#### 4. **ROI (Return on Investment，投資報酬率)**
+
+* **公式**：(投資收益 − 投資成本) / 投資成本
+* **意涵**：最廣義的投資報酬衡量方式，可以用於專案、行銷活動、資產購置等。
+* **適用對象**：不只財務報表，任何投資評估都可用。
+* **重點**：範圍最廣，不一定符合會計準則，通常是管理決策或專案投資的衡量工具。
+
+---
+
+#### 🔑 總結對比
+
+| 指標       | 分母          | 著眼點    | 常見用途               |
+| -------- | ----------- | ------ | ------------------ |
+| **ROE**  | 股東權益        | 股東投資報酬 | 衡量公司對股東資本的獲利能力     |
+| **ROA**  | 總資產         | 資產使用效率 | 評估公司資產整體獲利能力       |
+| **ROIC** | 投入資本（營運用資本） | 營運資本報酬 | 看公司是否創造超過 WACC 的價值 |
+| **ROI**  | 投資成本（彈性定義）  | 投資回收效益 | 各種專案、投資或行銷活動的報酬    |
+
+---
+
 ### n8n workflow for Data to Insights Visualization
 
 *06.6 From Data to Insights Faster - Part II Visualization
 
 ## 06.7 From Data to Insights Faster - Part III DeepSeek + Telegram
+
+<https://web.telegram.org/>
+<https://web.telegram.org/k/#@travelercopilotChrisT_bot>
 
 ### **DeepSeek Cost Comparison**
 
@@ -197,6 +249,7 @@ what about a bubble chart?
 
 ### n8n workflow for Data to Insights DeepSeek + Telegram
 
+*Monitor.xlsx
 *06.7 From Data to Insights Faster - Part III DeepSeek + Telegram
 
 ```note
