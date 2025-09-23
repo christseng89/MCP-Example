@@ -249,7 +249,6 @@ what about a bubble chart?
 
 ### n8n workflow for Data to Insights DeepSeek + Telegram
 
-*Monitor.xlsx
 *06.7 From Data to Insights Faster - Part III DeepSeek + Telegram
 
 ```note
@@ -261,3 +260,25 @@ Settings -> Table ID: mq0qyzxouxjapt5
 ### n8n workflow for AI News Research Team
 
 *06.8 Build Your AI News Research Team
+*Monitor.xlsx (Google Sheet)
+
+## 06.9 Integrating Reddit AI Agent into Newsletter Workflow
+
+```cmd
+cd n8n-workflows
+
+REM edit .env to use LOCALHOST for PUBLIC_URL
+docker compose down
+docker compose up -d
+```
+
+<https://www.reddit.com/r/SideProject/>
+<https://openrouter.ai/settings/keys>
+<https://old.reddit.com/prefs/apps/>
+
+### n8n workflow for Reddit AI Agent
+
+*Hot Topics.xlsx (Google Sheet)
+*06.9 Integrating Reddit AI Agent into Newsletter Workflow
+
+#### Gmail Approval Required

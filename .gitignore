@@ -6,3 +6,4 @@ BPMN-BA/
 node_modules/
 nocodb/
 memory-tool.db
+*.mp4

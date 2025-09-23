@@ -1,0 +1,1137 @@
+{
+  "name": "06.9 Integrating Reddit AI Agent into Newsletter Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Start here: Quickstart setup :star:\n\n[![Multi-Agent Research team ](https://img.youtube.com/vi/xjHwylptinE/sddefault.jpg)](https://youtu.be/xjHwylptinE)\n",
+        "height": 550,
+        "width": 567,
+        "color": 7
+      },
+      "id": "7ba50a64-311d-410a-9cde-706a13818053",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        1648
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "subreddit": "SideProject",
+        "keyword": "struggling with, AI side projects, niche SaaS",
+        "limit": 10,
+        "additionalFields": {
+          "sort": "top"
+        }
+      },
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        352
+      ],
+      "id": "86aa89a3-d174-4058-bfce-111d925424c4",
+      "name": "Reddit",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "GjMYr7CQmv4hBVPI",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        320,
+        352
+      ],
+      "id": "01db857c-f333-4647-bb76-39030b85771f",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        592,
+        544
+      ],
+      "id": "03df8ed4-e76c-4b9c-8226-428c97ec75a0",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Gak5KKR1Xb1lKD0J",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"HotTopicTitles\",\n  \"description\": \"Array of trending topics.  Specific business idea defined in the topic title\",\n  \"oneOf\": [\n    {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\",\n        \"minLength\": 2,\n        \"maxLength\": 100,\n        \"pattern\": \"^\\\\S+( \\\\S+)*$\",\n        \"description\": \"Title of a trending topic with specific business idea\"\n      },\n      \"uniqueItems\": true\n    }\n  ],\n  \"not\": {\n    \"type\": \"object\"\n  },\n  \"additionalProperties\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        544
+      ],
+      "id": "4d54f365-9b43-4cf9-9616-d7b52efedaed",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        960,
+        352
+      ],
+      "id": "664470a5-e4d9-4194-9e37-37de619e9345",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here are the reddit posts:\n{{ $json.data.toJsonString() }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Reddit Newsletter Topic Scout Agent\n\nYou are an expert content curator and newsletter strategist specialized in transforming Reddit's trending content into valuable newsletter topics. Your goal is to identify, analyze, and adapt popular Reddit posts into engaging newsletter content while maintaining professionalism and adding unique insights.\n\nOutput only the top 3 topics.  Only the best topics.\n\n## Core Responsibilities\n- Analyze Reddit's hot posts across various subreddits\n- Identify posts with potential for deeper exploration\n- Transform casual Reddit discussions into professional newsletter topics\n- Add value through expert insights and broader context\n- Ensure topics are evergreen when possible\n- Maintain high editorial standards\n\n## Topic Selection Criteria\n1. Business Value\n   - Will this topic help readers solve problems?\n   - Does it contain actionable insights?\n   - Is there potential for professional growth?\n\n2. Engagement Potential\n   - Does it spark curiosity?\n   - Can it generate meaningful discussion?\n   - Does it connect to broader trends?\n\n3. Credibility Factors\n   - Can claims be verified?\n   - Are there expert sources to cite?\n   - Is there data to support key points?\n\n## Output Format\nFor each topic, provide:\n\n1. Newsletter-Ready Title\n   - Professional tone\n   - Clear value proposition\n   - 60-80 characters optimal length\n\n2. Topic Analysis\n   - Original Reddit context\n   - Why it matters to your audience\n   - Potential angles for exploration\n\n3. Supporting Elements\n   - Key discussion points\n   - Relevant statistics or research\n   - Expert perspectives to include\n\n## Working Method\n1. Review hot posts from relevant subreddits\n2. Apply selection criteria\n3. Transform informal discussions into professional insights\n4. Add expert context and analysis\n5. Format for newsletter readability\n6. Include suggestions for further research\n\n## Voice and Style\n- Professional but approachable\n- Solution-oriented\n- Evidence-based\n- Forward-thinking\n- Industry-aware\n- Balanced perspective\n\n## Exclusion Criteria\n- Avoid controversial political topics\n- Skip purely entertainment content\n- Exclude unverifiable claims\n- Pass on temporary trends without lasting value\n- Avoid topics requiring extensive technical knowledge\n- Skip posts focused on personal drama\n\n## Examples of Good Transformations\n\nOriginal Reddit Post:\n\"Just automated my entire invoice process with Python, saved 4 hours a week!\"\n\nNewsletter Topic:\n\"Scaling Your Business: Effective Strategies for Creative Teams\"\n\nWhy It Works:\n- Focuses on broader business impact\n- Applies to wider audience\n- Maintains professionalism\n- Adds strategic context\n\n## Quality Checklist\n- [ ] Topic is relevant to target audience\n- [ ] Title is professional and engaging\n- [ ] Content adds value beyond original post\n- [ ] Includes actionable insights\n- [ ] Maintains editorial standards\n- [ ] Provides broader context\n- [ ] Links to current trends\n- [ ] Has potential for deep dive\n\nRemember: Your role is to elevate casual Reddit discussions into professional, valuable newsletter content that serves your audience's needs while maintaining high editorial standards."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        608,
+        352
+      ],
+      "id": "d9cdbef5-82b5-4f47-9493-8e29d3fbdc3d",
+      "name": "Reddit Newsletter Topic Scout"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1kYbfgbJtoo2d3477-PKC8Xt3gG6-MZfa4E85bKVFcmI",
+          "mode": "list",
+          "cachedResultName": "Hot Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kYbfgbJtoo2d3477-PKC8Xt3gG6-MZfa4E85bKVFcmI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kYbfgbJtoo2d3477-PKC8Xt3gG6-MZfa4E85bKVFcmI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topics": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "Topics"
+          ],
+          "schema": [
+            {
+              "id": "Topics",
+              "displayName": "Topics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1168,
+        352
+      ],
+      "id": "c5280025-1dfd-453b-9a37-5d7517862237",
+      "name": "Save to Hot Topics",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Hj7tvijrW8U75CIf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        352
+      ],
+      "id": "081638c8-7d09-4c61-9b4d-4957e62dec15",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5b7a8f5a-16b6-42e4-8d98-a7dadcb33d35",
+              "name": "reddit_posts",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        352
+      ],
+      "id": "8da06f62-de68-43d9-80f5-c36f1fc9ed08",
+      "name": "Extract Post"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "samfire5200@gmail.com",
+        "subject": "Approval requested",
+        "message": "New topics discovered.  Please see spreadsheet:\nhttps://docs.google.com/spreadsheets/d/1kYbfgbJtoo2d3477-PKC8Xt3gG6-MZfa4E85bKVFcmI/edit?usp=sharing",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1216,
+        608
+      ],
+      "id": "025a3d3a-b688-4eab-a40a-a1008c067bf3",
+      "name": "Approval",
+      "webhookId": "5976a21d-1c9b-4428-bdb3-717ea32bf923",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jErIXCJwUvolRuhq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Reddit Search\nSearch subreddit for ideas\n",
+        "height": 429,
+        "width": 598,
+        "color": 7
+      },
+      "id": "013da932-dfff-4390-b31a-0036d3219a2f",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Reddit Newsletter Topic Scout\nIdeate topic ideas\n",
+        "height": 429,
+        "width": 798,
+        "color": 7
+      },
+      "id": "525eadca-19d5-4f37-9c4b-181f7be0deb3",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        528,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Automate Content Curation and Creation: Reddit-to-Newsletter Pipeline Using AI Research Agents with Auto-Citations 📰\n\n",
+        "height": 80,
+        "width": 2198,
+        "color": 7
+      },
+      "id": "fa738e75-04eb-42b4-8fac-907f8d23d68f",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        1232
+      ],
+      "id": "1c6505a0-aa10-4bde-8fa6-d0b3caaed3ea",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        176,
+        1232
+      ],
+      "id": "cb6dba76-d7c9-4888-9cd6-498273950fde",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        624,
+        1232
+      ],
+      "id": "4f674315-7b08-4ca2-9281-a1d3a33db0bc",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.detailed }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "brief"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f5c36501-00ab-424f-9310-acddc0b8c935",
+                    "leftValue": "={{ $json.detailed }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "detailed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -160,
+        896
+      ],
+      "id": "5f896d0c-81a6-4d22-850c-d938694b3952",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kYbfgbJtoo2d3477-PKC8Xt3gG6-MZfa4E85bKVFcmI",
+          "mode": "list",
+          "cachedResultName": "Hot Topics",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kYbfgbJtoo2d3477-PKC8Xt3gG6-MZfa4E85bKVFcmI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kYbfgbJtoo2d3477-PKC8Xt3gG6-MZfa4E85bKVFcmI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -752,
+        896
+      ],
+      "id": "c7dd078f-9aac-4e2c-b3f9-42bd3b0485b5",
+      "name": "News to Monitor",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Hj7tvijrW8U75CIf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        1232
+      ],
+      "id": "a7fa659c-e97e-4d42-84c2-1f309acf8ecf",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "PvlVoIijr6w9bls7",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        320,
+        1232
+      ],
+      "id": "9b7b27e2-0bed-45d5-aa72-96843a0be578",
+      "name": "SerpAPI1",
+      "credentials": {
+        "serpApi": {
+          "id": "Au453rAcdgfMSQFp",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        1232
+      ],
+      "id": "eabac869-704a-4b3a-8324-0ecde79bafe3",
+      "name": "SerpAPI2",
+      "credentials": {
+        "serpApi": {
+          "id": "Au453rAcdgfMSQFp",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ab064c5-35c8-4604-993a-e1bede60a911",
+              "name": "event",
+              "value": "={{ $json.Monitor }}",
+              "type": "string"
+            },
+            {
+              "id": "7a494cc3-ee2a-4354-80f8-d0c3caf3237a",
+              "name": "detailed",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "5b1619aa-3bd5-46f6-b520-9b525132e362",
+              "name": "time_window",
+              "value": "day",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        896
+      ],
+      "id": "fac76642-e6d7-4abf-845e-e36106ef3918",
+      "name": "Settings1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "84887353-aace-4984-a4aa-e3322a35eddc",
+      "name": "Merge chapters title and text1",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1648,
+        1040
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "jsCode": "let article = \"\";\n\n// Introduction\narticle += $('Project Planner1').first().json.output.introduction;\n\nfor (const item of $input.all()) {\n  article += \"<strong>\" + item.json.title + \"</strong>\";\n  article += item.json.output;\n  article += \"<br>\";\n}\n\n// Conclusions\narticle += \"<strong> Conclusions </strong>\";\narticle += $('Project Planner1').first().json.output.conclusions;\n\n\nreturn [\n  {\n    \"article\": article\n  }\n];"
+      },
+      "id": "375bbafb-1706-4b2c-97ee-002a0953e94d",
+      "name": "Final article text1",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1984,
+        1040
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic to research: {{ $json.event }}",
+        "options": {
+          "systemMessage": "=You are Research Leader specialized in comprehensive topic analysis, research and content structuring. Your task is to create an enriched, research-backed table of contents for a given topic. \n\nFollow these steps:\n1. Analyze the provided topic thoroughly.\n\n2. Conduct web research to gather current insights, trends, and expert perspectives on the topic.\n\n3. Synthesize the gathered information to identify:\n   - Core concepts and principles\n   - Current trends and developments\n   - Expert opinions and best practices\n   - Real-world applications and examples\n   - Potential challenges and solutions\n\n4. Create a comprehensive table of contents that:\n   - Reflects both foundational knowledge and current developments\n   - Incorporates relevant case studies and examples\n   - Addresses common questions and concerns\n   - Includes practical applications and future implications\n\n5. Structure the content hierarchically, ensuring:\n   - Logical flow and progression\n   - Clear relationships between sections\n   - Balanced coverage of theoretical and practical aspects\n   - Integration of research-backed insights\n\nPlease format your response as follows:\n\nTopic Analysis:\n[Brief overview of the topic and its significance based on current research]\n\nKey Research Insights:\n- [Insight 1 from web research]\n- [Insight 2 from web research]\n- [Insight 3 from web research]\n\nProposed Table of Contents:\n\nI. Introduction\n   A. Topic Overview and Current Relevance\n   B. Key Trends and Developments\n   C. Why This Matters Now\n\nII. Background and Context\n    A. Historical Development\n    B. Fundamental Concepts\n    C. Current State of the Field\n\nIII. [Main Theme 1 from Research]\n     A. [Key Finding/Aspect]\n     B. [Expert Perspectives]\n     C. [Real-world Applications]\n\nIV. [Main Theme 2 from Research]\n    A. [Key Finding/Aspect]\n    B. [Case Studies]\n    C. [Practical Implications]\n\n[Continue with additional research-based sections]\n\nIX. Future Perspectives\n    A. Emerging Trends\n    B. Potential Developments\n    C. Recommendations\n\nX. Conclusion\n   A. Summary of Key Insights\n   B. Actionable Takeaways\n   C. Final Thoughts\n\nResearch Sources:\n[List of key sources consulted]\n\nUsage Instructions:\n1. Provide a specific topic you want to analyze\n2. The AI will conduct web research using available tools including SerpAPI search tool\n3. Based on the research, it will generate a comprehensive, current, and well-structured table of contents\n4. Each section will be enriched with recent findings and expert insights\n5. The final structure will be suitable for various content formats (blog posts, articles, whitepapers)\n\nToday's date is {{ $now }}"
+        }
+      },
+      "id": "efedf413-be74-4391-9ce2-318284e15f2c",
+      "name": "Research Leader 🔬1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        144,
+        1040
+      ],
+      "typeVersion": 1.6,
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"subtitle\": {\n      \"type\": \"string\"\n    },\n    \"introduction\": {\n      \"type\": \"string\"\n    },\n    \"conclusions\": {\n      \"type\": \"string\"\n    },\n    \"imagePrompt\": {\n      \"type\": \"string\"\n    },\n    \"chapters\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"title\": {\n            \"type\": \"string\"\n          },\n          \"prompt\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"title\",\n          \"prompt\"\n        ]\n      }\n    }\n  },\n  \"required\": [\n    \"subtitle\",\n    \"introduction\",\n    \"conclusions\",\n    \"imagePrompt\",\n    \"chapters\"\n  ]\n}"
+      },
+      "id": "80252e59-b429-4b2b-8558-139499a47348",
+      "name": "Structured Output Parser2",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.chapters",
+        "options": {}
+      },
+      "id": "1bdef38c-8d3d-4a86-bdb9-4d7a6f790522",
+      "name": "Delegate to Research Assistants1",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        992,
+        1040
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a chapter for the article: {{ $('Project Planner1').item.json.output.subtitle }}\n\nWrite the chapter titled {{ $json.title }}that {{ $json.prompt }}.\n\nMake sure to include citations in the final output.  They are provided by the SerpAPI search tool\n",
+        "options": {
+          "systemMessage": "=You are a dedicated Research Assistant AI agent, working as part of a research team under the guidance of a Research Leader and Project Planner. Your task is to write a chapter in the as part of the overall research into a topic.\n\nGuidelines:\n- Just return the plain text for each chapter (no JSON structure).\n- Use the SerpAPI search tool to research the topic in the chapter\n- Use html format for output\n- Don't add internal titles or headings.\n- The length of each chapther should be around 350 words long- Go deep in the topic you treat, don't just throw some superficial info\n{{ $itemIndex > 0 ? \"- The previous chapter talks about \" + $input.all()[$itemIndex-1].json.title : \"\" }}\n{{ $itemIndex > 0 ? \"- The promt for the previous chapter is \" + $input.all()[$itemIndex-1].json.prompt : \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The following chapter will talk about \" + $input.all()[$itemIndex+1].json.title: \"\" }}\n{{ $itemIndex < $input.all().length ? \"- The prompt for the following chapter is \" + $input.all()[$itemIndex+1].json.prompt : \"\" }}\n- Consider the previous and following chapters what writing the text for this chapter. The text must be coherent with the previous and following chapters.\n- This chapter should not repeat the concepts already exposed in the previous chapter.\n- This chapter is a part of a larger article so don't include an introduction or conclusions. This chapter should merge with the rest of the article.\n- Please write in a style that is professional\n- Please use the SerpAPI online tool as source of information to use to write the chapter\n- Make sure to include citations from the SerpAPI search tool in your writing\n\nCitation Guidelines:\n- Use the SerpAPI search tool to gather information and cite sources\n- For each major claim or piece of information, include a hyperlinked inline citation\n- Format citations as HTML links with descriptive text:\n  <a href=\"[URL]\">[Source: Publication Name]</a>\n  Examples of proper citation format:\n  - \"According to recent data <a href=\"https://www.mckinsey.com/article-url\">[Source: McKinsey & Company]</a>...\"\n- When directly quoting from a source, use quotation marks and include the citation\n- Integrate citations naturally into the flow of the text without disrupting readability\n- Ensure all cited information is relevant and supports the chapter's main points\n- Verify that citations are accurate and come directly from the SerpAPI search results\n- Balance cited content with original analysis and synthesis\n- When citing statistics or specific data points, include the year if available in the citation\n\n\nContent Integration:\n- Smoothly blend cited information with original analysis\n- Use transitions to connect cited material with your own insights\n- Maintain the specified tone while incorporating citations\n- Ensure citations support rather than dominate the narrative\n- Use a mix of paraphrasing and direct quotes when citing sources\n\nSources Section Requirements:\n- At the end of your chapter, include a \"Sources\" section\n- Format the sources section as follows:\n\n<hr>\n<h3>Sources</h3>\n<ul>\n<li><a href=\"[URL]\">[Publication Name] - [Article Title]</a></li>\n[Additional sources...]\n</ul>\n\nSource List Guidelines:\n- List each unique source used in your chapter\n- Include the full URL from the SerpAPI search results\n- Order sources alphabetically by publication name\n- Include article titles when available\n- Each source should only appear once in the list\n- Ensure all URLs are functional and properly formatted\n- Include all sources referenced in your in-text citations\n- Match source names exactly as used in in-text citations\n\nExample Source Entry:\n<li><a href=\"https://www.mckinsey.com/article-path\">McKinsey & Company - The Future of AI in Business</a></li>\n\nQuality Control:\n- Verify that every in-text citation has a corresponding entry in the Sources section\n- Check that all URLs are complete and accurate\n- Ensure consistency between in-text citation names and source list entries\n- Confirm all cited information is relevant and supports the chapter's main points\n- Balance cited content with original analysis and synthesis\n\n\nToday's date is : {{ $now }}\n",
+          "maxIterations": 3
+        }
+      },
+      "id": "edca49da-7152-409e-b5c2-359523203249",
+      "name": "Research Assistant1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1232,
+        1040
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ROLE\nYou generate a JSON article outline that MUST validate against the given JSON schema.\n\nINPUTS\n- topics: {{ $json.output }}\n- today: {{ $now }}\n\nTASK\nCreate an SEO-friendly outline about `topics`, with:\n- subtitle (string)\n- introduction (~100 words, HTML). It introduces the whole topic that later chapters expand.\n- exactly 5 chapters. Each chapter has:\n  * title (no “Chapter 1…”, no colons “:”)\n  * prompt (exhaustive guidance to write that chapter; plain text)\n  * Chapters must progress logically without repeating ideas.\n- conclusions (~100 words, HTML) that summarize and close the article.\n- imagePrompt: a concise photographic cover description that reflects the article’s themes.\n\nSTYLE\nProfessional tone. Go deep (not superficial). Use HTML only in `introduction` and `conclusions`.\n\nOUTPUT RULES — CRITICAL\n1) Return RAW JSON only (no backticks, no markdown, no comments).\n2) Do NOT include any field other than:\n   subtitle, introduction, conclusions, imagePrompt, chapters.\n3) `chapters` MUST contain exactly 5 items, each with only:\n   title, prompt.\n4) Use standard ASCII quotes `\"...\"`. No trailing commas.\n\nRETURN\nA single JSON object conforming to the schema:\n{\n  \"subtitle\": \"string\",\n  \"introduction\": \"string (HTML, ~100 words)\",\n  \"conclusions\": \"string (HTML, ~100 words)\",\n  \"imagePrompt\": \"string\",\n  \"chapters\": [\n    { \"title\": \"string-without-colons\", \"prompt\": \"string\" },\n    { \"title\": \"string-without-colons\", \"prompt\": \"string\" },\n    { \"title\": \"string-without-colons\", \"prompt\": \"string\" },\n    { \"title\": \"string-without-colons\", \"prompt\": \"string\" },\n    { \"title\": \"string-without-colons\", \"prompt\": \"string\" }\n  ]\n}\n\nToday's date is : {{ $now }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "653f8cd1-c499-4668-9410-27f9f16643fc",
+      "name": "Project Planner1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        608,
+        1040
+      ],
+      "executeOnce": false,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "content": "## Research Leader 🔬\nBuild table of contents\n\n",
+        "height": 428.96012242189374,
+        "width": 457.8111495531946,
+        "color": 7
+      },
+      "id": "a4cacf67-cb99-45db-aba9-a851198694e6",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        912
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Plan the work and Delegate to writers 📅\n",
+        "height": 430.74703747002076,
+        "width": 576.6288165877254,
+        "color": 7
+      },
+      "id": "ead87586-d572-47af-8c16-17ae38d5bad0",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        912
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Team of Research Assistants  ✍️\nEach Assistant works on a chapter",
+        "height": 434.28473716292865,
+        "width": 677.4186673497638,
+        "color": 7
+      },
+      "id": "f88a6b9d-52c2-4c3b-9174-f8405ab7ec8b",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1168,
+        912
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Editor polishing draft 📝 ",
+        "height": 429,
+        "width": 1099,
+        "color": 7
+      },
+      "id": "1f64b29d-1b09-413c-894d-1208b98da14a",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1888,
+        912
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Suggest an appropriate title of email that summarizes this content. Just one sentence output please in plain text.\n {{ $json.output }}"
+      },
+      "id": "3c0ac376-4dc6-4ba4-ace7-30f8397a81b0",
+      "name": "Title",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        2528,
+        1040
+      ],
+      "typeVersion": 1.4
+    },
+    {
+      "parameters": {
+        "sendTo": "samfire5200@gmail.com",
+        "subject": "={{ $json.text.replaceAll('\\\"','') }}",
+        "message": "={{ $('Editor1').item.json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "21e5b695-a28c-406d-a641-da39843c914b",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        2800,
+        1280
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "9fa071b3-3abc-4572-baa6-b3155d513b80",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jErIXCJwUvolRuhq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Article to edit:\n {{ $json.article }}\n\nProvide polished output in html format. ",
+        "options": {
+          "systemMessage": "=You are an expert Editor specializing in refining and polishing content to ensure it meets the highest quality standards. Your role is to review and improve the written material produced by multiple Writers while maintaining academic integrity and proper source attribution. Your task is to provide a highly polished, SEO-optimized article with proper citation management that respects the original content.\n\nContent Review Instructions:\nReview the content while maintaining its core message and key points\nFix only clear grammar, spelling, and punctuation errors\nPreserve the original tone and voice\nEnsure content alignment with the original brief\nMake minimal adjustments to sentence structure, focusing only on clarity\nOptimize headlines and subheadings without changing their core meaning\n\nContent Preservation Rules:\nNever remove substantive content\nMaintain all original examples and illustrations\nPreserve section ordering\nKeep all relevant details and supporting points\nRetain nuanced language and specific terminology\n\nCitation Management Instructions:\nPreserve all inline citations from the original writers in the format: [Source: Publication Name].\nEnsure all inline citations are hyperlinked by embedding the publication name in the citation with the corresponding URL. Example: [Source: [Publication Name](URL)].\nIdentify and remove any duplicate citations across different sections.\nStandardize citation formats if writers used different styles.\nVerify that all cited claims are properly attributed.\nEnsure citations don't disrupt the flow of reading.\nCross-reference all inline citations with their corresponding source links.\n\nUnified Source Documentation Format:\nCreate ONE \"Sources\" section at the very end of the article (after the conclusions section).\n\nFormat each source entry consistently using HTML list items:\n\nhtml\n\n<li><a href=\"[URL]\">[Publication Name] - [Article Title]</a></li>\nInclude for each source:\n\nPublication Name\nArticle Title (if available)\nComplete URL\nDate Accessed (if available)\nEnsure all source entries are hyperlinked properly.\n\nOrganize all sources alphabetically by publication name.\n\nRemove any duplicate entries.\n\nVerify all links are functional.\n\nSEO and Formatting Guidelines:\nMaintain proper HTML formatting throughout.\nEnsure citations and hyperlinks don't interfere with keyword optimization.\nFormat the \"Sources\" section with proper HTML tags.\nUse appropriate heading tags (<h1>, <h2>, <h3>) for structure.\nInclude proper meta descriptions and title tags if required.\nOutput Format:\nThe edited article should be structured as follows:\n\nMain content with inline citations (hyperlinked).\n\"Sources\" section at the end of the article with all reference links. There should only be one \"Sources\" section.\n\nAdditional Requirements:\nMaintain academic integrity while ensuring readability.\nBalance SEO optimization with proper citation practices.\nEnsure all writers' contributions are properly attributed.\nPreserve the original meaning and intent of cited material.\nCreate smooth transitions between sections from different writers.\n\nOUTPUT RULES:\n- Output must be **pure HTML only**.\n- Do NOT wrap the result in markdown code fences (no ```html, no ```).\n- Do NOT add any labels like \"html\".\n- The output should start directly with <p>, <h1>, <article>, etc.\n\nToday's date is: {{ $now }}"
+        }
+      },
+      "id": "e1ef9a4e-8f4c-4927-a592-89e7b32082f6",
+      "name": "Editor1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2192,
+        1040
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -544,
+        896
+      ],
+      "id": "881397e6-ee82-4617-b012-23ce9a151834",
+      "name": "Loop Over Items1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Reddit": {
+      "main": [
+        [
+          {
+            "node": "Extract Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Reddit Newsletter Topic Scout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Reddit Newsletter Topic Scout",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Reddit Newsletter Topic Scout",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Save to Hot Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit Newsletter Topic Scout": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Reddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Post": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Hot Topics": {
+      "main": [
+        [
+          {
+            "node": "Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approval": {
+      "main": [
+        [
+          {
+            "node": "News to Monitor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Assistant1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Leader 🔬1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Project Planner1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Research Leader 🔬1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "News to Monitor": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Editor1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Title",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Leader 🔬1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Assistant1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge chapters title and text1": {
+      "main": [
+        [
+          {
+            "node": "Final article text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final article text1": {
+      "main": [
+        [
+          {
+            "node": "Editor1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Leader 🔬1": {
+      "main": [
+        [
+          {
+            "node": "Project Planner1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Project Planner1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delegate to Research Assistants1": {
+      "main": [
+        [
+          {
+            "node": "Merge chapters title and text1",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Research Assistant1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Assistant1": {
+      "main": [
+        [
+          {
+            "node": "Merge chapters title and text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Planner1": {
+      "main": [
+        [
+          {
+            "node": "Delegate to Research Assistants1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor1": {
+      "main": [
+        [
+          {
+            "node": "Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Settings1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7b3ec58c-9fe5-4f09-8b81-cfaf90fa3bb4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "nLgntzph7DJpdvVN",
+  "tags": []
+}
