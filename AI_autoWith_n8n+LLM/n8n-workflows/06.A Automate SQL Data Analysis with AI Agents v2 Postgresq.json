@@ -1,0 +1,528 @@
+{
+  "name": "06.A Automate SQL Data Analysis with AI Agents v2 Postgresq",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "04694a0b-4b44-40c4-9c74-6b762d87332e",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        -144,
+        80
+      ],
+      "webhookId": "8e605ffe-58c8-42e2-999b-100dc3bb6db5",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Chat Trigger').item.json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        304
+      ],
+      "id": "64bdd5e2-9f8b-431e-9147-1f2d042da1b8",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "37512e1a-8376-4ba0-bdcd-34bb9329ae4b",
+              "name": "response",
+              "type": "string",
+              "value": "={{\"https://quickchart.io/chart?width=400&c=\"+ encodeURIComponent($json.output.toJsonString()) }}\n\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "577b41ca-7070-477b-8857-776513a2c726",
+      "name": "Set response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1632,
+        64
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n    \"name\": \"chart_configuration\",\n    \"description\": \"Configuration schema for Chart.js charts\",\n    \"strict\": true,\n    \"schema\": {\n  \"type\": \"object\",\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\",\n      \"enum\": [\"bar\", \"line\", \"radar\", \"pie\", \"doughnut\", \"polarArea\", \"bubble\", \"scatter\", \"area\"]\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"labels\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          }\n        },\n        \"datasets\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"label\": {\n                \"type\": [\"string\", \"null\"]\n              },\n              \"data\": {\n                \"type\": \"array\",\n                \"items\": {\n                  \"type\": \"number\"\n                }\n              },\n              \"backgroundColor\": {\n                \"type\": [\"array\", \"null\"],\n                \"items\": {\n                  \"type\": \"string\"\n                }\n              },\n              \"borderColor\": {\n                \"type\": [\"array\", \"null\"],\n                \"items\": {\n                  \"type\": \"string\"\n                }\n              },\n              \"borderWidth\": {\n                \"type\": [\"number\", \"null\"]\n              }\n            },\n            \"required\": [\"data\", \"label\", \"backgroundColor\", \"borderColor\", \"borderWidth\"],\n            \"additionalProperties\": false\n          }\n        }\n      },\n      \"required\": [\"labels\", \"datasets\"],\n      \"additionalProperties\": false\n    },\n    \"options\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"scales\": {\n          \"type\": [\"object\", \"null\"],\n          \"properties\": {\n            \"yAxes\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"type\": [\"object\", \"null\"],\n                \"properties\": {\n                  \"ticks\": {\n                    \"type\": [\"object\", \"null\"],\n                    \"properties\": {\n                      \"max\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"min\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"stepSize\": {\n                        \"type\": [\"number\", \"null\"]\n                      },\n                      \"beginAtZero\": {\n                        \"type\": [\"boolean\", \"null\"]\n                      }\n                    },\n                    \"required\": [\"max\", \"min\", \"stepSize\", \"beginAtZero\"],\n                    \"additionalProperties\": false\n                  },\n                  \"stacked\": {\n                    \"type\": [\"boolean\", \"null\"]\n                  }\n                },\n                \"required\": [\"ticks\", \"stacked\"],\n                \"additionalProperties\": false\n              }},\n              \"xAxes\": {\n                \"type\": [\"object\", \"null\"],\n                \"properties\": {\n                  \"stacked\": {\n                    \"type\": [\"boolean\", \"null\"]\n                  }\n                },\n                \"required\": [\"stacked\"],\n                \"additionalProperties\": false\n              }\n          },\n          \"required\": [\"yAxes\", \"xAxes\"],\n          \"additionalProperties\": false\n        },\n        \"plugins\": {\n          \"type\": [\"object\", \"null\"],\n          \"properties\": {\n            \"title\": {\n              \"type\": [\"object\", \"null\"],\n              \"properties\": {\n                \"display\": {\n                  \"type\": [\"boolean\", \"null\"]\n                },\n                \"text\": {\n                  \"type\": [\"string\", \"null\"]\n                }\n              },\n              \"required\": [\"display\", \"text\"],\n              \"additionalProperties\": false\n            },\n            \"legend\": {\n              \"type\": [\"object\", \"null\"],\n              \"properties\": {\n                \"display\": {\n                  \"type\": [\"boolean\", \"null\"]\n                },\n                \"position\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"enum\": [\"top\", \"left\", \"bottom\", \"right\", null]\n                }\n              },\n              \"required\": [\"display\", \"position\"],\n              \"additionalProperties\": false\n            }\n          },\n          \"required\": [\"title\", \"legend\"],\n          \"additionalProperties\": false\n        }\n      },\n      \"required\": [\"scales\", \"plugins\"],\n      \"additionalProperties\": false\n    }\n  },\n  \"required\": [\"type\", \"data\", \"options\"],\n  \"additionalProperties\": false\n}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        272
+      ],
+      "id": "b4df5e05-f033-4890-a30b-4aa99012643c",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "content": "## Data Retriever and Visualization Agent as Tool\n",
+        "height": 760,
+        "width": 1200,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        704,
+        0
+      ],
+      "id": "532f741b-b583-4803-9246-75ddf2bcda70",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "name": "generate_a_chart",
+        "description": "Call this tool whenever you need to generate a chart. All string values must be properly escaped, especially for multi-line strings.  When processing the output of the tool, URLs returned should always be in markdown format. for example,![](url)",
+        "workflowId": "={{ $workflow.id }}",
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"query\": {\n\t\t\"type\": \"string\",\n\t\t\"description\": \"a query describing the chart to generate in json format\"\n\t\t},\n    \"event\": {\n         \"type\": \"string\",\n          \"description\": \"the type of event.  this should always be set to Generate\"\n\t}\n}\n}"
+      },
+      "id": "6b3d4cde-f206-4dba-a8a1-544804c716b8",
+      "name": "Generate chart",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        336,
+        304
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## Data Analysis Orchestrator 🤵\n",
+        "height": 760,
+        "width": 620,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7c318a4f-d9b7-4e1f-8787-275f53f26ad1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.event }}",
+                    "rightValue": "Generate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generator"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c239ccd7-9acc-421c-9478-812bc330cfd9",
+                    "leftValue": "={{ $json.query.event }}",
+                    "rightValue": "Data",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        912,
+        80
+      ],
+      "id": "d7ef47a9-833c-4974-8085-9b71990c5b40",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "37512e1a-8376-4ba0-bdcd-34bb9329ae4b",
+              "name": "response",
+              "type": "string",
+              "value": "=\n{{ $json.output }}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "43e51f57-718e-42a4-87a6-15cda7876456",
+      "name": "Set response1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1632,
+        432
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## Start here: Step-by Step Youtube Tutorial :star:\n\n[![Multi-Agent Research team ](https://img.youtube.com/vi/VxG4JzSbszE/sddefault.jpg)](https://youtu.be/VxG4JzSbszE)\n",
+        "height": 550,
+        "width": 567,
+        "color": 7
+      },
+      "id": "1263b2ad-4731-4cdd-bf7a-7ba8f1059977",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        880
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "retrieve_data",
+        "description": "Call this tool whenever you need to retrieve data. All string values must be properly escaped, especially for multi-line strings.  Don't pass in the SQL query.  Just the question the user asked.",
+        "workflowId": "={{ $workflow.id }}",
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\t\"query\": {\n\t\t\"type\": \"string\",\n\t\t\"description\": \"the users query\"\n\t\t},\n    \"event\": {\n         \"type\": \"string\",\n          \"description\": \"the type of event.  this should always be set to Data\"\n\t}\n}\n}"
+      },
+      "id": "bdaf2080-72f2-49cb-b690-f19635c84105",
+      "name": "Retrieve Data",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        464,
+        304
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Chat Trigger').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are a helpful Data Visualization Orchestrator Agent that works with a Data Retrieval Analyst and a Visualization Assistant.  \n\nYour goal is to work with them to complete the users request.\n\nGuidelines:\n- Only use the chart tool when the user asks to do so.\n- When generating charts, please display the resulting URL graph in markdown format\n- Use the retrieve_data tool to fetch the data\n\n\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        176,
+        80
+      ],
+      "id": "320899cd-c132-4d9d-ada9-3db6f327d23a",
+      "name": "Orchestrator Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Input data:{{ $('When Executed by Another Workflow').item.json.query.query }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=I want you to act as a Chart.js visualization expert. Your primary goal is to generate valid and clearly labeled Chart.js configuration objects based on user requests.  These configurations should be directly usable within a Chart.js environment.\n\nInput: You will receive user requests describing the desired visualization. These requests may include:\n\nChart Type: (e.g., bar, line, pie, scatter, radar, bubble, etc.)\nData: The data to be visualized. This can be provided in various formats (CSV, JSON, lists). Clarify ambiguous data formats with the user. Handle data extraction as needed.\nLabels: Labels for data points, axes, and other elements. Specifically, the user must provide clear axis titles and units (if applicable). Ask clarifying questions if this information is missing.\nStyling: Customization options (colors, fonts, gridlines, titles, legends, tooltips, axis scales). Use Chart.js defaults if no specific styling is requested.\nSpecific Chart.js options: Users might request specific Chart.js features (logarithmic scales, animations, plugins).\nNatural language descriptions: Interpret less structured descriptions and translate them into valid Chart.js configurations.\nAxis information: Request and expect clear details on axis labels, including:\nAxis Titles: Concise titles for x and y axes. (e.g., \"Month\", \"Sales (USD)\")\nUnits: Units of measurement, if relevant. (e.g., \"(USD)\", \"kg\")\nData Type: The type of data on each axis (categorical, numerical, time series).\nSpecific Formatting: Requirements for date/number formats, currency symbols, etc.\nOutput:  A valid, well-formatted, and easily readable JSON object representing a Chart.js configuration, ready to be used in a new Chart() constructor.  The output must include properly configured axis labels based on the provided input. This includes adding titles and units to both axes within the options.scales section of the JSON.\n\nExample Input (Improved):\n\n\"Create a bar chart showing the monthly sales for the first quarter of 2024.  January had $10,000 in sales, February had $12,000, and March had $15,000.  Use blue for the bars. The chart title should be 'Q1 2024 Sales'. The x-axis represents the 'Month' and the y-axis represents 'Sales (USD)'.\"\n\nExample Output (Improved):  (See previous response for the updated JSON with axis labels)\n\nImportant Considerations:\n\nData Validation: Perform basic validation and ask for clarification if data is inconsistent or incomplete.\nError Handling: Handle errors gracefully and inform the user if their request cannot be fulfilled.\nChart.js Version: Assume the latest stable version unless specified otherwise.\nBest Practices: Adhere to Chart.js best practices for effective visualizations.\nClear Axis Labels: Prioritize clear and informative axis labels in all generated Chart.js configurations.\n\nFurther instructions:\n- Never generate function callbacks"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1200,
+        64
+      ],
+      "id": "46264388-d3c6-4e6f-a4eb-994af29f9f1e",
+      "name": "Visualization Agent 📶",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "agent": "sqlAgent",
+        "promptType": "define",
+        "text": "={{ $('When Executed by Another Workflow').item.json.query.query }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1216,
+        432
+      ],
+      "id": "a8de7bc0-2ad3-4fcd-b8d1-c81c7e32b175",
+      "name": "Data Retrieval Agent 👩🏻‍💻",
+      "retryOnFail": true,
+      "credentials": {
+        "postgres": {
+          "id": "bEWXskfkz8rodZrn",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        80
+      ],
+      "id": "29b49b58-35e1-45c2-981c-54c93c97709a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.5-sonnet",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        48,
+        304
+      ],
+      "id": "84928693-98dc-4560-bc3a-222f6e279c01",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Gak5KKR1Xb1lKD0J",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.5-sonnet",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        272
+      ],
+      "id": "9ae66dab-29e4-4bf4-adc0-9e3a6cb8608d",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Gak5KKR1Xb1lKD0J",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.5-sonnet",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        640
+      ],
+      "id": "77796b1c-36f0-40ef-b404-2d4966aa40d5",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Gak5KKR1Xb1lKD0J",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "Orchestrator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Orchestrator Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Visualization Agent 📶",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate chart": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Visualization Agent 📶",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data Retrieval Agent 👩🏻‍💻",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visualization Agent 📶": {
+      "main": [
+        [
+          {
+            "node": "Set response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Retrieval Agent 👩🏻‍💻": {
+      "main": [
+        [
+          {
+            "node": "Set response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Orchestrator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Visualization Agent 📶",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Data Retrieval Agent 👩🏻‍💻",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bba67777-1de2-4d98-a8d1-99bc855a3ecd",
+  "meta": {
+    "instanceId": "eaad05f20ef6e41a4a980718af320768c442cf10b8bb1a0972c22e1dc90b48d2"
+  },
+  "id": "QYIAfD8qwktV59H9",
+  "tags": []
+}

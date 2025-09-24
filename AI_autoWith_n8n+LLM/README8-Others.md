@@ -282,3 +282,14 @@ docker compose up -d
 *06.9 Integrating Reddit AI Agent into Newsletter Workflow
 
 #### Gmail Approval Required
+
+## 06.A Automate SQL Data Analysis with AI Agents
+
+```chat
+For the energy table, can you suggest some queries I can ask that may provide insight into the data?
+I'm interested in production growth between 2023 and 2024, please visualize this trend across companies.
+```
+
+*NorthAmericaEnergyFuturePricing.csv => energy (table name)
+*06.A Automate SQL Data Analysis with AI Agents v1 Supabase
+*06.A Automate SQL Data Analysis with AI Agents v2 Postgresql
