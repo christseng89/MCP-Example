@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <title>新版內容差異追蹤 (Word Style)</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 20px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 180px;
+        border: 1px solid #aaa;
+        border-radius: 6px;
+        padding: 8px;
+      }
+      textarea[readonly] {
+        background: #f5f5f5;
+        color: #333;
+      }
+      .label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+      }
+      #newDoc {
+        border: 1px solid #666;
+        border-radius: 6px;
+        min-height: 200px;
+        padding: 10px;
+        white-space: pre-wrap;
+      }
+      ins {
+        background: #c8facc;
+        text-decoration: none;
+      }
+      del {
+        background: #fbb;
+        text-decoration: line-through;
+      }
+      ins.active,
+      del.active {
+        background: yellow !important;
+        outline: 2px solid orange;
+      }
+      .toolbar {
+        margin: 12px 0;
+      }
+      .toolbar button {
+        margin-right: 6px;
+        padding: 6px 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <div>
+        <span class="label">舊版內容 (只讀)</span>
+        <textarea id="oldArea" readonly>
+花蓮縣馬太鞍溪堤壩1座湖前天溢流導致潰堤，造成光復鄉嚴重災情。</textarea
+        >
+      </div>
+      <div>
+        <span class="label">新版內容（可編輯，顯示差異）</span>
+        <div id="newDoc" contenteditable="true"></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button id="btnCompare">Compare</button>
+      <button id="btnPrev">Prev</button>
+      <button id="btnNext">Next</button>
+      <button id="btnAccept">Accept</button>
+      <button id="btnReject">Reject</button>
+      <button id="btnAcceptAll">Accept All</button>
+      <button id="btnRejectAll">Reject All</button>
+      <span id="counter">0/0</span>
+    </div>
+
+    <script>
+      // 逐字比對
+      function tokenize(text) {
+        return [...text];
+      }
+
+      function lcs(a, b) {
+        const n = a.length,
+          m = b.length;
+        const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
+        for (let i = 1; i <= n; i++) {
+          for (let j = 1; j <= m; j++) {
+            dp[i][j] =
+              a[i - 1] === b[j - 1]
+                ? dp[i - 1][j - 1] + 1
+                : Math.max(dp[i - 1][j], dp[i][j - 1]);
+          }
+        }
+        const res = [];
+        let i = n,
+          j = m;
+        while (i > 0 && j > 0) {
+          if (a[i - 1] === b[j - 1]) {
+            res.push({ t: "eq", v: a[i - 1] });
+            i--;
+            j--;
+          } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+            res.push({ t: "del", v: a[i - 1] });
+            i--;
+          } else {
+            res.push({ t: "add", v: b[j - 1] });
+            j--;
+          }
+        }
+        while (i > 0) res.push({ t: "del", v: a[--i] });
+        while (j > 0) res.push({ t: "add", v: b[--j] });
+        return res.reverse();
+      }
+
+      function coalesce(steps) {
+        const out = [];
+        for (const s of steps) {
+          const last = out[out.length - 1];
+          if (last && last.t === s.t) last.v += s.v;
+          else out.push({ t: s.t, v: s.v });
+        }
+        return out;
+      }
+
+      const oldArea = document.getElementById("oldArea");
+      const newDoc = document.getElementById("newDoc");
+      const counter = document.getElementById("counter");
+
+      // 取得「目前新版基準文字」：把 <del> 當不存在、<ins> 當普通文字
+      function getNewDocText() {
+        const clone = newDoc.cloneNode(true);
+        // 刪除被標成刪除的文字
+        clone.querySelectorAll("del").forEach((n) => n.remove());
+        // 將新增的文字展開為普通文字
+        clone
+          .querySelectorAll("ins")
+          .forEach((n) => n.replaceWith(n.textContent));
+        // 取純文字作為本次比對的「新版基準」
+        return (clone.textContent || "").replace(/\r\n?/g, "\n");
+      }
+
+      function render() {
+        const oldTxt = (oldArea.value || "").replace(/\r\n?/g, "\n");
+        const newTxt = getNewDocText();
+        const steps = coalesce(lcs(tokenize(oldTxt), tokenize(newTxt)));
+
+        newDoc.innerHTML = "";
+        for (const s of steps) {
+          if (s.t === "eq") {
+            newDoc.append(s.v);
+          } else {
+            const el = document.createElement(s.t === "add" ? "ins" : "del");
+            el.textContent = s.v;
+            newDoc.append(el);
+          }
+        }
+        activeIdx = -1;
+        updateCounter();
+      }
+
+      function list() {
+        return [...newDoc.querySelectorAll("ins,del")];
+      }
+      let activeIdx = -1;
+
+      function setActive(i) {
+        list().forEach((e) => e.classList.remove("active"));
+        const arr = list();
+        if (arr.length === 0) {
+          counter.textContent = "0/0";
+          return;
+        }
+        activeIdx = (i + arr.length) % arr.length;
+        arr[activeIdx].classList.add("active");
+        arr[activeIdx].scrollIntoView({ block: "center", behavior: "smooth" });
+        counter.textContent = `${activeIdx + 1}/${arr.length}`;
+      }
+
+      function acceptOne() {
+        const arr = list();
+        if (arr.length === 0) return;
+        const n = arr[activeIdx];
+        if (!n) return;
+        if (n.tagName === "INS") n.replaceWith(n.textContent); // 接受新增
+        else n.remove(); // 接受刪除
+        setActive(activeIdx);
+      }
+      function rejectOne() {
+        const arr = list();
+        if (arr.length === 0) return;
+        const n = arr[activeIdx];
+        if (!n) return;
+        if (n.tagName === "INS") n.remove(); // 拒絕新增
+        else n.replaceWith(n.textContent); // 拒絕刪除
+        setActive(activeIdx);
+      }
+      function acceptAll() {
+        list().forEach((n) => {
+          if (n.tagName === "INS") n.replaceWith(n.textContent);
+          else n.remove();
+        });
+        setActive(-1);
+      }
+      function rejectAll() {
+        list().forEach((n) => {
+          if (n.tagName === "INS") n.remove();
+          else n.replaceWith(n.textContent);
+        });
+        setActive(-1);
+      }
+      function updateCounter() {
+        const arr = list();
+        counter.textContent = arr.length
+          ? `${activeIdx + 1}/${arr.length}`
+          : "0/0";
+      }
+
+      document.getElementById("btnCompare").onclick = render;
+      document.getElementById("btnPrev").onclick = () =>
+        setActive(activeIdx - 1);
+      document.getElementById("btnNext").onclick = () =>
+        setActive(activeIdx + 1);
+      document.getElementById("btnAccept").onclick = acceptOne;
+      document.getElementById("btnReject").onclick = rejectOne;
+      document.getElementById("btnAcceptAll").onclick = acceptAll;
+      document.getElementById("btnRejectAll").onclick = rejectAll;
+
+      // 初次渲染（給一段可改的新版內容）
+      newDoc.textContent =
+        "花蓮縣馬太鞍溪堤壩在豪雨前出現滲流，導致潰堤，造成光復鄉嚴重災情。";
+      render();
+    </script>
+  </body>
+</html>
