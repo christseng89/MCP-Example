@@ -33,3 +33,11 @@ docker compose exec n8n printenv | grep -E "CHART_API_KEY|JINA_API_KEY"
 ```
 
 <http://localhost:5778/>
+
+```cmd
+docker exec -it n8n sh
+    ls /home/node/.n8n/nodes/node_modules/ -l
+    exit
+
+docker logs n8n
+```

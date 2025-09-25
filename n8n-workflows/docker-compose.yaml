@@ -1,25 +1,30 @@
 services:
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+      # image: docker.n8n.io/n8nio/n8n
+  # With this setup, you can add community nodes via the N8N_COMMUNITY_PACKAGES env var
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: n8n-with-time:latest
     container_name: n8n
     restart: unless-stopped
     ports:
-      - "5778:5678" # 本機訪問編輯器 http://localhost:5778
+      - "5778:5678"
     env_file:
-      - .env # 讀取上一步建立的 .env
+      - .env
     environment:
-      N8N_HOST: 0.0.0.0 # 在容器內綁到所有介面
-      N8N_PROTOCOL: http # 內部使用 http；對外用 WEBHOOK_URL 的 https
-      CHART_API_KEY: ${CHART_API_KEY} # 顯式帶入
-      JINA_API_KEY: ${JINA_API_KEY} # 顯式帶入
+      N8N_HOST: 0.0.0.0
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:5778
+      DB_SQLITE_POOL_SIZE: "1"
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
 
-      # ---- 開啟並安裝社群節點（JSON 陣列，放 npm 套件名）----
-      # 請把下面的包名換成你要的社群節點（到 npm 搜 "n8n-nodes-xxxx"）
-      N8N_COMMUNITY_PACKAGES: '["n8n-nodes-mcp","n8n-nodes-tavily"]'
+      # ⚠️ Only list packages that actually exist on npm
+      # (there’s no public "n8n-nodes-mcp")
+      N8N_COMMUNITY_PACKAGES: '["@tavily/n8n-nodes-tavily","n8n-nodes-qdrant"]'
 
-      # （選）允許 Function/Code 節點引入外部套件
-      # NODE_FUNCTION_ALLOW_EXTERNAL: axios,lodash,dayjs,airbnb,timer      
-
+      # If your Code/Function nodes import libs, list them here
+      NODE_FUNCTION_ALLOW_EXTERNAL: axios,lodash,dayjs
     volumes:
       - C:/n8n/n8n-data:/home/node/.n8n
       - C:/n8n/local-files:/files
