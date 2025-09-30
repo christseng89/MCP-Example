@@ -443,18 +443,18 @@ curl -s -u samfire5200@gmail.com:t0210#Chris -H "X-N8N-API-KEY: eyJhbGciOiJIUzI1
 
 curl -i -X POST http://localhost:5778/rest/login \
   -H "Content-Type: application/json" \
-  -d '{"emailOrLdapLoginId":"samfire5200@gmail.com","password":"t0210#Chris"}' \
+  -d '{"emailOrLdapLoginId":"samfire5200@gmail.com","password":"t0nnn#Xxxxx"}' \
   > headers.txt
 
-curl 'https://customsearch.googleapis.com/customsearch/v1?q=Investment%20Banking%20Director%20in%20Atlanta%20site%3Alinkedin.com%2Fin&key=AIzaSyCaqBkuz-odQT6UcG3AcRp1dp7HoHtiryk' \
+curl 'https://customsearch.googleapis.com/customsearch/v1?q=Investment%20Banking%20Director%20in%20Atlanta%20site%3Alinkedin.com%2Fin&key=AIza....' \
   --header 'Accept: application/json' \
   --compressed
 
-curl 'https://customsearch.googleapis.com/customsearch/v1?q=Investment%20Banking%20Director%20in%20Atlanta&key=AIzaSyCaqBkuz-odQT6UcG3AcRp1dp7HoHtiryk' \
+curl 'https://customsearch.googleapis.com/customsearch/v1?q=Investment%20Banking%20Director%20in%20Atlanta&key=AIzaSy...' \
   --header 'Accept: application/json' \
   --compressed
 
-curl 'https://customsearch.googleapis.com/customsearch/v1?cx=f4f949040f29043c7&q=Investment%20Banking%20Director%20in%20Atlanta&key=AIzaSyCaqBkuz-odQT6UcG3AcRp1dp7HoHtiryk' \
+curl 'https://customsearch.googleapis.com/customsearch/v1?cx=f4f949040f29043c7&q=Investment%20Banking%20Director%20in%20Atlanta&key=AIzaSy...' \
   --header 'Accept: application/json' \
   --compressed
 
