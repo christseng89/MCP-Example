@@ -384,3 +384,78 @@
    暫停流程，直到條件滿足或時間到才繼續執行。
 
 ---
+
+## 📊 n8n Embeddings 節點比較表
+
+| 節點名稱                       | 成本                                            | 適用場景             | 優點                  | 缺點                     |
+| -------------------------- | --------------------------------------------- | ---------------- | ------------------- | ---------------------- |
+| **OpenAI**                 | 按 token 收費（相對便宜，`text-embedding-3-small` 成本低） | RAG、文件檢索、聊天知識庫   | 穩定、支援多語言、社群應用多      | 需上雲，資料隱私要注意            |
+| **Cohere**                 | 按 token 收費，與 OpenAI 相近                        | 搜尋、分類、聚類         | 語義理解強，效果接近 OpenAI   | 模型選擇少，生態不如 OpenAI      |
+| **AWS Bedrock**            | 按 API 請求收費（依模型不同）                             | 已在 AWS 生態，需權限控管  | 易整合 AWS，企業合規        | 成本偏高，上手需 AWS IAM       |
+| **Azure OpenAI**           | 與 OpenAI 相同但加上 Azure 定價                       | 金融、政府、醫療等需合規的環境  | 有 SLA、合規（資料中心可選）    | 綁定 Azure，成本高於直連 OpenAI |
+| **Google Gemini**          | 預計按 token 收費（Google Cloud 模式）                 | 跨模態（文字+圖像）、AI 搜尋 | 新一代多模態模型，強調整合       | 模型新，應用案例較少             |
+| **Google Vertex**          | 按使用量收費                                        | GCP 生態用戶，機器學習管線  | 與 BigQuery、GCP 工具整合 | 學習曲線高，GCP 依賴重          |
+| **Hugging Face Inference** | 有免費配額，商業版需付費                                  | 自訂模型、專領域模型       | 模型選擇最多（醫療、法律等）      | 免費版限速，專業版成本高           |
+| **Mistral Cloud**          | 按 token 收費（比 OpenAI 便宜）                       | 歐洲用戶、隱私敏感應用      | 開源友好、支援 GDPR        | 模型數量比 Hugging Face 少   |
+| **Ollama**                 | 免費（本地運行，硬體成本自行負擔）                             | 本地開發、資料隱私要求      | 可離線使用，支援開源模型        | 需高算力（GPU/CPU），維護成本高    |
+
+---
+
+## ✅ 建議選擇路徑
+
+* **新手 / 常規應用**：用 **OpenAI**（簡單好用，成本低）
+* **企業上雲**：AWS → **Bedrock**，Azure → **Azure OpenAI**，GCP → **Vertex / Gemini**
+* **專領域模型**：用 **Hugging Face**（法律、醫療、金融專業模型）
+* **隱私保護**：選 **Ollama（本地）** 或 **Mistral Cloud（歐洲 GDPR）**
+* **嘗鮮多模態**：試 **Google Gemini**
+
+---
+
+## Ollama
+
+```bash
+# keep your chat model (optional)
+ollama pull llama3.2:latest
+
+# pull an embedding model
+ollama pull nomic-embed-text
+
+curl http://localhost:11434/api/tags
+
+curl -s http://localhost:11434/api/embeddings \
+  -H "Content-Type: application/json" \
+  -d '{"model":"nomic-embed-text","prompt":"hello world"}' | jq '.embedding | length'
+# => 768   (dimension of the vector)
+
+```
+
+在 n8n → Ollama 連線設定裡，把 Base URL 改成 <http://host.docker.internal:11434>
+
+## Gemini API Key
+
+<https://aistudio.google.com/app/api-keys>
+
+## Get workflow files
+
+```bash
+curl -s -u samfire5200@gmail.com:t0210#Chris -H "X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MmIyNzc5MS00MzE4LTQ5OWMtYjhkYi03MzQyMjZhZmU4YTQiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzU5MTM2NDM0LCJleHAiOjE3NjY4NTEyMDB9.dn_V3jRIG0h6JIgvlodb0UbNW2P56VqnossD_EwMlRc" http://localhost:5778/rest/workflows > workflows.json
+
+
+curl -i -X POST http://localhost:5778/rest/login \
+  -H "Content-Type: application/json" \
+  -d '{"emailOrLdapLoginId":"samfire5200@gmail.com","password":"t0210#Chris"}' \
+  > headers.txt
+
+curl 'https://customsearch.googleapis.com/customsearch/v1?q=Investment%20Banking%20Director%20in%20Atlanta%20site%3Alinkedin.com%2Fin&key=AIzaSyCaqBkuz-odQT6UcG3AcRp1dp7HoHtiryk' \
+  --header 'Accept: application/json' \
+  --compressed
+
+curl 'https://customsearch.googleapis.com/customsearch/v1?q=Investment%20Banking%20Director%20in%20Atlanta&key=AIzaSyCaqBkuz-odQT6UcG3AcRp1dp7HoHtiryk' \
+  --header 'Accept: application/json' \
+  --compressed
+
+curl 'https://customsearch.googleapis.com/customsearch/v1?cx=f4f949040f29043c7&q=Investment%20Banking%20Director%20in%20Atlanta&key=AIzaSyCaqBkuz-odQT6UcG3AcRp1dp7HoHtiryk' \
+  --header 'Accept: application/json' \
+  --compressed
+
+```
