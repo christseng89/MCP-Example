@@ -1,7 +1,7 @@
 services:
   n8n:
-      # image: docker.n8n.io/n8nio/n8n
-  # With this setup, you can add community nodes via the N8N_COMMUNITY_PACKAGES env var
+    # image: docker.n8n.io/n8nio/n8n
+    # With this setup, you can add community nodes via the N8N_COMMUNITY_PACKAGES env var
     build:
       context: .
       dockerfile: Dockerfile

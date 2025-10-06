@@ -293,3 +293,26 @@ I'm interested in production growth between 2023 and 2024, please visualize this
 *NorthAmericaEnergyFuturePricing.csv => energy (table name)
 *06.A Automate SQL Data Analysis with AI Agents v1 Supabase
 *06.A Automate SQL Data Analysis with AI Agents v2 Postgresql
+
+## Binance API Key
+
+<https://www.binance.com/en/binance-api>
+<https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data>
+<https://newsapi.org/>
+
+<https://www.capitoltrades.com/>
+<https://www.capitoltrades.com/trades>
+<https://site.financialmodelingprep.com/>
+<https://site.financialmodelingprep.com/developer/docs#quote>
+
+<https://moralis.com/>
+<https://admin.moralis.com/>
+<https://docs.moralis.com/>
+<https://docs.moralis.com/web3-data-api/solana>
+<https://docs.moralis.com/web3-data-api/solana/reference/get-trending-tokens?chain=eth&limit=25>
+<https://docs.moralis.com/web3-data-api/solana/reference/get-token-holder-stats?network=mainnet&address=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN>
+
+<https://dash.the-odds-api.com/api-subscriptions>
+<https://the-odds-api.com/sports/mma-ufc-odds.html#query-featured-mma-ufc-markets>
+
+<https://www.kaggle.com/datasets/mdabbert/ultimate-ufc-dataset>
