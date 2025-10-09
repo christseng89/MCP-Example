@@ -1,7 +1,5 @@
 services:
   n8n:
-    # image: docker.n8n.io/n8nio/n8n
-    # With this setup, you can add community nodes via the N8N_COMMUNITY_PACKAGES env var
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,18 +11,19 @@ services:
     env_file:
       - .env
     environment:
-      N8N_HOST: 0.0.0.0
-      N8N_PROTOCOL: http
-      WEBHOOK_URL: http://localhost:5778
+      # REMOVE these three (they override your .env with localhost/http):
+      # N8N_HOST: 0.0.0.0
+      # N8N_PROTOCOL: http
+      # WEBHOOK_URL: http://localhost:5778
+
       DB_SQLITE_POOL_SIZE: "1"
       N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
 
-      # ⚠️ Only list packages that actually exist on npm
-      # (there’s no public "n8n-nodes-mcp")
+      # Community nodes
       N8N_COMMUNITY_PACKAGES: '["@tavily/n8n-nodes-tavily","n8n-nodes-qdrant"]'
 
-      # If your Code/Function nodes import libs, list them here
-      NODE_FUNCTION_ALLOW_EXTERNAL: axios,lodash,dayjs
+      # Merge external libs you want in Function/Code nodes
+      NODE_FUNCTION_ALLOW_EXTERNAL: axios,lodash,dayjs,jsonwebtoken
     volumes:
-      - C:/n8n/n8n-data:/home/node/.n8n
-      - C:/n8n/local-files:/files
+      - "C:/n8n/n8n-data:/home/node/.n8n"
+      - "C:/n8n/local-files:/files"
